@@ -8,8 +8,8 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Git initialization
   - [x] Create folder structure (src/server/, src/client/, src/shared/)
   - [x] Initialize single package.json with all dependencies
-  - [ ] Set up TypeScript config with path mapping
-  - [ ] Install core dependencies (Express, Socket.io, React, Vite, tsx)
+  - [x] Set up TypeScript config with path mapping
+  - [x] Install core dependencies (Express, Socket.io, React, Vite, tsx)
   - [ ] Set up ESLint + Prettier for code formatting
   - [ ] Create basic README with setup instructions
 - [ ] Shared Type Definitions
