@@ -7,7 +7,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 - [ ] Project Setup
   - [x] Git initialization
   - [x] Create folder structure (src/server/, src/client/, src/shared/)
-  - [ ] Initialize single package.json with all dependencies
+  - [x] Initialize single package.json with all dependencies
   - [ ] Set up TypeScript config with path mapping
   - [ ] Install core dependencies (Express, Socket.io, React, Vite, tsx)
   - [ ] Set up ESLint + Prettier for code formatting
