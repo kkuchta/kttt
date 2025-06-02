@@ -28,43 +28,47 @@
 ## Project Structure
 
 - kttt/
-  - server/ # Backend Node.js application
-    - src/
+  - package.json # Single package for everything
+  - tsconfig.json # Shared TypeScript config
+  - src/
+    - shared/ # Shared TypeScript files
+      - types/
+        - game.ts # Game state, moves, players
+        - socket.ts # Socket event types
+      - utils/
+        - gameLogic.ts # Shared game utilities
+    - server/ # Backend Node.js application
       - index.ts # Express + Socket.io server
       - game/ # Game logic and state management
       - rooms/ # Room/session management
-    - package.json
-    - tsconfig.json
-  - client/ # Frontend React application
-    - src/
+    - client/ # Frontend React application
+      - App.tsx
       - components/ # React components
       - hooks/ # Custom React hooks
       - socket/ # Socket.io client setup
-    - package.json
-    - tsconfig.json
-    - vite.config.ts
-  - shared/ # Shared TypeScript definitions
-    - types/
-    - package.json
-  - package.json # Root workspace configuration
+  - dist/ # Build output
+    - server/ # Compiled server code
+    - client/ # Built React app
 
 ## Development Setup
 
 ### Package Management
 
-- **Primary:** npm (consistent with Node.js ecosystem)
+- **Single package.json** with all dependencies
+- **No npm workspaces** - simpler dependency management
 
 ### Build Tooling
 
 - **Frontend:** Vite (fast development, TypeScript support)
-- **Backend:** TypeScript compiler (tsc) with watch mode
-- **Shared:** TypeScript compiler for type checking
+- **Backend:** tsx with watch mode for development
+- **Shared:** Direct TypeScript imports (no separate build step)
 
 ### Development Workflow
 
-1. Shared types compiled first
-2. Backend and frontend can import shared types
+1. Start both server and client with `npm run dev`
+2. Server and client import shared TypeScript files directly
 3. Hot reload for both client and server during development
+4. TypeScript path mapping for clean imports (`@shared/types/game`)
 
 ## Deployment Strategy
 
