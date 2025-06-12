@@ -18,12 +18,12 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [ ] Define Socket.io event types
   - [ ] Create shared game utility functions
 - [ ] Backend Foundation
-  - [ ] Basic Express server setup
+  - [x] Basic Express server setup
   - [ ] Socket.io integration and room management
   - [ ] Game ID generation and validation
   - [ ] Basic API endpoints (create game, get game state)
 - [ ] Frontend Foundation
-  - [ ] React app with Vite setup
+  - [x] React app with Vite setup
   - [ ] Socket.io client integration
   - [ ] Basic routing (home page, game page)
   - [ ] Game board component structure
