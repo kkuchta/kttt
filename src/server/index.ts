@@ -1,5 +1,5 @@
-import cors from "cors";
-import express from "express";
+import cors from 'cors';
+import express from 'express';
 
 const app = express();
 const PORT = 3001;
@@ -9,10 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 // Basic test route
-app.get("/api/health", (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({
-    status: "ok",
-    message: "Kriegspiel Tic Tac Toe server is running",
+    status: 'ok',
+    message: 'Kriegspiel Tic Tac Toe server is running',
     timestamp: new Date().toISOString(),
   });
 });

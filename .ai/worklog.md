@@ -4,14 +4,14 @@ This is a log of ongoing work. It contains the tasks we've done and the tasks we
 
 Do _not_ do multiple tasks at once. Pause for instruction after each task.
 
-- [ ] Project Setup
+- [x] Project Setup
   - [x] Git initialization
   - [x] Create folder structure (src/server/, src/client/, src/shared/)
   - [x] Initialize single package.json with all dependencies
   - [x] Set up TypeScript config with path mapping
   - [x] Install core dependencies (Express, Socket.io, React, Vite, tsx)
-  - [ ] Set up ESLint + Prettier for code formatting
-  - [ ] Create basic README with setup instructions
+  - [x] Set up ESLint + Prettier for code formatting
+  - [x] Create basic README with setup instructions
 - [ ] Shared Type Definitions
   - [ ] Define game state interfaces in src/shared/types/
   - [ ] Define player and move types
