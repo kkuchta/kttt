@@ -29,6 +29,15 @@ build-server: ## Build only the server
 start: ## Start the production server
 	npm run start
 
+type-check: ## Run TypeScript type checking for both client and server
+	npm run type-check
+
+type-check-client: ## Run TypeScript type checking for client only
+	npm run type-check:client
+
+type-check-server: ## Run TypeScript type checking for server only
+	npm run type-check:server
+
 lint: ## Run ESLint to check for issues
 	npm run lint
 
@@ -68,5 +77,5 @@ ci: install check build ## CI pipeline: install, check, and build
 	@echo "✅ CI pipeline completed successfully!"
 
 # Quick checks before committing
-pre-commit: lint-fix format check ## Format, fix, and check code before committing
+pre-commit: lint-fix format type-check check ## Format, fix, type-check, and validate code before committing
 	@echo "✅ Code is ready for commit!" 

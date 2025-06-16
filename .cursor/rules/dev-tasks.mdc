@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## Development Commands
+
+This project uses a Makefile to standardize development tasks. Always check the Makefile first for available commands before suggesting npm scripts directly.
+
+### Key Make Targets:
+- `make help` - Shows all available targets with descriptions
+- `make dev` - Start both client and server in development mode.  The AI should never run this - the user will already have them running in a separate terminal.
+- `make lint` - Run ESLint to check code quality
+- `make lint-fix` - Auto-fix ESLint issues
+- `make format` - Format code with Prettier
+- `make check` - Run both linting and format checks
+- `make pre-commit` - Complete pre-commit workflow (lint-fix + format + check)
+- `make build` - Build for production
+- `make clean` - Clean build artifacts and dependencies
+- `make setup` - Initial project setup
+
+### Development Workflow:
+1. Use `make dev` to start development servers
+2. Use `make pre-commit` before committing changes
+3. Use `make help` to see all available commands
+4. Prefer Make targets over direct npm scripts when available
+
+When suggesting development commands, always mention the Make target first, then optionally include the npm equivalent.

@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // Basic test route
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_, res) => {
   res.json({
     status: 'ok',
     message: 'Kriegspiel Tic Tac Toe server is running',
