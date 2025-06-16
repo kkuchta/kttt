@@ -42,6 +42,14 @@ module.exports = {
     'prefer-const': 'error',
     'no-var': 'error',
   },
+  overrides: [
+    {
+      files: ['src/server/**/*'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
   settings: {
     react: {
       version: 'detect',

@@ -4,7 +4,7 @@ function App() {
       const response = await fetch('/api/health');
       const data = await response.json();
       alert(`API Response: ${data.message}`);
-    } catch (error) {
+    } catch {
       alert('Failed to connect to API');
     }
   };

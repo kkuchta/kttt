@@ -12,11 +12,11 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Install core dependencies (Express, Socket.io, React, Vite, tsx)
   - [x] Set up ESLint + Prettier for code formatting
   - [x] Create basic README with setup instructions
-- [ ] Shared Type Definitions
-  - [ ] Define game state interfaces in src/shared/types/
-  - [ ] Define player and move types
-  - [ ] Define Socket.io event types
-  - [ ] Create shared game utility functions
+- [x] Shared Type Definitions
+  - [x] Define game state interfaces in src/shared/types/
+  - [x] Define player and move types
+  - [x] Define Socket.io event types
+  - [x] Create shared game utility functions
 - [ ] Backend Foundation
   - [x] Basic Express server setup
   - [ ] Socket.io integration and room management
