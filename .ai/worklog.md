@@ -17,11 +17,15 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Define player and move types
   - [x] Define Socket.io event types
   - [x] Create shared game utility functions
-- [ ] Backend Foundation
+- [x] Backend Foundation
   - [x] Basic Express server setup
-  - [ ] Socket.io integration and room management
-  - [ ] Game ID generation and validation
-  - [ ] Basic API endpoints (create game, get game state)
+  - [x] Socket.io integration and room management
+    - [x] Add Socket.io server to Express app
+    - [x] Implement room management (create/join rooms by game ID)
+    - [x] Game ID generation and validation (4-character codes)
+    - [x] Basic socket event handlers (connect, disconnect, join room)
+    - [x] Simple HTML test client for Socket.io testing
+  - [x] Basic API endpoints (create game, get game state)
 - [ ] Frontend Foundation
   - [x] React app with Vite setup
   - [ ] Socket.io client integration

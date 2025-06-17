@@ -19,7 +19,7 @@ export interface ClientToServerEvents {
 // Events sent from server to client
 export interface ServerToClientEvents {
   // Game management responses
-  'game-created': (data: { gameId: string }) => void;
+  'game-created': (data: { gameId: string; yourPlayer: Player }) => void;
   'game-joined': (data: {
     success: boolean;
     gameState?: ClientGameState;

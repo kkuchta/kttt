@@ -9,7 +9,7 @@ This project uses a Makefile to standardize development tasks. Always check the 
 
 ### Key Make Targets:
 - `make help` - Shows all available targets with descriptions
-- `make dev` - Start both client and server in development mode.  The AI should never run this - the user will already have them running in a separate terminal.
+- `make dev` - Start both client and server in development mode.  You should never run this - the user will already have them running in a separate terminal.  Nor should you run the dev:server or dev:client commands directly.
 - `make lint` - Run ESLint to check code quality
 - `make lint-fix` - Auto-fix ESLint issues
 - `make format` - Format code with Prettier
