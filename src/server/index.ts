@@ -15,6 +15,11 @@ import {
   createClientGameState,
   createEmptyBoard,
   generateGameId,
+  getOpponentPlayer,
+  isGameOver,
+  positionToKey,
+  setCellState,
+  validateMove,
 } from '../shared/utils/gameLogic';
 
 // In-memory storage for active games using full GameState
@@ -269,11 +274,133 @@ io.on('connection', socket => {
   // Make move
   socket.on('make-move', position => {
     console.log(`🎯 Move attempt from ${socket.id}:`, position);
-    // TODO: Implement move logic
-    socket.emit('move-result', {
-      success: false,
-      error: 'Not implemented yet',
+
+    const gameId = socketToGame.get(socket.id);
+    if (!gameId) {
+      console.log(`❌ Player ${socket.id} not in any game`);
+      socket.emit('move-result', {
+        success: false,
+        error: 'You are not in a game',
+      });
+      return;
+    }
+
+    const game = activeGames.get(gameId);
+    if (!game) {
+      console.log(`❌ Game not found: ${gameId}`);
+      socket.emit('move-result', {
+        success: false,
+        error: 'Game not found',
+      });
+      return;
+    }
+
+    // Determine which player this socket represents
+    let currentPlayer: Player | null = null;
+    if (game.players.X === socket.id) {
+      currentPlayer = 'X';
+    } else if (game.players.O === socket.id) {
+      currentPlayer = 'O';
+    }
+
+    if (!currentPlayer) {
+      console.log(`❌ Player ${socket.id} not in game ${gameId}`);
+      socket.emit('move-result', {
+        success: false,
+        error: 'You are not a player in this game',
+      });
+      return;
+    }
+
+    // Validate the move using existing game logic
+    const moveResult = validateMove(game, currentPlayer, position);
+
+    // Update last activity
+    game.lastActivity = Date.now();
+
+    if (!moveResult.success) {
+      if (moveResult.revealed) {
+        // Kriegspiel rule: Move failed because cell was occupied
+        // Reveal the opponent's piece and switch turns
+        const revealedKey = positionToKey(moveResult.revealed);
+        game.revealedCells.add(revealedKey);
+
+        // Player loses their turn
+        game.currentTurn = getOpponentPlayer(currentPlayer);
+
+        console.log(
+          `💥 Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
+        );
+
+        // Send move result to the player who made the invalid move
+        socket.emit('move-result', {
+          success: false,
+          error: 'Cell is occupied',
+          revealedPosition: moveResult.revealed,
+        });
+
+        // Send updated game state to all players
+        sendGameStateToAllPlayers(game);
+      } else {
+        // Other validation error (not your turn, invalid position, etc.)
+        console.log(`❌ Move validation failed: ${moveResult.error}`);
+        socket.emit('move-result', {
+          success: false,
+          error: moveResult.error,
+        });
+      }
+      return;
+    }
+
+    // Move is valid - place the piece
+    game.board = setCellState(game.board, position, currentPlayer);
+
+    // Add to move history
+    game.moveHistory.push({
+      player: currentPlayer,
+      position,
+      timestamp: Date.now(),
     });
+
+    console.log(
+      `✅ Player ${currentPlayer} placed piece at (${position.row},${position.col})`
+    );
+
+    // Check if game is over
+    const gameResult = isGameOver(game.board);
+    if (gameResult) {
+      // Game is complete
+      game.status = 'completed';
+      game.result = gameResult;
+
+      console.log(
+        `🏁 Game ${gameId} completed:`,
+        gameResult.winner ? `${gameResult.winner} wins!` : 'Draw'
+      );
+
+      // Send move result to current player
+      socket.emit('move-result', { success: true });
+
+      // Send game over notification to all players
+      io.to(gameId).emit('game-over', {
+        result: gameResult,
+        finalBoard: game.board, // Show full board when game ends
+      });
+
+      // Send final game state to all players
+      sendGameStateToAllPlayers(game);
+    } else {
+      // Game continues - switch turns
+      game.currentTurn = getOpponentPlayer(currentPlayer);
+
+      console.log(`🔄 Turn switched to ${game.currentTurn}`);
+
+      // Send move result to current player
+      socket.emit('move-result', { success: true });
+
+      // Send updated game state to all players
+      sendGameStateToAllPlayers(game);
+    }
   });
 
   // Connection utilities
@@ -334,6 +461,18 @@ function removePlayerFromGame(socketId: string, gameId: string) {
         playersCount,
       });
     }
+  }
+}
+
+// Helper function to send game state updates to all players in a game
+function sendGameStateToAllPlayers(game: GameState) {
+  if (game.players.X) {
+    const clientStateX = createClientGameState(game, 'X');
+    io.to(game.players.X).emit('game-state-update', clientStateX);
+  }
+  if (game.players.O) {
+    const clientStateO = createClientGameState(game, 'O');
+    io.to(game.players.O).emit('game-state-update', clientStateO);
   }
 }
 

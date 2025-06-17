@@ -40,8 +40,12 @@ export interface SocketEventHandlers {
 }
 
 export function useSocket(handlers: SocketEventHandlers = {}) {
+  // Initialize connection state based on actual socket status
   const [connectionState, setConnectionState] = useState<ConnectionState>(
-    defaultConnectionState
+    () => ({
+      ...defaultConnectionState,
+      isConnected: socket.connected, // Check actual socket connection status
+    })
   );
   const [gameState, setGameState] = useState<ClientGameState | null>(null);
 
@@ -245,14 +249,20 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
     };
   }, []);
 
-  // Cleanup on unmount
+  // Only leave game when the browser/tab is actually closing
   useEffect(() => {
-    return () => {
-      if (socket.connected) {
+    const handleBeforeUnload = () => {
+      if (socket.connected && connectionState.gameId) {
         socketHelpers.leaveGame();
       }
     };
-  }, []);
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [connectionState.gameId]);
 
   return {
     // Connection state

@@ -34,22 +34,22 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [x] Socket event handling and state management
     - [x] Integration into App.tsx with connection testing
     - [x] Game creation and joining functionality
-  - [ ] Basic routing (home page, game page)
-    - [ ] Install and configure React Router
-    - [ ] Create Home page component with game creation/joining
-    - [ ] Create Game page component for active games
-    - [ ] Handle URL-based game joining (/game/:gameId)
-    - [ ] Navigation between pages
-  - [ ] Game board component structure
-    - [ ] Create GameBoard component
-    - [ ] Cell component with click handling
-    - [ ] Game status display component
-    - [ ] Turn indicator component
+  - [x] Basic routing (home page, game page)
+    - [x] Install and configure React Router
+    - [x] Create Home page component with game creation/joining
+    - [x] Create Game page component for active games
+    - [x] Handle URL-based game joining (/game/:gameId)
+    - [x] Navigation between pages
+  - [x] Game board component structure
+    - [x] Create GameBoard component
+    - [x] Cell component with click handling
+    - [x] Game status display component
+    - [x] Turn indicator component
 - [ ] Core Game Logic
-  - [ ] Server-side game state management
-  - [ ] Move validation and turn logic
-  - [ ] Win condition detection
-  - [ ] Kriegspiel visibility rules (hidden pieces, reveals)
+  - [x] Server-side game state management
+  - [x] Move validation and turn logic
+  - [x] Win condition detection
+  - [x] Kriegspiel visibility rules (hidden pieces, reveals)
   - [ ] Basic unit tests for game logic functions
 - [ ] Real-time Multiplayer
   - [ ] Player connection and room joining
@@ -57,10 +57,10 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [ ] Game state updates and filtered views
   - [ ] Reconnection handling
 - [ ] UI/UX Polish
+  - [x] Game status indicators (turn, winner, etc.)
+  - [x] Error handling and user messaging
   - [ ] Responsive game board design
   - [ ] Move feedback and animations
-  - [ ] Game status indicators (turn, winner, etc.)
-  - [ ] Error handling and user messaging
 - [ ] Deployment
   - [ ] Production build setup
   - [ ] Environment configuration
