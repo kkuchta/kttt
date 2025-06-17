@@ -26,11 +26,25 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [x] Basic socket event handlers (connect, disconnect, join room)
     - [x] Simple HTML test client for Socket.io testing
   - [x] Basic API endpoints (create game, get game state)
-- [ ] Frontend Foundation
+- [x] Frontend Foundation
   - [x] React app with Vite setup
-  - [ ] Socket.io client integration
+  - [x] Socket.io client integration
+    - [x] Create Socket.io client setup with TypeScript types
+    - [x] Custom React hook for socket connection management
+    - [x] Socket event handling and state management
+    - [x] Integration into App.tsx with connection testing
+    - [x] Game creation and joining functionality
   - [ ] Basic routing (home page, game page)
+    - [ ] Install and configure React Router
+    - [ ] Create Home page component with game creation/joining
+    - [ ] Create Game page component for active games
+    - [ ] Handle URL-based game joining (/game/:gameId)
+    - [ ] Navigation between pages
   - [ ] Game board component structure
+    - [ ] Create GameBoard component
+    - [ ] Cell component with click handling
+    - [ ] Game status display component
+    - [ ] Turn indicator component
 - [ ] Core Game Logic
   - [ ] Server-side game state management
   - [ ] Move validation and turn logic

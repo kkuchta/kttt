@@ -25,7 +25,10 @@
     "paths": {
       "@shared/*": ["src/shared/*"],
       "@client/*": ["src/client/*"]
-    }
+    },
+
+    /* Vite environment types */
+    "types": ["vite/client"]
   },
   "include": ["src/client", "src/shared"],
   "references": [{ "path": "./tsconfig.node.json" }]

@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Never try to start the dev servers yourself.  I'll run those myself in persistant terminal tabs.  If you need me to restart them, just ask me to.

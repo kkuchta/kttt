@@ -32,7 +32,7 @@ const io = new Server<
   SocketData
 >(server, {
   cors: {
-    origin: ['http://localhost:5173', 'null'], // Allow Vite dev server and file:// protocol
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'null'], // Allow both Vite ports and file:// protocol
     methods: ['GET', 'POST'],
   },
 });
@@ -40,7 +40,12 @@ const io = new Server<
 const PORT = 3001;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    methods: ['GET', 'POST'],
+  })
+);
 app.use(express.json());
 
 // Helper function to create a new game state
