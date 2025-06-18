@@ -77,5 +77,15 @@ ci: install check build ## CI pipeline: install, check, and build
 	@echo "✅ CI pipeline completed successfully!"
 
 # Quick checks before committing
-pre-commit: lint-fix format type-check check ## Format, fix, type-check, and validate code before committing
-	@echo "✅ Code is ready for commit!" 
+pre-commit: lint-fix format check ## Complete pre-commit workflow
+	@echo "✅ Code is ready for commit!"
+
+## Testing
+test: ## Run unit tests
+	npm run test
+
+test-watch: ## Run unit tests in watch mode
+	npm run test:watch
+
+test-coverage: ## Run unit tests with coverage report
+	npm run test:coverage 

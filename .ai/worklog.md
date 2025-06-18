@@ -45,12 +45,16 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [x] Cell component with click handling
     - [x] Game status display component
     - [x] Turn indicator component
-- [ ] Core Game Logic
+- [x] Core Game Logic
   - [x] Server-side game state management
   - [x] Move validation and turn logic
   - [x] Win condition detection
   - [x] Kriegspiel visibility rules (hidden pieces, reveals)
-  - [ ] Basic unit tests for game logic functions
+  - [x] Basic unit tests for game logic functions
+    - [x] Set up Jest testing framework with TypeScript support
+    - [x] Comprehensive unit tests for all game logic functions (36 tests)
+    - [x] 100% code coverage on game logic (statements, branches, functions, lines)
+    - [x] Kriegspiel-specific rule testing (move validation, visibility, client state filtering)
 - [ ] Real-time Multiplayer
   - [ ] Player connection and room joining
   - [ ] Live move synchronization
