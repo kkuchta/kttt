@@ -21,6 +21,13 @@ import {
   setCellState,
   validateMove,
 } from '../shared/utils/gameLogic';
+import {
+  createConnectionValidationMiddleware,
+  createSecurityMiddleware,
+  withErrorHandling,
+  withValidation,
+  withValidationNoData,
+} from './middleware/validation';
 
 // In-memory storage for active games using full GameState
 const activeGames = new Map<string, GameState>();
@@ -37,7 +44,7 @@ const io = new Server<
   SocketData
 >(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'null'], // Allow both Vite ports and file:// protocol
+    origin: ['http://localhost:3000', 'http://localhost:5173'], // Removed 'null' for security
     methods: ['GET', 'POST'],
   },
 });
@@ -52,6 +59,10 @@ app.use(
   })
 );
 app.use(express.json());
+
+// Add validation middleware to Socket.io
+io.use(createConnectionValidationMiddleware());
+io.use(createSecurityMiddleware());
 
 // Helper function to create a new game state
 function createNewGameState(gameId: string): GameState {
@@ -148,275 +159,293 @@ app.get('/api/games/:gameId', (req, res) => {
 io.on('connection', socket => {
   console.log(`🔌 Client connected: ${socket.id}`);
 
-  // Game creation
-  socket.on('create-game', () => {
-    console.log(`📝 Create game request from ${socket.id}`);
-    const gameId = generateGameId();
+  // Game creation - with validation
+  socket.on(
+    'create-game',
+    withValidationNoData(socket, 'create-game', () => {
+      console.log(`📝 Create game request from ${socket.id}`);
+      const gameId = generateGameId();
 
-    // Create new game state
-    const newGame = createNewGameState(gameId);
-    newGame.players.X = socket.id; // Creator becomes player X
-    newGame.status = 'waiting-for-players';
+      // Create new game state
+      const newGame = createNewGameState(gameId);
+      newGame.players.X = socket.id; // Creator becomes player X
+      newGame.status = 'waiting-for-players';
 
-    // Store the game
-    activeGames.set(gameId, newGame);
-    socketToGame.set(socket.id, gameId);
+      // Store the game
+      activeGames.set(gameId, newGame);
+      socketToGame.set(socket.id, gameId);
 
-    // Join the Socket.io room
-    socket.join(gameId);
+      // Join the Socket.io room
+      socket.join(gameId);
 
-    console.log(`🎮 Created game ${gameId}, creator: ${socket.id} (X)`);
-    socket.emit('game-created', {
-      gameId,
-      yourPlayer: 'X',
-    });
-  });
+      console.log(`🎮 Created game ${gameId}, creator: ${socket.id} (X)`);
+      socket.emit('game-created', {
+        gameId,
+        yourPlayer: 'X',
+      });
+    })
+  );
 
-  // Game joining
-  socket.on('join-game', gameId => {
-    console.log(`🎮 Join game request: ${gameId} from ${socket.id}`);
+  // Game joining - with validation
+  socket.on(
+    'join-game',
+    withValidation(socket, 'join-game', gameId => {
+      console.log(`🎮 Join game request: ${gameId} from ${socket.id}`);
 
-    const game = activeGames.get(gameId);
-    if (!game) {
-      console.log(`❌ Game not found: ${gameId}`);
-      socket.emit('game-not-found');
-      return;
-    }
+      const game = activeGames.get(gameId);
+      if (!game) {
+        console.log(`❌ Game not found: ${gameId}`);
+        socket.emit('game-not-found');
+        return;
+      }
 
-    // Check if game is full
-    if (game.players.X && game.players.O) {
-      console.log(`🚫 Game full: ${gameId}`);
-      socket.emit('game-full');
-      return;
-    }
+      // Check if game is full
+      if (game.players.X && game.players.O) {
+        console.log(`🚫 Game full: ${gameId}`);
+        socket.emit('game-full');
+        return;
+      }
 
-    // Check if player is already in this game
-    if (game.players.X === socket.id || game.players.O === socket.id) {
-      console.log(`🔄 Player ${socket.id} already in game ${gameId}`);
-      const yourPlayer = game.players.X === socket.id ? 'X' : 'O';
+      // Check if player is already in this game
+      if (game.players.X === socket.id || game.players.O === socket.id) {
+        console.log(`🔄 Player ${socket.id} already in game ${gameId}`);
+        const yourPlayer = game.players.X === socket.id ? 'X' : 'O';
+        socket.emit('game-joined', {
+          success: true,
+          yourPlayer,
+        });
+
+        // Send current game state
+        const clientState = createClientGameState(game, yourPlayer);
+        socket.emit('game-state-update', clientState);
+        return;
+      }
+
+      // Assign player to empty slot
+      let assignedPlayer: Player;
+      if (!game.players.X) {
+        game.players.X = socket.id;
+        assignedPlayer = 'X';
+      } else {
+        game.players.O = socket.id;
+        assignedPlayer = 'O';
+      }
+
+      // Update game state
+      game.lastActivity = Date.now();
+
+      // Check if game can start (both players present)
+      if (game.players.X && game.players.O) {
+        game.status = 'active';
+      }
+
+      socketToGame.set(socket.id, gameId);
+
+      // Join the Socket.io room
+      socket.join(gameId);
+
+      console.log(
+        `✅ Player ${socket.id} joined game ${gameId} as ${assignedPlayer}`
+      );
+
+      // Notify the joining player
       socket.emit('game-joined', {
         success: true,
-        yourPlayer,
+        yourPlayer: assignedPlayer,
       });
 
-      // Send current game state
-      const clientState = createClientGameState(game, yourPlayer);
-      socket.emit('game-state-update', clientState);
-      return;
-    }
+      // Send current game state to all players
+      const playersCount = (game.players.X ? 1 : 0) + (game.players.O ? 1 : 0);
 
-    // Assign player to empty slot
-    let assignedPlayer: Player;
-    if (!game.players.X) {
-      game.players.X = socket.id;
-      assignedPlayer = 'X';
-    } else {
-      game.players.O = socket.id;
-      assignedPlayer = 'O';
-    }
+      // Send filtered game state to each player
+      if (game.players.X) {
+        const clientStateX = createClientGameState(game, 'X');
+        io.to(game.players.X).emit('game-state-update', clientStateX);
+      }
+      if (game.players.O) {
+        const clientStateO = createClientGameState(game, 'O');
+        io.to(game.players.O).emit('game-state-update', clientStateO);
+      }
 
-    // Update game state
-    game.lastActivity = Date.now();
-
-    // Check if game can start (both players present)
-    if (game.players.X && game.players.O) {
-      game.status = 'active';
-    }
-
-    socketToGame.set(socket.id, gameId);
-
-    // Join the Socket.io room
-    socket.join(gameId);
-
-    console.log(
-      `✅ Player ${socket.id} joined game ${gameId} as ${assignedPlayer}`
-    );
-
-    // Notify the joining player
-    socket.emit('game-joined', {
-      success: true,
-      yourPlayer: assignedPlayer,
-    });
-
-    // Send current game state to all players
-    const playersCount = (game.players.X ? 1 : 0) + (game.players.O ? 1 : 0);
-
-    // Send filtered game state to each player
-    if (game.players.X) {
-      const clientStateX = createClientGameState(game, 'X');
-      io.to(game.players.X).emit('game-state-update', clientStateX);
-    }
-    if (game.players.O) {
-      const clientStateO = createClientGameState(game, 'O');
-      io.to(game.players.O).emit('game-state-update', clientStateO);
-    }
-
-    // Notify other players in the room
-    socket.to(gameId).emit('player-joined', {
-      player: assignedPlayer,
-      playersCount,
-    });
-  });
-
-  // Leave game
-  socket.on('leave-game', () => {
-    console.log(`👋 Leave game request from ${socket.id}`);
-
-    const gameId = socketToGame.get(socket.id);
-    if (!gameId) {
-      console.log(`❌ Player ${socket.id} not in any game`);
-      return;
-    }
-
-    removePlayerFromGame(socket.id, gameId);
-  });
-
-  // Make move
-  socket.on('make-move', position => {
-    console.log(`🎯 Move attempt from ${socket.id}:`, position);
-
-    const gameId = socketToGame.get(socket.id);
-    if (!gameId) {
-      console.log(`❌ Player ${socket.id} not in any game`);
-      socket.emit('move-result', {
-        success: false,
-        error: 'You are not in a game',
+      // Notify other players in the room
+      socket.to(gameId).emit('player-joined', {
+        player: assignedPlayer,
+        playersCount,
       });
-      return;
-    }
+    })
+  );
 
-    const game = activeGames.get(gameId);
-    if (!game) {
-      console.log(`❌ Game not found: ${gameId}`);
-      socket.emit('move-result', {
-        success: false,
-        error: 'Game not found',
-      });
-      return;
-    }
+  // Leave game - with validation
+  socket.on(
+    'leave-game',
+    withValidationNoData(socket, 'leave-game', () => {
+      console.log(`👋 Leave game request from ${socket.id}`);
 
-    // Determine which player this socket represents
-    let currentPlayer: Player | null = null;
-    if (game.players.X === socket.id) {
-      currentPlayer = 'X';
-    } else if (game.players.O === socket.id) {
-      currentPlayer = 'O';
-    }
+      const gameId = socketToGame.get(socket.id);
+      if (!gameId) {
+        console.log(`❌ Player ${socket.id} not in any game`);
+        return;
+      }
 
-    if (!currentPlayer) {
-      console.log(`❌ Player ${socket.id} not in game ${gameId}`);
-      socket.emit('move-result', {
-        success: false,
-        error: 'You are not a player in this game',
-      });
-      return;
-    }
+      removePlayerFromGame(socket.id, gameId);
+    })
+  );
 
-    // Validate the move using existing game logic
-    const moveResult = validateMove(game, currentPlayer, position);
+  // Make move - with validation
+  socket.on(
+    'make-move',
+    withValidation(socket, 'make-move', position => {
+      console.log(`🎯 Move attempt from ${socket.id}:`, position);
 
-    // Update last activity
-    game.lastActivity = Date.now();
-
-    if (!moveResult.success) {
-      if (moveResult.revealed) {
-        // Kriegspiel rule: Move failed because cell was occupied
-        // Reveal the opponent's piece and switch turns
-        const revealedKey = positionToKey(moveResult.revealed);
-        game.revealedCells.add(revealedKey);
-
-        // Player loses their turn
-        game.currentTurn = getOpponentPlayer(currentPlayer);
-
-        console.log(
-          `💥 Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
-        );
-
-        // Send move result to the player who made the invalid move
+      const gameId = socketToGame.get(socket.id);
+      if (!gameId) {
+        console.log(`❌ Player ${socket.id} not in any game`);
         socket.emit('move-result', {
           success: false,
-          error: 'Cell is occupied',
-          revealedPosition: moveResult.revealed,
+          error: 'You are not in a game',
         });
+        return;
+      }
+
+      const game = activeGames.get(gameId);
+      if (!game) {
+        console.log(`❌ Game not found: ${gameId}`);
+        socket.emit('move-result', {
+          success: false,
+          error: 'Game not found',
+        });
+        return;
+      }
+
+      // Determine which player this socket represents
+      let currentPlayer: Player | null = null;
+      if (game.players.X === socket.id) {
+        currentPlayer = 'X';
+      } else if (game.players.O === socket.id) {
+        currentPlayer = 'O';
+      }
+
+      if (!currentPlayer) {
+        console.log(`❌ Player ${socket.id} not in game ${gameId}`);
+        socket.emit('move-result', {
+          success: false,
+          error: 'You are not a player in this game',
+        });
+        return;
+      }
+
+      // Validate the move using existing game logic
+      const moveResult = validateMove(game, currentPlayer, position);
+
+      // Update last activity
+      game.lastActivity = Date.now();
+
+      if (!moveResult.success) {
+        if (moveResult.revealed) {
+          // Kriegspiel rule: Move failed because cell was occupied
+          // Reveal the opponent's piece and switch turns
+          const revealedKey = positionToKey(moveResult.revealed);
+          game.revealedCells.add(revealedKey);
+
+          // Player loses their turn
+          game.currentTurn = getOpponentPlayer(currentPlayer);
+
+          console.log(
+            `💥 Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
+          );
+
+          // Send move result to the player who made the invalid move
+          socket.emit('move-result', {
+            success: false,
+            error: 'Cell is occupied',
+            revealedPosition: moveResult.revealed,
+          });
+
+          // Send updated game state to all players
+          sendGameStateToAllPlayers(game);
+        } else {
+          // Other validation error (not your turn, invalid position, etc.)
+          console.log(`❌ Move validation failed: ${moveResult.error}`);
+          socket.emit('move-result', {
+            success: false,
+            error: moveResult.error,
+          });
+        }
+        return;
+      }
+
+      // Move is valid - place the piece
+      game.board = setCellState(game.board, position, currentPlayer);
+
+      // Add to move history
+      game.moveHistory.push({
+        player: currentPlayer,
+        position,
+        timestamp: Date.now(),
+      });
+
+      console.log(
+        `✅ Player ${currentPlayer} placed piece at (${position.row},${position.col})`
+      );
+
+      // Check if game is over
+      const gameResult = isGameOver(game.board);
+      if (gameResult) {
+        // Game is complete
+        game.status = 'completed';
+        game.result = gameResult;
+
+        console.log(
+          `🏁 Game ${gameId} completed:`,
+          gameResult.winner ? `${gameResult.winner} wins!` : 'Draw'
+        );
+
+        // Send move result to current player
+        socket.emit('move-result', { success: true });
+
+        // Send game over notification to all players
+        io.to(gameId).emit('game-over', {
+          result: gameResult,
+          finalBoard: game.board, // Show full board when game ends
+        });
+
+        // Send final game state to all players
+        sendGameStateToAllPlayers(game);
+      } else {
+        // Game continues - switch turns
+        game.currentTurn = getOpponentPlayer(currentPlayer);
+
+        console.log(`🔄 Turn switched to ${game.currentTurn}`);
+
+        // Send move result to current player
+        socket.emit('move-result', { success: true });
 
         // Send updated game state to all players
         sendGameStateToAllPlayers(game);
-      } else {
-        // Other validation error (not your turn, invalid position, etc.)
-        console.log(`❌ Move validation failed: ${moveResult.error}`);
-        socket.emit('move-result', {
-          success: false,
-          error: moveResult.error,
-        });
       }
-      return;
-    }
+    })
+  );
 
-    // Move is valid - place the piece
-    game.board = setCellState(game.board, position, currentPlayer);
+  // Connection utilities - with validation
+  socket.on(
+    'ping',
+    withValidationNoData(socket, 'ping', () => {
+      socket.emit('pong');
+    })
+  );
 
-    // Add to move history
-    game.moveHistory.push({
-      player: currentPlayer,
-      position,
-      timestamp: Date.now(),
-    });
+  // Disconnection handling - with error handling
+  socket.on(
+    'disconnect',
+    withErrorHandling(socket, 'disconnect', reason => {
+      console.log(`🔌 Client disconnected: ${socket.id}, reason: ${reason}`);
 
-    console.log(
-      `✅ Player ${currentPlayer} placed piece at (${position.row},${position.col})`
-    );
-
-    // Check if game is over
-    const gameResult = isGameOver(game.board);
-    if (gameResult) {
-      // Game is complete
-      game.status = 'completed';
-      game.result = gameResult;
-
-      console.log(
-        `🏁 Game ${gameId} completed:`,
-        gameResult.winner ? `${gameResult.winner} wins!` : 'Draw'
-      );
-
-      // Send move result to current player
-      socket.emit('move-result', { success: true });
-
-      // Send game over notification to all players
-      io.to(gameId).emit('game-over', {
-        result: gameResult,
-        finalBoard: game.board, // Show full board when game ends
-      });
-
-      // Send final game state to all players
-      sendGameStateToAllPlayers(game);
-    } else {
-      // Game continues - switch turns
-      game.currentTurn = getOpponentPlayer(currentPlayer);
-
-      console.log(`🔄 Turn switched to ${game.currentTurn}`);
-
-      // Send move result to current player
-      socket.emit('move-result', { success: true });
-
-      // Send updated game state to all players
-      sendGameStateToAllPlayers(game);
-    }
-  });
-
-  // Connection utilities
-  socket.on('ping', () => {
-    socket.emit('pong');
-  });
-
-  // Disconnection handling
-  socket.on('disconnect', reason => {
-    console.log(`🔌 Client disconnected: ${socket.id}, reason: ${reason}`);
-
-    const gameId = socketToGame.get(socket.id);
-    if (gameId) {
-      removePlayerFromGame(socket.id, gameId);
-    }
-  });
+      const gameId = socketToGame.get(socket.id);
+      if (gameId) {
+        removePlayerFromGame(socket.id, gameId);
+      }
+    })
+  );
 });
 
 // Helper function to remove a player from a game

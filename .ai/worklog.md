@@ -55,6 +55,23 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [x] Comprehensive unit tests for all game logic functions (36 tests)
     - [x] 100% code coverage on game logic (statements, branches, functions, lines)
     - [x] Kriegspiel-specific rule testing (move validation, visibility, client state filtering)
+- [x] Security & Production Readiness
+  - [x] Input validation and sanitization
+    - [x] Add Zod schema validation for Socket.io events
+    - [x] Validate all incoming position data
+    - [x] Validate game ID format
+    - [x] Add rate limiting for connections and actions
+    - [x] Sanitize user inputs
+    - [x] Comprehensive unit tests for validation (24 additional tests)
+    - [x] Protection against common attacks (XSS, injection, overflow, etc.)
+  - [ ] Error handling and recovery
+    - [ ] Add error boundaries around async operations
+    - [ ] Implement graceful error responses
+    - [ ] Add structured logging
+  - [ ] Resource management
+    - [ ] Implement game expiration (TTL)
+    - [ ] Add connection limits
+    - [ ] Memory usage monitoring
 - [ ] Real-time Multiplayer
   - [ ] Player connection and room joining
   - [ ] Live move synchronization

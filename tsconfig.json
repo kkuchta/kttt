@@ -31,5 +31,6 @@
     "types": ["vite/client"]
   },
   "include": ["src/client", "src/shared"],
+  "exclude": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
