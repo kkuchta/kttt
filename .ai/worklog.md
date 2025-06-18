@@ -5,65 +5,20 @@ This is a log of ongoing work. It contains the tasks we've done and the tasks we
 Do _not_ do multiple tasks at once. Pause for instruction after each task.
 
 - [x] Project Setup
-  - [x] Git initialization
-  - [x] Create folder structure (src/server/, src/client/, src/shared/)
-  - [x] Initialize single package.json with all dependencies
-  - [x] Set up TypeScript config with path mapping
-  - [x] Install core dependencies (Express, Socket.io, React, Vite, tsx)
-  - [x] Set up ESLint + Prettier for code formatting
-  - [x] Create basic README with setup instructions
 - [x] Shared Type Definitions
-  - [x] Define game state interfaces in src/shared/types/
-  - [x] Define player and move types
-  - [x] Define Socket.io event types
-  - [x] Create shared game utility functions
 - [x] Backend Foundation
-  - [x] Basic Express server setup
-  - [x] Socket.io integration and room management
-    - [x] Add Socket.io server to Express app
-    - [x] Implement room management (create/join rooms by game ID)
-    - [x] Game ID generation and validation (4-character codes)
-    - [x] Basic socket event handlers (connect, disconnect, join room)
-    - [x] Simple HTML test client for Socket.io testing
-  - [x] Basic API endpoints (create game, get game state)
 - [x] Frontend Foundation
-  - [x] React app with Vite setup
-  - [x] Socket.io client integration
-    - [x] Create Socket.io client setup with TypeScript types
-    - [x] Custom React hook for socket connection management
-    - [x] Socket event handling and state management
-    - [x] Integration into App.tsx with connection testing
-    - [x] Game creation and joining functionality
-  - [x] Basic routing (home page, game page)
-    - [x] Install and configure React Router
-    - [x] Create Home page component with game creation/joining
-    - [x] Create Game page component for active games
-    - [x] Handle URL-based game joining (/game/:gameId)
-    - [x] Navigation between pages
-  - [x] Game board component structure
-    - [x] Create GameBoard component
-    - [x] Cell component with click handling
-    - [x] Game status display component
-    - [x] Turn indicator component
 - [x] Core Game Logic
-  - [x] Server-side game state management
-  - [x] Move validation and turn logic
-  - [x] Win condition detection
-  - [x] Kriegspiel visibility rules (hidden pieces, reveals)
-  - [x] Basic unit tests for game logic functions
-    - [x] Set up Jest testing framework with TypeScript support
-    - [x] Comprehensive unit tests for all game logic functions (36 tests)
-    - [x] 100% code coverage on game logic (statements, branches, functions, lines)
-    - [x] Kriegspiel-specific rule testing (move validation, visibility, client state filtering)
-- [x] Security & Production Readiness
-  - [x] Input validation and sanitization
-    - [x] Add Zod schema validation for Socket.io events
-    - [x] Validate all incoming position data
-    - [x] Validate game ID format
-    - [x] Add rate limiting for connections and actions
-    - [x] Sanitize user inputs
-    - [x] Comprehensive unit tests for validation (24 additional tests)
-    - [x] Protection against common attacks (XSS, injection, overflow, etc.)
+- [x] Real-time Multiplayer
+- [x] Security & Production Readiness - Input validation and sanitization
+- [ ] Persistent Game Storage (Redis)
+  - [ ] Add Redis dependency and types
+  - [ ] Create storage abstraction layer (GameStorage interface)
+  - [ ] Implement RedisStorage with TTL
+  - [ ] Replace in-memory Maps with Redis storage calls
+  - [ ] Update development setup docs for Docker Redis
+  - [ ] Test locally with Redis
+- [ ] Security & Production Readiness - Remaining items
   - [ ] Error handling and recovery
     - [ ] Add error boundaries around async operations
     - [ ] Implement graceful error responses
@@ -72,11 +27,6 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [ ] Implement game expiration (TTL)
     - [ ] Add connection limits
     - [ ] Memory usage monitoring
-- [x] Real-time Multiplayer
-  - [x] Player connection and room joining
-  - [x] Live move synchronization
-  - [x] Game state updates and filtered views
-  - [x] Reconnection handling
 - [ ] UI/UX Polish
   - [x] Game status indicators (turn, winner, etc.)
   - [x] Error handling and user messaging
