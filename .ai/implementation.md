@@ -2,12 +2,12 @@
 
 ## Tech Stack Decision
 
-### Final Choice: Node.js + Socket.io + TypeScript + Redis
+### Final Choice: Node.js + Socket.io + TypeScript + In-Memory Storage (Redis-ready)
 
 **Backend:**
 
 - Node.js + Express + Socket.io + TypeScript
-- Redis for persistent game state storage
+- In-memory storage with Redis abstraction layer (ready for future Redis implementation)
 
 **Frontend:**
 
@@ -25,7 +25,7 @@
 - Bun + native TypeScript: Too bleeding-edge for side project
 - Python + FastAPI: Less mature WebSocket ecosystem
 - Vanilla JavaScript: No type safety for complex game state
-- Redis: Survives deployments, built-in TTL, perfect for ephemeral game state
+- In-memory + Redis abstraction: Immediate functionality with easy Redis migration path
 
 ## Project Structure
 
@@ -40,10 +40,20 @@
       - utils/
         - gameLogic.ts # Shared game utilities
     - server/ # Backend Node.js application
-      - index.ts # Express + Socket.io server
+      - index.ts # Main server setup and configuration
+      - routes/
+        - api.ts # REST API endpoints
+      - socket/
+        - handlers.ts # Socket.io event handlers
+      - game/
+        - GameManager.ts # Game logic and state management
       - storage/ # Game state storage abstraction
-        - GameStorage.ts # Storage interface
-        - RedisStorage.ts # Redis implementation
+        - StorageInterface.ts # Storage interface
+        - InMemoryStorage.ts # In-memory implementation
+      - middleware/
+        - validation.ts # Input validation and security
+      - validation/
+        - schemas.ts # Zod validation schemas
     - client/ # Frontend React application
       - App.tsx
       - components/ # React components
@@ -58,7 +68,7 @@
 ### Prerequisites
 
 - **Node.js 18+**
-- **Redis server** (Docker)
+- **Redis server** (Optional - for future Redis storage implementation)
 
 ### Package Management
 
@@ -73,18 +83,19 @@
 
 ### Development Workflow
 
-1. **Start Redis**: `docker run -p 6379:6379 redis:alpine` or local Redis server
-2. **Start dev servers**: `npm run dev` (starts both server and client)
-3. Server and client import shared TypeScript files directly
-4. Hot reload for both client and server during development
-5. TypeScript path mapping for clean imports (`@shared/types/game`)
+1. **Start dev servers**: `make dev` (starts both server and client)
+2. Server and client import shared TypeScript files directly
+3. Hot reload for both client and server during development
+4. TypeScript path mapping for clean imports (`@shared/types/game`)
+5. **Redis optional**: Current implementation uses in-memory storage
 
 ## Deployment Strategy
 
 ### Storage Requirements
 
-- **Redis instance** (Redis Cloud, AWS ElastiCache, Railway Redis, etc.)
-- **Environment variables** for Redis connection
+- **Current**: In-memory storage (automatic cleanup every 60 seconds)
+- **Future**: Redis instance (Redis Cloud, AWS ElastiCache, Railway Redis, etc.)
+- **Environment variables** for future Redis connection
 
 ### Build Process
 
@@ -95,35 +106,51 @@
 ### Environment Configuration
 
 ```env
-REDIS_URL=redis://localhost:6379  # Development
-REDIS_URL=redis://user:pass@host:port  # Production
+# Current - no external dependencies needed
 PORT=3001
 NODE_ENV=production
+
+# Future Redis configuration
+REDIS_URL=redis://localhost:6379  # Development
+REDIS_URL=redis://user:pass@host:port  # Production
 ```
 
 ## Key Implementation Decisions
 
+### Server Architecture
+
+- **Modular design:** Separated concerns into focused files
+- **GameManager class:** Centralized game logic and state management
+- **Storage abstraction:** Easy swap between in-memory and Redis
+- **Route separation:** REST API endpoints in dedicated router
+- **Socket handlers:** Real-time game interactions in separate module
+
 ### Game State Management
 
 - **Server authoritative:** All game logic runs on server
-- **Redis storage:** Persistent game state with TTL (auto-cleanup)
+- **In-memory storage:** Fast access with automatic TTL cleanup (4 hours)
 - **Client views:** Filtered game state sent to each player
 - **Move validation:** Server-side only to prevent cheating
 
 ### Storage Strategy
 
+- **Current Implementation:** In-memory with cleanup intervals
 - **Active games:** 4 hours TTL (expire after inactivity)
-- **Completed games:** 1 hour TTL (players can see final results)
+- **Completed games:** Same TTL (players can see final results)
 - **Storage abstraction:** Interface allows swapping storage implementations
+- **Future-ready:** Easy Redis migration via StorageInterface
 
 ### WebSocket Communication
 
 - **Socket.io rooms:** One room per game session
 - **Typed events:** Full TypeScript coverage for all messages
 - **Reconnection:** Built-in Socket.io reconnection handling
+- **Validation middleware:** Rate limiting and input validation
 
 ### Security Approach
 
 - Game ID serves as access control
 - No authentication needed for MVP
 - Server validates all moves and game state changes
+- Rate limiting on all socket events
+- Input validation with Zod schemas
