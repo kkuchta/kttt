@@ -199,14 +199,7 @@ io.on('connection', socket => {
         return;
       }
 
-      // Check if game is full
-      if (game.players.X && game.players.O) {
-        console.log(`🚫 Game full: ${gameId}`);
-        socket.emit('game-full');
-        return;
-      }
-
-      // Check if player is already in this game
+      // Check if player is already in this game FIRST
       if (game.players.X === socket.id || game.players.O === socket.id) {
         console.log(`🔄 Player ${socket.id} already in game ${gameId}`);
         const yourPlayer = game.players.X === socket.id ? 'X' : 'O';
@@ -218,6 +211,13 @@ io.on('connection', socket => {
         // Send current game state
         const clientState = createClientGameState(game, yourPlayer);
         socket.emit('game-state-update', clientState);
+        return;
+      }
+
+      // Check if game is full AFTER checking if already in game
+      if (game.players.X && game.players.O) {
+        console.log(`🚫 Game full: ${gameId}`);
+        socket.emit('game-full');
         return;
       }
 
