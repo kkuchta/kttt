@@ -11,13 +11,13 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 - [x] Core Game Logic
 - [x] Real-time Multiplayer
 - [x] Security & Production Readiness - Input validation and sanitization
-- [ ] Persistent Game Storage (Redis)
-  - [ ] Add Redis dependency and types
-  - [ ] Create storage abstraction layer (GameStorage interface)
-  - [ ] Implement RedisStorage with TTL
-  - [ ] Replace in-memory Maps with Redis storage calls
-  - [ ] Update development setup docs for Docker Redis
-  - [ ] Test locally with Redis
+- [x] Persistent Game Storage (Redis)
+  - [x] Add Redis dependency and types
+  - [x] Create storage abstraction layer (GameStorage interface)
+  - [x] Implement RedisStorage with TTL
+  - [x] Replace in-memory Maps with Redis storage calls
+  - [x] Update development setup docs for Docker Redis
+  - [x] Test locally with Redis
 - [ ] Security & Production Readiness - Remaining items
   - [ ] Error handling and recovery
     - [ ] Add error boundaries around async operations

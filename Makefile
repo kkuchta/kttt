@@ -1,4 +1,4 @@
-.PHONY: help install dev build start lint lint-fix format format-check check clean
+.PHONY: help install dev build start lint lint-fix format format-check check clean redis-up redis-down redis-logs redis-cli
 
 # Default target
 help: ## Show this help message
@@ -8,7 +8,26 @@ help: ## Show this help message
 install: ## Install all dependencies
 	npm install
 
-dev: ## Start development servers (client + server)
+## Redis Development Setup
+redis-up: ## Start Redis container for development
+	docker compose up -d redis
+	@echo "✅ Redis is running on localhost:6379"
+
+redis-down: ## Stop Redis container
+	docker compose down
+
+redis-logs: ## View Redis container logs
+	docker compose logs -f redis
+
+redis-cli: ## Connect to Redis CLI
+	docker exec -it kttt-redis redis-cli
+
+redis-reset: ## Reset Redis data (stop, remove volumes, start fresh)
+	docker compose down -v
+	docker compose up -d redis
+	@echo "✅ Redis reset complete - fresh instance running"
+
+dev: redis-up ## Start development servers (client + server) with Redis
 	npm run dev
 
 dev-server: ## Start only the server in development mode

@@ -17,6 +17,7 @@ For detailed game rules, see [Game Rules](/.ai/game_rules.md).
 
 - Node.js (v18 or higher)
 - npm
+- Docker (for Redis)
 - make (optional, but recommended)
 
 ### Setup
@@ -30,6 +31,9 @@ cd kttt
 make install
 # or: npm install
 
+# Start Redis (required for data persistence)
+make redis-up
+
 # Start development servers
 make dev
 # or: npm run dev
@@ -39,6 +43,38 @@ The application will be available at:
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:3000
+
+### Redis Development Setup
+
+The application uses Redis for persistent game storage. We provide Docker Compose for easy local development:
+
+```bash
+# Start Redis container
+make redis-up
+
+# View Redis logs
+make redis-logs
+
+# Connect to Redis CLI
+make redis-cli
+
+# Stop Redis
+make redis-down
+
+# Reset Redis data (clean slate)
+make redis-reset
+```
+
+#### Storage Configuration
+
+You can configure Redis connection via environment variables:
+
+```bash
+# Redis Configuration
+REDIS_URL=redis://localhost:6379
+REDIS_TTL_SECONDS=14400  # 4 hours
+REDIS_CONNECTION_TIMEOUT_MS=5000  # 5 seconds
+```
 
 ## 🛠️ Development
 
@@ -54,6 +90,16 @@ make dev-client   # Start only the client (Vite dev server)
 make dev-server   # Start only the server (tsx watch mode)
 make build        # Build for production
 make start        # Start production server
+```
+
+#### Redis Management
+
+```bash
+make redis-up     # Start Redis container
+make redis-down   # Stop Redis container
+make redis-logs   # View Redis logs
+make redis-cli    # Connect to Redis CLI
+make redis-reset  # Reset Redis data (fresh start)
 ```
 
 #### Code Quality
@@ -75,6 +121,20 @@ make ci           # Full CI pipeline (install, check, build)
 make clean        # Clean all build artifacts and dependencies
 make clean-dist   # Clean only build artifacts
 ```
+
+#### Testing
+
+```bash
+make test         # Run all tests (requires Redis)
+make test-watch   # Run tests in watch mode
+make test-coverage # Run tests with coverage report
+```
+
+**Redis Testing:**
+
+- By default, tests **require Redis** to be running and will **fail** if unavailable
+- To skip Redis tests: `SKIP_REDIS_TESTS=true make test`
+- To run only non-Redis tests: `npm test -- --testPathIgnorePatterns=RedisStorage`
 
 #### Help
 

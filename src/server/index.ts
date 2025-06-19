@@ -8,6 +8,7 @@ import type {
   ServerToClientEvents,
   SocketData,
 } from '../shared';
+import { createStorage, getStorageConfig } from './config/storage';
 import { GameManager } from './game/GameManager';
 import {
   createConnectionValidationMiddleware,
@@ -15,12 +16,16 @@ import {
 } from './middleware/validation';
 import { createApiRoutes } from './routes/api';
 import { setupSocketHandlers } from './socket/handlers';
-import { InMemoryStorage } from './storage/InMemoryStorage';
+import { RedisStorage } from './storage/RedisStorage';
 
-const PORT = 3001;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 
-// Initialize storage
-const storage = new InMemoryStorage();
+// Initialize storage based on configuration
+const storageConfig = getStorageConfig();
+const storage = createStorage(storageConfig);
+
+console.log(`🗄️  Using Redis storage`);
+console.log(`🔗 Redis URL: ${storageConfig.redis.url}`);
 
 // Initialize Express app
 const app = express();
@@ -61,6 +66,20 @@ io.use(createSecurityMiddleware());
 // Setup Socket.io event handlers
 setupSocketHandlers(io, gameManager);
 
+// Connect to Redis if using Redis storage
+async function initializeStorage() {
+  if (storage instanceof RedisStorage) {
+    try {
+      await storage.connect();
+      console.log('✅ Redis storage connected successfully');
+    } catch (error) {
+      console.error('❌ Failed to connect to Redis:', error);
+      console.log('💡 Make sure Redis is running: make redis-up');
+      process.exit(1);
+    }
+  }
+}
+
 // Cleanup interval for old games
 setInterval(async () => {
   try {
@@ -73,13 +92,37 @@ setInterval(async () => {
   }
 }, 60000); // Run cleanup every minute
 
-// Start server
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🆕 Create game: POST http://localhost:${PORT}/api/games`);
-  console.log(
-    `📋 Get game state: GET http://localhost:${PORT}/api/games/:gameId`
-  );
-  console.log(`🔌 Socket.io ready for connections`);
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Shutting down gracefully...');
+
+  if (storage instanceof RedisStorage) {
+    await storage.disconnect();
+    console.log('✅ Redis connection closed');
+  }
+
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+// Initialize and start server
+async function startServer() {
+  await initializeStorage();
+
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`🆕 Create game: POST http://localhost:${PORT}/api/games`);
+    console.log(
+      `📋 Get game state: GET http://localhost:${PORT}/api/games/:gameId`
+    );
+    console.log(`🔌 Socket.io ready for connections`);
+  });
+}
+
+startServer().catch(error => {
+  console.error('❌ Failed to start server:', error);
+  process.exit(1);
 });
