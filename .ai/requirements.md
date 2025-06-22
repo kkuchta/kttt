@@ -2,11 +2,13 @@
 
 ## Overview
 
-Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.md` for game mechanics). Focus on low-friction multiplayer experience via URL sharing.
+Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.md` for game mechanics). Focus on low-friction multiplayer experience via URL sharing and quick matchmaking.
 
 ## User Experience Requirements
 
-### Primary User Flow
+### Primary User Flows
+
+#### Flow 1: Create & Share Game (Original)
 
 1. Player 1 visits home page and clicks "Create Game"
 2. System generates unique game URL and displays it to Player 1
@@ -15,6 +17,29 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 5. Game starts automatically when both players connected
 6. Real-time gameplay via WebSocket connection
 7. Game ends with winner announcement and full board reveal
+
+#### Flow 2: Quick Match (New)
+
+1. Player visits home page and clicks "Quick Match"
+2. Player joins matchmaking queue with "Looking for opponent..." status
+3. System matches first two players in queue (FIFO)
+4. Both players automatically redirected to new game
+5. Game starts immediately with real-time gameplay
+6. Game ends with winner announcement and full board reveal
+
+### Home Page Interface
+
+- **"Create Game"** button - generates shareable game link
+- **"Quick Match"** button - joins matchmaking queue
+- **"Join Game"** option - for joining via shared URL
+
+### Matchmaking Queue Experience
+
+- **Queue Status**: Clear "Looking for opponent..." message
+- **Wait Time**: Show elapsed time and estimated wait
+- **Cancel Option**: "Cancel" button to leave queue
+- **Timeout**: Auto-cancel after 2-3 minutes to prevent dead queues
+- **Queue Position**: Optional enhancement to show position in line
 
 ### URL Structure
 

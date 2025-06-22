@@ -27,6 +27,20 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [ ] Implement game expiration (TTL)
     - [ ] Add connection limits
     - [ ] Memory usage monitoring
+- [ ] Quick Match / Matchmaking Queue
+  - [ ] Backend matchmaking system
+    - [ ] Queue management in GameManager
+    - [ ] FIFO matching logic
+    - [ ] Queue timeout handling (2-3 minutes)
+    - [ ] Graceful queue cleanup on disconnect
+  - [ ] Socket events for matchmaking
+    - [ ] joinQueue, leaveQueue, matchFound events
+    - [ ] Queue status updates
+  - [ ] Frontend matchmaking UI
+    - [ ] "Quick Match" button on home page
+    - [ ] Queue waiting state with cancel option
+    - [ ] Auto-redirect to game on match
+    - [ ] Queue status display ("Looking for opponent...")
 - [ ] UI/UX Polish
   - [x] Game status indicators (turn, winner, etc.)
   - [x] Error handling and user messaging

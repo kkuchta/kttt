@@ -8,6 +8,7 @@
 
 - Node.js + Express + Socket.io + TypeScript
 - In-memory storage with Redis abstraction layer (ready for future Redis implementation)
+- Matchmaking queue system for Quick Match feature
 
 **Frontend:**
 
@@ -17,7 +18,7 @@
 
 **Shared:**
 
-- TypeScript type definitions for game state, moves, and socket events
+- TypeScript type definitions for game state, moves, socket events, and matchmaking
 - End-to-end type safety from frontend to backend
 
 ### Reasoning
@@ -36,7 +37,8 @@
     - shared/ # Shared TypeScript files
       - types/
         - game.ts # Game state, moves, players
-        - socket.ts # Socket event types
+        - socket.ts # Socket event types (includes matchmaking events)
+        - matchmaking.ts # Queue and matchmaking types
       - utils/
         - gameLogic.ts # Shared game utilities
     - server/ # Backend Node.js application
@@ -45,8 +47,10 @@
         - api.ts # REST API endpoints
       - socket/
         - handlers.ts # Socket.io event handlers
+        - matchmaking.ts # Matchmaking socket handlers
       - game/
         - GameManager.ts # Game logic and state management
+        - MatchmakingManager.ts # Queue management and matching logic
       - storage/ # Game state storage abstraction
         - StorageInterface.ts # Storage interface
         - InMemoryStorage.ts # In-memory implementation
@@ -57,7 +61,9 @@
     - client/ # Frontend React application
       - App.tsx
       - components/ # React components
+        - QuickMatch.tsx # Matchmaking queue UI
       - hooks/ # Custom React hooks
+        - useMatchmaking.ts # Matchmaking queue hook
       - socket/ # Socket.io client setup
   - dist/ # Build output
     - server/ # Compiled server code
@@ -121,9 +127,18 @@ REDIS_URL=redis://user:pass@host:port  # Production
 
 - **Modular design:** Separated concerns into focused files
 - **GameManager class:** Centralized game logic and state management
+- **MatchmakingManager class:** Queue management and player matching
 - **Storage abstraction:** Easy swap between in-memory and Redis
 - **Route separation:** REST API endpoints in dedicated router
 - **Socket handlers:** Real-time game interactions in separate module
+
+### Matchmaking System
+
+- **FIFO Queue:** Simple first-come-first-served matching
+- **In-memory queue:** Fast matching with cleanup on disconnect
+- **Timeout handling:** Auto-remove players after 2-3 minutes
+- **Auto-game creation:** Matched players get new game automatically
+- **Queue status:** Real-time updates to waiting players
 
 ### Game State Management
 
@@ -137,12 +152,14 @@ REDIS_URL=redis://user:pass@host:port  # Production
 - **Current Implementation:** In-memory with cleanup intervals
 - **Active games:** 4 hours TTL (expire after inactivity)
 - **Completed games:** Same TTL (players can see final results)
+- **Matchmaking queue:** In-memory with disconnect cleanup
 - **Storage abstraction:** Interface allows swapping storage implementations
 - **Future-ready:** Easy Redis migration via StorageInterface
 
 ### WebSocket Communication
 
 - **Socket.io rooms:** One room per game session
+- **Matchmaking events:** joinQueue, leaveQueue, matchFound, queueStatus
 - **Typed events:** Full TypeScript coverage for all messages
 - **Reconnection:** Built-in Socket.io reconnection handling
 - **Validation middleware:** Rate limiting and input validation
@@ -154,3 +171,4 @@ REDIS_URL=redis://user:pass@host:port  # Production
 - Server validates all moves and game state changes
 - Rate limiting on all socket events
 - Input validation with Zod schemas
+- Queue spam protection via rate limiting
