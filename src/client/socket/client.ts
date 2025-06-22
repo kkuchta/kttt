@@ -61,8 +61,8 @@ export const socketHelpers = {
     socket.emit('create-game');
   },
 
-  joinGame: (gameId: string) => {
-    socket.emit('join-game', gameId);
+  joinGame: (gameId: string, rejoinAsPlayer?: 'X' | 'O') => {
+    socket.emit('join-game', gameId, rejoinAsPlayer);
   },
 
   leaveGame: () => {

@@ -48,14 +48,37 @@ export function setupSocketHandlers(
       })
     );
 
-    // Game joining - with validation
+    // Game joining - with manual validation for multiple parameters
     socket.on(
       'join-game',
-      withValidation(socket, 'join-game', async gameId => {
-        console.log(`🎮 Join game request: ${gameId} from ${socket.id}`);
+      withErrorHandling(socket, 'join-game', async (gameId, rejoinAsPlayer) => {
+        // Manual validation since we have optional parameters
+        if (typeof gameId !== 'string' || gameId.length !== 4) {
+          socket.emit('error', {
+            message: 'Invalid game ID',
+            code: 'INVALID_GAME_ID',
+          });
+          return;
+        }
+
+        if (rejoinAsPlayer && !['X', 'O'].includes(rejoinAsPlayer)) {
+          socket.emit('error', {
+            message: 'Invalid rejoin player',
+            code: 'INVALID_REJOIN_PLAYER',
+          });
+          return;
+        }
+
+        console.log(
+          `🎮 Join game request: ${gameId} from ${socket.id}${rejoinAsPlayer ? ` (rejoin as ${rejoinAsPlayer})` : ''}`
+        );
 
         try {
-          const result = await gameManager.joinGame(socket.id, gameId);
+          const result = await gameManager.joinGame(
+            socket.id,
+            gameId,
+            rejoinAsPlayer
+          );
 
           if (!result.success) {
             if (result.error === 'Game not found') {

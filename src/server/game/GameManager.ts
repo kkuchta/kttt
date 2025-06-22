@@ -110,7 +110,8 @@ export class GameManager {
   // Join a game
   async joinGame(
     socketId: string,
-    gameId: string
+    gameId: string,
+    rejoinAsPlayer?: Player
   ): Promise<{
     success: boolean;
     yourPlayer?: Player;
@@ -123,7 +124,13 @@ export class GameManager {
       return { success: false, error: 'Game not found' };
     }
 
-    // Check if player is already in this game FIRST
+    console.log(`🔍 Join game debug - Game ${gameId}:`, {
+      currentPlayers: game.players,
+      requestingSocket: socketId,
+      rejoinAsPlayer,
+    });
+
+    // Check if player is already in this game FIRST (exact socket ID match)
     if (game.players.X === socketId || game.players.O === socketId) {
       console.log(`🔄 Player ${socketId} already in game ${gameId}`);
       const yourPlayer = game.players.X === socketId ? 'X' : 'O';
@@ -133,13 +140,70 @@ export class GameManager {
       return { success: true, yourPlayer, isReconnection: true };
     }
 
-    // Check if game is full AFTER checking if already in game
+    // Handle reconnection case: client is trying to rejoin as a specific player
+    if (rejoinAsPlayer) {
+      const currentSocketForPlayer = game.players[rejoinAsPlayer];
+
+      console.log(`🔍 Rejoin attempt - Player ${rejoinAsPlayer}:`, {
+        currentSocketForPlayer,
+        newSocketId: socketId,
+        isReconnection:
+          currentSocketForPlayer && currentSocketForPlayer !== socketId,
+      });
+
+      if (currentSocketForPlayer && currentSocketForPlayer !== socketId) {
+        // There's already a different socket ID for this player - this is a reconnection
+        console.log(
+          `🔄 Reconnecting player ${rejoinAsPlayer}: updating socket ${currentSocketForPlayer} → ${socketId}`
+        );
+
+        // Update the socket ID for this player
+        game.players[rejoinAsPlayer] = socketId;
+        game.lastActivity = Date.now();
+
+        await this.storage.updateGame(gameId, game);
+        await this.storage.setSocketGame(socketId, gameId);
+
+        return {
+          success: true,
+          yourPlayer: rejoinAsPlayer,
+          isReconnection: true,
+        };
+      } else if (!currentSocketForPlayer) {
+        // Player slot is empty, assign this socket to it
+        console.log(
+          `🔍 Player slot ${rejoinAsPlayer} is empty, assigning to ${socketId}`
+        );
+
+        game.players[rejoinAsPlayer] = socketId;
+        game.lastActivity = Date.now();
+
+        // Check if game can start (both players present)
+        if (game.players.X && game.players.O) {
+          game.status = 'active';
+        }
+
+        await this.storage.updateGame(gameId, game);
+        await this.storage.setSocketGame(socketId, gameId);
+
+        console.log(
+          `✅ Player ${socketId} joined game ${gameId} as ${rejoinAsPlayer} (requested slot)`
+        );
+
+        return { success: true, yourPlayer: rejoinAsPlayer };
+      }
+      // If currentSocketForPlayer === socketId, this is handled by the first check above
+    }
+
+    console.log(`🔍 Final check - Game players:`, game.players);
+
+    // Check if game is full AFTER checking reconnection scenarios
     if (game.players.X && game.players.O) {
       console.log(`🚫 Game full: ${gameId}`);
       return { success: false, error: 'Game is full' };
     }
 
-    // Assign player to empty slot
+    // Assign player to empty slot (normal new join case)
     let assignedPlayer: Player;
     if (!game.players.X) {
       game.players.X = socketId;

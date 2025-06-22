@@ -22,8 +22,8 @@ export const SocketEventSchemas = {
   // No payload needed for create-game
   'create-game': z.void(),
 
-  // Join game requires valid game ID
-  'join-game': GameIdSchema,
+  // Join game - handle multiple argument patterns
+  'join-game': z.any(), // We'll handle validation manually in the handler
 
   // Make move requires valid position
   'make-move': PositionSchema,

@@ -6,7 +6,7 @@ import { ClientGameState, GameResult, Player, Position } from './game';
 export interface ClientToServerEvents {
   // Game creation and joining
   'create-game': () => void;
-  'join-game': (gameId: string) => void;
+  'join-game': (gameId: string, rejoinAsPlayer?: Player) => void;
   'leave-game': () => void;
 
   // Gameplay

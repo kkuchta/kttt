@@ -28,6 +28,9 @@ export function GamePage() {
         alert(`Failed to join game: ${data.error}`);
         // Redirect back to home page on join failure
         navigate('/');
+      } else if (data.yourPlayer && gameId) {
+        // Store player identity in localStorage for reconnection
+        localStorage.setItem(`game-${gameId}-player`, data.yourPlayer);
       }
     },
     onGameOver: data => {
@@ -42,6 +45,11 @@ export function GamePage() {
         alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
       } else {
         alert('🤝 Game ended in a draw!');
+      }
+
+      // Clean up localStorage for this game
+      if (gameId) {
+        localStorage.removeItem(`game-${gameId}-player`);
       }
     },
     onError: data => {
@@ -71,13 +79,38 @@ export function GamePage() {
     }
   }, [gameId, isConnected, isConnecting, connect, navigate]);
 
-  // Separate effect for joining the game once connected
+  // Join game when connected
   useEffect(() => {
-    if (isConnected && gameId && !gameState) {
-      // Only join if we're connected and don't have game state yet
+    if (!gameId || !isConnected || yourPlayer) {
+      return; // Don't join if no gameId, not connected, or already joined
+    }
+
+    // Check if we have a stored player identity for reconnection
+    const storedPlayer = localStorage.getItem(`game-${gameId}-player`) as
+      | 'X'
+      | 'O'
+      | null;
+
+    if (storedPlayer) {
+      console.log(
+        `Attempting to rejoin game ${gameId} as player ${storedPlayer}`
+      );
+      joinGame(gameId, storedPlayer);
+    } else {
+      console.log(`Joining new game ${gameId}`);
       joinGame(gameId);
     }
-  }, [isConnected, gameId, gameState, joinGame]);
+  }, [gameId, isConnected, yourPlayer, joinGame]);
+
+  // Cleanup localStorage when component unmounts or game changes
+  useEffect(() => {
+    return () => {
+      // Clean up localStorage for this game when navigating away
+      if (gameId) {
+        localStorage.removeItem(`game-${gameId}-player`);
+      }
+    };
+  }, [gameId]);
 
   const handleCellClick = (row: number, col: number) => {
     if (!gameState?.canMove || !gameId) return;

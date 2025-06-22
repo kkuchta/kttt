@@ -76,9 +76,9 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
     }
   }, []);
 
-  const joinGame = useCallback((gameId: string) => {
+  const joinGame = useCallback((gameId: string, rejoinAsPlayer?: 'X' | 'O') => {
     if (socket.connected) {
-      socketHelpers.joinGame(gameId);
+      socketHelpers.joinGame(gameId, rejoinAsPlayer);
     }
   }, []);
 
