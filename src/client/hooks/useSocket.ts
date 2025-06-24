@@ -37,6 +37,17 @@ export interface SocketEventHandlers {
   onGameFull?: () => void;
   onGameNotFound?: () => void;
   onReconnected?: (gameState: ClientGameState) => void;
+
+  // Matchmaking events
+  onQueueJoined?: (data: { position: number; estimatedWait: number }) => void;
+  onQueueLeft?: () => void;
+  onQueueStatus?: (data: {
+    position: number;
+    queueSize: number;
+    estimatedWait: number;
+  }) => void;
+  onMatchFound?: (data: { gameId: string; yourPlayer: Player }) => void;
+  onQueueError?: (data: { message: string }) => void;
 }
 
 export function useSocket(handlers: SocketEventHandlers = {}) {
@@ -97,6 +108,19 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
   const ping = useCallback(() => {
     if (socket.connected) {
       socketHelpers.ping();
+    }
+  }, []);
+
+  // Matchmaking actions
+  const joinQueue = useCallback(() => {
+    if (socket.connected) {
+      socket.emit('join-queue');
+    }
+  }, []);
+
+  const leaveQueue = useCallback(() => {
+    if (socket.connected) {
+      socket.emit('leave-queue');
     }
   }, []);
 
@@ -212,6 +236,34 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       console.log('Pong received');
     };
 
+    // Matchmaking events
+    const onQueueJoined = (data: {
+      position: number;
+      estimatedWait: number;
+    }) => {
+      handlersRef.current.onQueueJoined?.(data);
+    };
+
+    const onQueueLeft = () => {
+      handlersRef.current.onQueueLeft?.();
+    };
+
+    const onQueueStatus = (data: {
+      position: number;
+      queueSize: number;
+      estimatedWait: number;
+    }) => {
+      handlersRef.current.onQueueStatus?.(data);
+    };
+
+    const onMatchFound = (data: { gameId: string; yourPlayer: Player }) => {
+      handlersRef.current.onMatchFound?.(data);
+    };
+
+    const onQueueError = (data: { message: string }) => {
+      handlersRef.current.onQueueError?.(data);
+    };
+
     // Register all event listeners
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
@@ -228,6 +280,11 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
     socket.on('game-not-found', onGameNotFound);
     socket.on('reconnected', onReconnected);
     socket.on('pong', onPong);
+    socket.on('queue-joined', onQueueJoined);
+    socket.on('queue-left', onQueueLeft);
+    socket.on('queue-status', onQueueStatus);
+    socket.on('match-found', onMatchFound);
+    socket.on('queue-error', onQueueError);
 
     // Cleanup function
     return () => {
@@ -246,6 +303,11 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       socket.off('game-not-found', onGameNotFound);
       socket.off('reconnected', onReconnected);
       socket.off('pong', onPong);
+      socket.off('queue-joined', onQueueJoined);
+      socket.off('queue-left', onQueueLeft);
+      socket.off('queue-status', onQueueStatus);
+      socket.off('match-found', onMatchFound);
+      socket.off('queue-error', onQueueError);
     };
   }, []);
 
@@ -279,6 +341,13 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
     leaveGame,
     makeMove,
     ping,
+
+    // Matchmaking actions
+    joinQueue,
+    leaveQueue,
+
+    // Socket reference for direct access
+    socket,
 
     // Convenience getters
     isConnected: connectionState.isConnected,

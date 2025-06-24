@@ -10,6 +10,7 @@ import type {
 } from '../shared';
 import { createStorage, getStorageConfig } from './config/storage';
 import { GameManager } from './game/GameManager';
+import { MatchmakingManager } from './game/MatchmakingManager';
 import {
   createConnectionValidationMiddleware,
   createSecurityMiddleware,
@@ -44,8 +45,9 @@ const io = new Server<
   },
 });
 
-// Initialize Game Manager
+// Initialize Game Manager and Matchmaking Manager
 const gameManager = new GameManager(storage, io);
+const matchmakingManager = new MatchmakingManager(gameManager, io);
 
 // Express middleware
 app.use(
@@ -64,7 +66,7 @@ io.use(createConnectionValidationMiddleware());
 io.use(createSecurityMiddleware());
 
 // Setup Socket.io event handlers
-setupSocketHandlers(io, gameManager);
+setupSocketHandlers(io, gameManager, matchmakingManager);
 
 // Connect to Redis if using Redis storage
 async function initializeStorage() {
@@ -95,6 +97,9 @@ setInterval(async () => {
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down gracefully...');
+
+  // Cleanup matchmaking manager
+  matchmakingManager.destroy();
 
   if (storage instanceof RedisStorage) {
     await storage.disconnect();

@@ -18,29 +18,26 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Replace in-memory Maps with Redis storage calls
   - [x] Update development setup docs for Docker Redis
   - [x] Test locally with Redis
-- [ ] Security & Production Readiness - Remaining items
-  - [ ] Error handling and recovery
-    - [ ] Add error boundaries around async operations
-    - [ ] Implement graceful error responses
-    - [ ] Add structured logging
-  - [ ] Resource management
-    - [ ] Implement game expiration (TTL)
-    - [ ] Add connection limits
-    - [ ] Memory usage monitoring
-- [ ] Quick Match / Matchmaking Queue
-  - [ ] Backend matchmaking system
-    - [ ] Queue management in GameManager
-    - [ ] FIFO matching logic
-    - [ ] Queue timeout handling (2-3 minutes)
-    - [ ] Graceful queue cleanup on disconnect
-  - [ ] Socket events for matchmaking
-    - [ ] joinQueue, leaveQueue, matchFound events
-    - [ ] Queue status updates
-  - [ ] Frontend matchmaking UI
-    - [ ] "Quick Match" button on home page
-    - [ ] Queue waiting state with cancel option
-    - [ ] Auto-redirect to game on match
-    - [ ] Queue status display ("Looking for opponent...")
+- [x] Quick Match / Matchmaking Queue
+  - [x] Backend matchmaking system
+    - [x] Queue management in GameManager
+    - [x] FIFO matching logic
+    - [x] Queue timeout handling (2-3 minutes)
+    - [x] Graceful queue cleanup on disconnect
+  - [x] Socket events for matchmaking
+    - [x] joinQueue, leaveQueue, matchFound events
+    - [x] Queue status updates
+  - [x] Frontend matchmaking UI
+    - [x] "Quick Match" button on home page
+    - [x] Queue waiting state with cancel option
+    - [x] Auto-redirect to game on match
+    - [x] Queue status display ("Looking for opponent...")
+- [ ] Bot Opponent During Queue
+  - [ ] Bot player interface and RandomBot implementation
+  - [ ] GameManager integration for bot games
+  - [ ] Queue UI enhancement ("Play vs Bot" button)
+  - [ ] Minimal bot game indicators in UI
+  - [ ] Post-bot game flow (return to queue options)
 - [ ] UI/UX Polish
   - [x] Game status indicators (turn, winner, etc.)
   - [x] Error handling and user messaging

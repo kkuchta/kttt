@@ -172,3 +172,14 @@ REDIS_URL=redis://user:pass@host:port  # Production
 - Rate limiting on all socket events
 - Input validation with Zod schemas
 - Queue spam protection via rate limiting
+
+### Bot Player Architecture
+
+- **Bot Interface:** Clean abstraction for different AI strategies
+- **RandomBot Implementation:** First bot using random valid moves
+- **Game Integration:** Bots reuse existing GameManager and game logic
+- **Fair Information:** Bots receive same filtered game state as human players
+- **No WebSocket:** Bot moves calculated server-side without socket connection
+- **Lightweight Storage:** Bot games use shorter TTL (30 minutes vs 4 hours)
+- **Queue Integration:** "Play vs Bot" button removes player from matchmaking queue
+- **Expandable Design:** Interface supports future SmartBot, HardBot implementations

@@ -9,6 +9,10 @@ export interface ClientToServerEvents {
   'join-game': (gameId: string, rejoinAsPlayer?: Player) => void;
   'leave-game': () => void;
 
+  // Matchmaking
+  'join-queue': () => void;
+  'leave-queue': () => void;
+
   // Gameplay
   'make-move': (position: Position) => void;
 
@@ -28,6 +32,17 @@ export interface ServerToClientEvents {
   }) => void;
   'game-full': () => void;
   'game-not-found': () => void;
+
+  // Matchmaking responses
+  'queue-joined': (data: { position: number; estimatedWait: number }) => void;
+  'queue-left': () => void;
+  'queue-status': (data: {
+    position: number;
+    queueSize: number;
+    estimatedWait: number;
+  }) => void;
+  'match-found': (data: { gameId: string; yourPlayer: Player }) => void;
+  'queue-error': (data: { message: string }) => void;
 
   // Game state updates
   'game-state-update': (gameState: ClientGameState) => void;

@@ -27,6 +27,14 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 5. Game starts immediately with real-time gameplay
 6. Game ends with winner announcement and full board reveal
 
+#### Flow 3: Bot Opponent While Waiting (New)
+
+1. Player clicks "Quick Match" and enters matchmaking queue
+2. While waiting, player sees "Play vs Bot Instead" option
+3. Clicking bot option removes player from queue and starts immediate bot game
+4. Bot game uses same UI with "vs Bot" indicator
+5. After bot game ends, player can choose to find human opponent or play another bot game
+
 ### Home Page Interface
 
 - **"Create Game"** button - generates shareable game link
@@ -38,6 +46,7 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 - **Queue Status**: Clear "Looking for opponent..." message
 - **Wait Time**: Show elapsed time and estimated wait
 - **Cancel Option**: "Cancel" button to leave queue
+- **Bot Option**: "Play vs Bot Instead" button for immediate gameplay while waiting
 - **Timeout**: Auto-cancel after 2-3 minutes to prevent dead queues
 - **Queue Position**: Optional enhancement to show position in line
 
@@ -132,3 +141,12 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 
 - Quick match system for random opponents
 - Game history/statistics
+
+### Bot Opponent Experience
+
+- **AI Difficulty**: Single random bot difficulty (expandable interface for future)
+- **Fair Play**: Bot receives same filtered game state as human players (no cheating)
+- **Game Persistence**: Shorter TTL (30 minutes) compared to human games (4 hours)
+- **Bot Behavior**: Random valid moves with 500ms delay for natural feel
+- **Post-Game Options**: "Find Human Opponent", "Play Another Bot", or "Home"
+- **Game Indicators**: Clear "vs Bot" labeling in game UI to distinguish from human games

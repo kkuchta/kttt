@@ -10,6 +10,8 @@ const RATE_LIMITS = {
   'join-game': { windowMs: 60000, maxRequests: 10 }, // 10 joins per minute
   'make-move': { windowMs: 1000, maxRequests: 2 }, // 2 moves per second
   'leave-game': { windowMs: 60000, maxRequests: 10 }, // 10 leaves per minute
+  'join-queue': { windowMs: 60000, maxRequests: 10 }, // 10 queue joins per minute
+  'leave-queue': { windowMs: 60000, maxRequests: 10 }, // 10 queue leaves per minute
   ping: { windowMs: 10000, maxRequests: 10 }, // 10 pings per 10 seconds
 } as const;
 

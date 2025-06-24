@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../hooks/useSocket';
+import { QuickMatch } from './QuickMatch';
 
 export function HomePage() {
   const [joinGameId, setJoinGameId] = useState('');
@@ -189,6 +190,9 @@ export function HomePage() {
             {isConnecting ? 'Connecting...' : 'Create Game'}
           </button>
         </div>
+
+        {/* Quick Match Section */}
+        <QuickMatch />
 
         {/* Join Game Section */}
         <div>

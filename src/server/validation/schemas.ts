@@ -31,6 +31,10 @@ export const SocketEventSchemas = {
   // No payload needed for leave-game
   'leave-game': z.void(),
 
+  // Matchmaking events - no payload needed
+  'join-queue': z.void(),
+  'leave-queue': z.void(),
+
   // No payload needed for ping
   ping: z.void(),
 } as const;

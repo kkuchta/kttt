@@ -7,6 +7,7 @@ import type {
 } from '../../shared';
 import { createClientGameState } from '../../shared/utils/gameLogic';
 import type { GameManager } from '../game/GameManager';
+import type { MatchmakingManager } from '../game/MatchmakingManager';
 import {
   withErrorHandling,
   withValidation,
@@ -20,7 +21,8 @@ export function setupSocketHandlers(
     InterServerEvents,
     SocketData
   >,
-  gameManager: GameManager
+  gameManager: GameManager,
+  matchmakingManager: MatchmakingManager
 ): void {
   io.on('connection', socket => {
     console.log(`🔌 Client connected: ${socket.id}`);
@@ -43,6 +45,55 @@ export function setupSocketHandlers(
           socket.emit('error', {
             message: 'Failed to create game',
             code: 'CREATE_GAME_ERROR',
+          });
+        }
+      })
+    );
+
+    // Matchmaking - join queue
+    socket.on(
+      'join-queue',
+      withValidationNoData(socket, 'join-queue', async () => {
+        console.log(`🎯 Join queue request from ${socket.id}`);
+
+        try {
+          const result = await matchmakingManager.joinQueue(socket.id);
+
+          if (result.success) {
+            socket.emit('queue-joined', {
+              position: result.position!,
+              estimatedWait: result.estimatedWait!,
+            });
+          } else {
+            socket.emit('queue-error', {
+              message: result.error || 'Failed to join queue',
+            });
+          }
+        } catch (error) {
+          console.error('Error joining queue:', error);
+          socket.emit('queue-error', {
+            message: 'Failed to join matchmaking queue',
+          });
+        }
+      })
+    );
+
+    // Matchmaking - leave queue
+    socket.on(
+      'leave-queue',
+      withValidationNoData(socket, 'leave-queue', async () => {
+        console.log(`🎯 Leave queue request from ${socket.id}`);
+
+        try {
+          const wasInQueue = matchmakingManager.leaveQueue(socket.id);
+
+          if (wasInQueue) {
+            socket.emit('queue-left');
+          }
+        } catch (error) {
+          console.error('Error leaving queue:', error);
+          socket.emit('queue-error', {
+            message: 'Failed to leave queue',
           });
         }
       })
@@ -211,7 +262,9 @@ export function setupSocketHandlers(
         console.log(`🔌 Client disconnected: ${socket.id}, reason: ${reason}`);
 
         try {
+          // Clean up from both game and matchmaking queue
           await gameManager.removePlayerFromGame(socket.id);
+          matchmakingManager.handlePlayerDisconnect(socket.id);
         } catch (error) {
           console.error('Error handling disconnect:', error);
         }
