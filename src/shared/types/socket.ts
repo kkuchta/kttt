@@ -1,5 +1,6 @@
 // Socket.io Event Types for Kriegspiel Tic Tac Toe
 
+import { BotDifficulty } from './bot';
 import { ClientGameState, GameResult, Player, Position } from './game';
 
 // Events sent from client to server
@@ -12,6 +13,12 @@ export interface ClientToServerEvents {
   // Matchmaking
   'join-queue': () => void;
   'leave-queue': () => void;
+
+  // Bot games
+  'create-bot-game': (data: {
+    botDifficulty?: BotDifficulty;
+    humanPlayer?: Player;
+  }) => void;
 
   // Gameplay
   'make-move': (position: Position) => void;
@@ -32,6 +39,15 @@ export interface ServerToClientEvents {
   }) => void;
   'game-full': () => void;
   'game-not-found': () => void;
+
+  // Bot game responses
+  'bot-game-created': (data: {
+    gameId: string;
+    yourPlayer: Player;
+    botPlayer: Player;
+    botDifficulty: BotDifficulty;
+  }) => void;
+  'bot-game-error': (data: { message: string }) => void;
 
   // Matchmaking responses
   'queue-joined': (data: { position: number; estimatedWait: number }) => void;
@@ -104,6 +120,7 @@ export const SOCKET_ERROR_CODES = {
   NOT_YOUR_TURN: 'NOT_YOUR_TURN',
   GAME_NOT_ACTIVE: 'GAME_NOT_ACTIVE',
   CONNECTION_ERROR: 'CONNECTION_ERROR',
+  BOT_GAME_ERROR: 'BOT_GAME_ERROR',
 } as const;
 
 export type SocketErrorCode =

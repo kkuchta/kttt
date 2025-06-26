@@ -268,6 +268,7 @@ export function createClientGameState(
       gameState.currentTurn === viewerPlayer &&
       viewerPlayer !== null,
     result: gameState.result,
+    botInfo: gameState.botInfo,
   };
 }
 

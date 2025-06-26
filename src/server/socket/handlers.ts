@@ -5,6 +5,7 @@ import type {
   ServerToClientEvents,
   SocketData,
 } from '../../shared';
+import type { BotDifficulty } from '../../shared/types/bot';
 import { createClientGameState } from '../../shared/utils/gameLogic';
 import type { GameManager } from '../game/GameManager';
 import type { MatchmakingManager } from '../game/MatchmakingManager';
@@ -94,6 +95,66 @@ export function setupSocketHandlers(
           console.error('Error leaving queue:', error);
           socket.emit('queue-error', {
             message: 'Failed to leave queue',
+          });
+        }
+      })
+    );
+
+    // Bot game creation - with validation
+    socket.on(
+      'create-bot-game',
+      withValidation(socket, 'create-bot-game', async data => {
+        console.log(`🤖 Create bot game request from ${socket.id}:`, data);
+
+        try {
+          // Remove player from matchmaking queue if they're in one
+          const wasInQueue = matchmakingManager.leaveQueue(socket.id);
+          if (wasInQueue) {
+            console.log(
+              `🎯 Removed ${socket.id} from queue to create bot game`
+            );
+          }
+
+          // Set defaults for optional parameters
+          const botDifficulty: BotDifficulty = data.botDifficulty || 'random';
+          const humanPlayer = data.humanPlayer || 'X';
+
+          // Create bot game
+          const result = await gameManager.createBotGame(
+            socket.id,
+            botDifficulty,
+            humanPlayer
+          );
+
+          if (result.success) {
+            // Join the Socket.io room
+            socket.join(result.gameId);
+
+            // Get the created game to send complete info
+            const game = await gameManager.gameStorage.getGame(result.gameId);
+            if (game && game.botInfo) {
+              socket.emit('bot-game-created', {
+                gameId: result.gameId,
+                yourPlayer: humanPlayer,
+                botPlayer: game.botInfo.botPlayer,
+                botDifficulty: game.botInfo.botDifficulty as BotDifficulty,
+              });
+
+              // Send initial game state
+              const clientState = createClientGameState(game, humanPlayer);
+              socket.emit('game-state-update', clientState);
+            } else {
+              throw new Error('Failed to retrieve created bot game');
+            }
+          } else {
+            socket.emit('bot-game-error', {
+              message: 'Failed to create bot game',
+            });
+          }
+        } catch (error) {
+          console.error('Error creating bot game:', error);
+          socket.emit('bot-game-error', {
+            message: 'Failed to create bot game',
           });
         }
       })

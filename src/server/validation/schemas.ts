@@ -17,6 +17,25 @@ export const GameIdSchema = z
     'Game ID must contain only valid characters (A-Z except I,O and 2-9 except 0,1)'
   );
 
+// Bot difficulty validation schema
+export const BotDifficultySchema = z.enum([
+  'random',
+  'easy',
+  'medium',
+  'hard',
+] as const);
+
+// Player validation schema
+export const PlayerSchema = z.enum(['X', 'O'] as const);
+
+// Bot game creation schema
+export const CreateBotGameSchema = z
+  .object({
+    botDifficulty: BotDifficultySchema.optional(),
+    humanPlayer: PlayerSchema.optional(),
+  })
+  .strict(); // Reject extra properties
+
 // Socket event validation schemas
 export const SocketEventSchemas = {
   // No payload needed for create-game
@@ -35,6 +54,9 @@ export const SocketEventSchemas = {
   'join-queue': z.void(),
   'leave-queue': z.void(),
 
+  // Bot game creation
+  'create-bot-game': CreateBotGameSchema,
+
   // No payload needed for ping
   ping: z.void(),
 } as const;
@@ -42,6 +64,9 @@ export const SocketEventSchemas = {
 // Type inference helpers
 export type ValidatedPosition = z.infer<typeof PositionSchema>;
 export type ValidatedGameId = z.infer<typeof GameIdSchema>;
+export type ValidatedBotDifficulty = z.infer<typeof BotDifficultySchema>;
+export type ValidatedPlayer = z.infer<typeof PlayerSchema>;
+export type ValidatedCreateBotGame = z.infer<typeof CreateBotGameSchema>;
 
 // Validation result type
 export type ValidationResult<T> =

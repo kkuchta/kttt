@@ -52,6 +52,13 @@ export interface GameState {
   result?: GameResult;
   createdAt: number;
   lastActivity: number;
+  // Bot game metadata (optional)
+  botInfo?: {
+    isBot: true;
+    botPlayer: Player; // Which player is the bot
+    humanPlayer: Player; // Which player is human
+    botDifficulty: string; // Bot difficulty level
+  };
 }
 
 // Client-side filtered view of game state
@@ -64,6 +71,13 @@ export interface ClientGameState {
   revealedCells: Position[]; // Cells revealed due to conflicts
   canMove: boolean; // Whether this client can make a move
   result?: GameResult;
+  // Bot game information (for UI indicators)
+  botInfo?: {
+    isBot: true;
+    botPlayer: Player; // Which player is the bot
+    humanPlayer: Player; // Which player is human
+    botDifficulty: string; // Bot difficulty level
+  };
 }
 
 // Utility type for move validation results

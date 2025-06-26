@@ -33,9 +33,9 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [x] Auto-redirect to game on match
     - [x] Queue status display ("Looking for opponent...")
 - [ ] Bot Opponent During Queue
-  - [ ] Bot player interface and RandomBot implementation
-  - [ ] GameManager integration for bot games
-  - [ ] Queue UI enhancement ("Play vs Bot" button)
+  - [x] Bot player interface and RandomBot implementation
+  - [x] GameManager integration for bot games
+  - [x] Queue UI enhancement ("Play vs Bot" button)
   - [ ] Minimal bot game indicators in UI
   - [ ] Post-bot game flow (return to queue options)
 - [ ] UI/UX Polish

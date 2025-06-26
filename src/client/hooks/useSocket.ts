@@ -1,3 +1,4 @@
+import { BotDifficulty } from '@shared/types/bot';
 import {
   ClientGameState,
   GameResult,
@@ -48,6 +49,15 @@ export interface SocketEventHandlers {
   }) => void;
   onMatchFound?: (data: { gameId: string; yourPlayer: Player }) => void;
   onQueueError?: (data: { message: string }) => void;
+
+  // Bot game events
+  onBotGameCreated?: (data: {
+    gameId: string;
+    yourPlayer: Player;
+    botPlayer: Player;
+    botDifficulty: BotDifficulty;
+  }) => void;
+  onBotGameError?: (data: { message: string }) => void;
 }
 
 export function useSocket(handlers: SocketEventHandlers = {}) {
@@ -86,6 +96,15 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       socketHelpers.createGame();
     }
   }, []);
+
+  const createBotGame = useCallback(
+    (botDifficulty: BotDifficulty = 'random', humanPlayer: Player = 'X') => {
+      if (socket.connected) {
+        socket.emit('create-bot-game', { botDifficulty, humanPlayer });
+      }
+    },
+    []
+  );
 
   const joinGame = useCallback((gameId: string, rejoinAsPlayer?: 'X' | 'O') => {
     if (socket.connected) {
@@ -161,6 +180,25 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
         yourPlayer: data.yourPlayer,
       }));
       handlersRef.current.onGameCreated?.(data);
+    };
+
+    const onBotGameCreated = (data: {
+      gameId: string;
+      yourPlayer: Player;
+      botPlayer: Player;
+      botDifficulty: BotDifficulty;
+    }) => {
+      setConnectionState(prev => ({
+        ...prev,
+        gameId: data.gameId,
+        yourPlayer: data.yourPlayer,
+      }));
+      handlersRef.current.onBotGameCreated?.(data);
+    };
+
+    const onBotGameError = (data: { message: string }) => {
+      setConnectionState(prev => ({ ...prev, error: data.message }));
+      handlersRef.current.onBotGameError?.(data);
     };
 
     const onGameJoined = (data: {
@@ -269,6 +307,8 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
     socket.on('disconnect', onDisconnect);
     socket.on('connect_error', onConnectError);
     socket.on('game-created', onGameCreated);
+    socket.on('bot-game-created', onBotGameCreated);
+    socket.on('bot-game-error', onBotGameError);
     socket.on('game-joined', onGameJoined);
     socket.on('game-state-update', onGameStateUpdate);
     socket.on('move-result', onMoveResult);
@@ -292,6 +332,8 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       socket.off('disconnect', onDisconnect);
       socket.off('connect_error', onConnectError);
       socket.off('game-created', onGameCreated);
+      socket.off('bot-game-created', onBotGameCreated);
+      socket.off('bot-game-error', onBotGameError);
       socket.off('game-joined', onGameJoined);
       socket.off('game-state-update', onGameStateUpdate);
       socket.off('move-result', onMoveResult);
@@ -337,6 +379,7 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
 
     // Game actions
     createGame,
+    createBotGame,
     joinGame,
     leaveGame,
     makeMove,

@@ -1,6 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { useMatchmaking } from '../hooks/useMatchmaking';
+import { useSocket } from '../hooks/useSocket';
 
 export function QuickMatch() {
+  const navigate = useNavigate();
+
   const {
     isInQueue,
     queueStatus,
@@ -12,6 +16,18 @@ export function QuickMatch() {
     formatWaitTime,
   } = useMatchmaking();
 
+  const { isConnected, connect, createBotGame } = useSocket({
+    onBotGameCreated: data => {
+      console.log('Bot game created:', data);
+      // Navigate to the bot game
+      navigate(`/game/${data.gameId}`);
+    },
+    onBotGameError: data => {
+      console.error('Bot game error:', data);
+      alert(`Failed to create bot game: ${data.message}`);
+    },
+  });
+
   const handleJoinQueue = () => {
     clearError();
     joinQueue();
@@ -19,6 +35,17 @@ export function QuickMatch() {
 
   const handleLeaveQueue = () => {
     leaveQueue();
+  };
+
+  const handlePlayBot = async () => {
+    if (!isConnected) {
+      await connect();
+    }
+
+    if (isConnected) {
+      // Remove from queue and create bot game
+      createBotGame('random', 'X');
+    }
   };
 
   // If not in queue, show the Quick Match button
@@ -83,7 +110,7 @@ export function QuickMatch() {
     );
   }
 
-  // If in queue, show the queue status
+  // If in queue, show the queue status with bot option
   return (
     <div style={{ marginBottom: '30px' }}>
       <h3 style={{ color: '#333', marginBottom: '15px' }}>
@@ -138,6 +165,31 @@ export function QuickMatch() {
           </div>
         )}
       </div>
+
+      {/* Bot game option - NEW! */}
+      <button
+        onClick={handlePlayBot}
+        style={{
+          width: '100%',
+          padding: '12px',
+          fontSize: '16px',
+          backgroundColor: '#17a2b8',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s',
+          marginBottom: '10px',
+        }}
+        onMouseOver={e => {
+          e.currentTarget.style.backgroundColor = '#138496';
+        }}
+        onMouseOut={e => {
+          e.currentTarget.style.backgroundColor = '#17a2b8';
+        }}
+      >
+        🤖 Play vs Bot Instead
+      </button>
 
       <button
         onClick={handleLeaveQueue}
