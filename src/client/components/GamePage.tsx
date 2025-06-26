@@ -223,62 +223,66 @@ export function GamePage() {
         )}
       </div>
 
-      {/* Share Game URL */}
-      <div
-        style={{
-          padding: '15px',
-          margin: '20px 0',
-          borderRadius: '10px',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>Invite a Friend</h3>
-        <p style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px' }}>
-          Share this URL with someone to play together:
-        </p>
+      {/* Share Game URL - only show for human vs human games */}
+      {(!gameState || !gameState.botInfo) && (
         <div
           style={{
-            display: 'flex',
-            gap: '10px',
-            backgroundColor: '#f8f9fa',
-            padding: '10px',
-            borderRadius: '5px',
-            border: '1px solid #dee2e6',
+            padding: '15px',
+            margin: '20px 0',
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <input
-            type="text"
-            value={gameUrl}
-            readOnly
+          <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>
+            Invite a Friend
+          </h3>
+          <p style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px' }}>
+            Share this URL with someone to play together:
+          </p>
+          <div
             style={{
-              flex: 1,
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '3px',
-              fontSize: '14px',
-              backgroundColor: 'white',
-            }}
-          />
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(gameUrl);
-              alert('Game URL copied to clipboard!');
-            }}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '3px',
-              cursor: 'pointer',
-              fontSize: '14px',
+              display: 'flex',
+              gap: '10px',
+              backgroundColor: '#f8f9fa',
+              padding: '10px',
+              borderRadius: '5px',
+              border: '1px solid #dee2e6',
             }}
           >
-            Copy
-          </button>
+            <input
+              type="text"
+              value={gameUrl}
+              readOnly
+              style={{
+                flex: 1,
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '3px',
+                fontSize: '14px',
+                backgroundColor: 'white',
+              }}
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(gameUrl);
+                alert('Game URL copied to clipboard!');
+              }}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              Copy
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Game State Display */}
       {gameState ? (
@@ -299,6 +303,7 @@ export function GamePage() {
             canMove={gameState.canMove}
             result={gameState.result}
             yourPlayer={gameState.yourPlayer}
+            botInfo={gameState.botInfo}
           />
 
           <GameBoard

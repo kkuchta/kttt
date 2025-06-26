@@ -36,7 +36,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Bot player interface and RandomBot implementation
   - [x] GameManager integration for bot games
   - [x] Queue UI enhancement ("Play vs Bot" button)
-  - [ ] Minimal bot game indicators in UI
+  - [x] Minimal bot game indicators in UI
   - [ ] Post-bot game flow (return to queue options)
 - [ ] UI/UX Polish
   - [x] Game status indicators (turn, winner, etc.)
