@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 import { createServer } from 'http';
+import path from 'path';
 import { Server } from 'socket.io';
 import type {
   ClientToServerEvents,
@@ -32,6 +33,12 @@ console.log(`🔗 Redis URL: ${storageConfig.redis.url}`);
 const app = express();
 const server = createServer(app);
 
+// Configure CORS origins based on environment
+const corsOrigins =
+  process.env.NODE_ENV === 'production'
+    ? [process.env.FRONTEND_URL || 'https://your-app.railway.app']
+    : ['http://localhost:3000', 'http://localhost:5173'];
+
 // Initialize Socket.io
 const io = new Server<
   ClientToServerEvents,
@@ -40,7 +47,7 @@ const io = new Server<
   SocketData
 >(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5173'], // Removed 'null' for security
+    origin: corsOrigins,
     methods: ['GET', 'POST'],
   },
 });
@@ -52,7 +59,7 @@ const matchmakingManager = new MatchmakingManager(gameManager, io);
 // Express middleware
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    origin: corsOrigins,
     methods: ['GET', 'POST'],
   })
 );
@@ -60,6 +67,16 @@ app.use(express.json());
 
 // API routes
 app.use('/api', createApiRoutes(gameManager));
+
+// Serve static files from client build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('dist/client'));
+
+  // Handle React Router - serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'dist/client/index.html'));
+  });
+}
 
 // Socket.io middleware
 io.use(createConnectionValidationMiddleware());
