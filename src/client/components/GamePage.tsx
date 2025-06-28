@@ -1,13 +1,19 @@
-import { useEffect } from 'react';
+import { GameResult } from '@shared/types/game';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSocket } from '../hooks/useSocket';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
 import { GameStatus } from './GameStatus';
+import { PostBotGameOptions } from './PostBotGameOptions';
 
 export function GamePage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
+
+  // State for post-bot game options modal
+  const [showPostBotGameOptions, setShowPostBotGameOptions] = useState(false);
+  const [botGameResult, setBotGameResult] = useState<GameResult | null>(null);
 
   const {
     isConnected,
@@ -36,15 +42,22 @@ export function GamePage() {
     onGameOver: data => {
       console.log('Game over:', data);
 
-      // Use gameState.yourPlayer as fallback since it should be more reliable
-      const currentPlayer = yourPlayer || gameState?.yourPlayer;
-
-      // Show win announcement
-      if (data.result.winner) {
-        const isYourWin = data.result.winner === currentPlayer;
-        alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+      // Check if this is a bot game
+      if (gameState?.botInfo) {
+        // For bot games, show the post-game options modal
+        setBotGameResult(data.result);
+        setShowPostBotGameOptions(true);
       } else {
-        alert('🤝 Game ended in a draw!');
+        // For human games, keep the existing alert behavior
+        const currentPlayer = yourPlayer || gameState?.yourPlayer;
+
+        // Show win announcement
+        if (data.result.winner) {
+          const isYourWin = data.result.winner === currentPlayer;
+          alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+        } else {
+          alert('🤝 Game ended in a draw!');
+        }
       }
 
       // Clean up localStorage for this game
@@ -332,6 +345,19 @@ export function GamePage() {
                 : '❌ Unable to connect to game'}
           </p>
         </div>
+      )}
+
+      {/* Post-Bot Game Options Modal */}
+      {showPostBotGameOptions && botGameResult && gameState?.botInfo && (
+        <PostBotGameOptions
+          result={botGameResult}
+          yourPlayer={gameState.yourPlayer}
+          botDifficulty={gameState.botInfo.botDifficulty}
+          onClose={() => {
+            setShowPostBotGameOptions(false);
+            setBotGameResult(null);
+          }}
+        />
       )}
     </div>
   );
