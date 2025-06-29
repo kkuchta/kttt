@@ -6,6 +6,7 @@ import {
   getHoverColor,
 } from '../../shared/constants/colors';
 import { useSocket } from '../hooks/useSocket';
+import { PageLayout } from './PageLayout';
 import { QuickMatch } from './QuickMatch';
 
 export function HomePage() {
@@ -115,19 +116,7 @@ export function HomePage() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px',
-        backgroundColor: colors.background,
-        backgroundImage:
-          'radial-gradient(circle at 20% 50%, rgba(0, 255, 231, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 94, 120, 0.05) 0%, transparent 50%)',
-      }}
-    >
+    <PageLayout variant="home" maxWidth="500px">
       {/* Hero Section */}
       <div
         style={{
@@ -136,8 +125,6 @@ export function HomePage() {
           padding: '50px 40px',
           borderRadius: '20px',
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
-          maxWidth: '500px',
-          width: '100%',
           textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
@@ -399,6 +386,6 @@ export function HomePage() {
           classic game
         </p>
       </div>
-    </div>
+    </PageLayout>
   );
 }

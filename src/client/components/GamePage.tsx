@@ -11,6 +11,7 @@ import { useSocket } from '../hooks/useSocket';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
 import { GameStatus } from './GameStatus';
+import { PageLayout } from './PageLayout';
 import { PostBotGameOptions } from './PostBotGameOptions';
 
 export function GamePage() {
@@ -148,16 +149,7 @@ export function GamePage() {
   const gameUrl = `${window.location.origin}/game/${gameId}`;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        padding: '20px',
-        backgroundColor: colors.background,
-        backgroundImage:
-          'radial-gradient(circle at 30% 20%, rgba(0, 255, 231, 0.03) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(255, 94, 120, 0.03) 0%, transparent 50%)',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
+    <PageLayout variant="game" maxWidth="700px">
       {/* Header */}
       <div
         style={{
@@ -480,6 +472,6 @@ export function GamePage() {
           }}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }
