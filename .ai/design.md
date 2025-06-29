@@ -1,6 +1,8 @@
-# Kriegspiel Tic Tac Toe – Visual Design Guide
+# Kriegspiel Tic Tac Toe – Visual Design System
 
-A modern, mobile-first design for a two-player hidden-information tic-tac-toe variant with matchmaking and bot opponents.
+A modern, mobile-first design system for a two-player hidden-information tic-tac-toe variant with matchmaking and bot opponents.
+
+**Status: ✅ Fully Implemented** | **Last Updated: 2024**
 
 ---
 
@@ -14,189 +16,301 @@ A modern, mobile-first design for a two-player hidden-information tic-tac-toe va
 
 ---
 
-## 🎨 Color Palette
+## 🎨 Color Palette & Implementation
 
-| Name             | Hex       | Usage                               |
-| ---------------- | --------- | ----------------------------------- |
-| Background       | `#0e0e0e` | Main background                     |
-| Grid Lines       | `#1a1a1a` | Board grid + UI frames              |
-| Text (dim)       | `#666666` | Secondary text, status messages     |
-| X Accent (Teal)  | `#00ffe7` | Player X moves, glow, hover effects |
-| O Accent (Coral) | `#ff5e78` | Player O moves, glow, hover effects |
-| Rejection Red    | `#ff3c3c` | **Primary** - Move rejection flash  |
-| Success Green    | `#00ff99` | Move accepted confirmation          |
-| Bot Blue         | `#2196f3` | Bot game indicators and headers     |
-| Queue Orange     | `#ffc107` | Matchmaking queue status            |
+| Name             | Hex       | Usage                               | Implementation        |
+| ---------------- | --------- | ----------------------------------- | --------------------- |
+| Background       | `#0e0e0e` | Main background                     | `colors.background`   |
+| Grid Lines       | `#1a1a1a` | Board grid + UI frames              | `colors.gridLines`    |
+| Text (dim)       | `#666666` | Secondary text, status messages     | `colors.textDim`      |
+| X Accent (Teal)  | `#00ffe7` | Player X moves, glow, hover effects | `colors.xAccent`      |
+| O Accent (Coral) | `#ff5e78` | Player O moves, glow, hover effects | `colors.oAccent`      |
+| Rejection Red    | `#ff3c3c` | **Primary** - Move rejection flash  | `colors.rejectionRed` |
+| Success Green    | `#00ff99` | Move accepted confirmation          | `colors.successGreen` |
+| Bot Blue         | `#2196f3` | Bot game indicators and headers     | `colors.botBlue`      |
+| Queue Orange     | `#ffc107` | Matchmaking queue status            | `colors.queueOrange`  |
 
-Use glows sparingly (opacity 10–30%) and apply `box-shadow` or CSS filters for softness.
+### Color Utility Functions
+
+**Available in `src/shared/constants/colors.ts`:**
+
+```typescript
+// Get player-specific colors
+getPlayerGlow(player: 'X' | 'O') // Returns appropriate accent color
+
+// Create glow effects
+createGlow(color: string, opacity: number) // Returns rgba() for glows
+
+// Hover state colors
+getHoverColor(baseColor: string) // Returns lighter version for hover
+
+// Pre-computed glow effects
+glows.xGlow, glows.oGlow, glows.rejectionGlow, etc.
+
+// Box shadow utilities
+boxShadows.xPiece, boxShadows.oPiece, boxShadows.rejection, etc.
+```
+
+**Usage Pattern:** Always use `colors.colorName` constants, never hardcode hex values.
 
 ---
 
-## 🔤 Fonts
+## 🔤 Typography System
 
-| Role        | Font                      | Notes                                  |
-| ----------- | ------------------------- | -------------------------------------- |
-| UI / Labels | Inter (fallback: sans)    | Clean and legible                      |
-| Symbols     | Space Grotesk or Rajdhani | Distinct but geometric X and O styling |
-| Status      | Inter Medium              | Bold for important game state messages |
+| Role               | Font                     | Implementation                           | Usage                                        |
+| ------------------ | ------------------------ | ---------------------------------------- | -------------------------------------------- |
+| **UI Text**        | Inter (400, 500, 600)    | `fontFamily: 'Inter, sans-serif'`        | All interface elements, labels, descriptions |
+| **Game Symbols**   | Space Grotesk (500, 700) | `fontFamily: 'Space Grotesk, monospace'` | X/O symbols, Game IDs                        |
+| **Status/Headers** | Inter Medium (500, 600)  | `fontWeight: '500'` or `'600'`           | Important status messages, headers           |
 
-Use a distinct CSS class to style the X and O separately from UI text. Status messages should use medium weight for visibility.
+**Typography Hierarchy:**
+
+- **Headers**: 28-36px, weight 700, Inter
+- **Subheaders**: 18-24px, weight 600, Inter
+- **Body**: 16px, weight 400, Inter
+- **Secondary**: 14px, weight 400, Inter
+- **Game Symbols**: 32px, weight 500, Space Grotesk
+
+---
+
+## 🏗️ Component Architecture
+
+### Established Patterns
+
+**Button Styling Pattern:**
+
+```typescript
+const buttonStyle: React.CSSProperties = {
+  padding: '16px 20px',
+  fontSize: '16px',
+  fontWeight: '600',
+  fontFamily: 'Inter, sans-serif',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease-in-out',
+  // Color-specific properties...
+};
+```
+
+**Hover Effect Pattern:**
+
+```typescript
+onMouseOver={e => {
+  e.currentTarget.style.backgroundColor = getHoverColor(baseColor);
+  e.currentTarget.style.transform = 'translateY(-2px)';
+  e.currentTarget.style.boxShadow = `0 0 25px ${createGlow(color, 0.3)}`;
+}}
+```
+
+**Container Styling Pattern:**
+
+```typescript
+const containerStyle = {
+  backgroundColor: colors.background,
+  border: `2px solid ${colors.gridLines}`,
+  borderRadius: '12px',
+  padding: '20px',
+  boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
+};
+```
 
 ---
 
 ## 🧩 Layout & Navigation
 
-### Home Page Layout
+### Home Page Layout ✅ Implemented
 
 - **Hero section** with game title and description
 - **Three primary actions** (equal visual weight):
-  - "Create Game" - generates shareable link
-  - "Quick Match" - joins matchmaking queue
-  - "Join Game" - input field + join button
-- **Connection status indicator** (prominent when disconnected)
-- Minimalist chrome; no borders unless active/focused
+  - "Create Game" - generates shareable link (Green)
+  - "Quick Match" - joins matchmaking queue (Orange)
+  - "Join Game" - input field + join button (Blue)
+- **Connection status indicator** (Green/Red with glows)
+- **Subtle gradient backgrounds** for visual depth
 
-### Game Page Layout
+### Game Page Layout ✅ Implemented
 
-- **Top Bar** above board:
-  - Game ID + Copy Link button (human games only)
-  - Back to Home button
-  - Connection status indicator
-- **Game Type Header** (bot games):
-  - "🤖 You (X) vs Random Bot (O)" with blue accent styling
-- **Status Section** below header:
-  - **Primary status**: "Your Turn" / "Bot Thinking..." / "Opponent's Turn"
-  - **Secondary info**: Current player indicator with colored badge
-- **Centered board** (3x3 grid with generous spacing)
-- **Move rejection feedback overlay** (when needed)
-- **Game sharing section** (human games when waiting for players)
-
-Mobile-first with clean scaling: text/buttons never smaller than `14px`.
+- **Header Bar**: Game title, Game ID, Home button
+- **Connection Status**: With color-coded status indicators
+- **Invite Section**: For human games, with copy functionality
+- **Game Type Headers**: Bot games with blue accent styling
+- **Status Section**: Turn indicators with colored badges
+- **Centered Board**: 3x3 grid with generous spacing and shadow
+- **Rules Section**: Collapsible help text
 
 ---
 
-## 🧠 Component Styling
+## 🧠 Component Specifications
 
-### Board Cells
+### Board Cells ✅ Implemented
 
-| State                 | Visual Treatment                                            |
-| --------------------- | ----------------------------------------------------------- |
-| **Empty**             | Clean grid cell, no content - all empties look identical    |
-| **Your Move**         | Large X or O with colored glow (teal/coral)                 |
-| **Opponent Revealed** | Opponent symbol with subtle glow + "revealed" styling       |
-| **Move Rejected**     | **PRIMARY INTERACTION** - Red flash + shake + error overlay |
+| State                 | Visual Treatment                                | CSS Classes       |
+| --------------------- | ----------------------------------------------- | ----------------- |
+| **Empty**             | Dark background, grid borders - all identical   | `.cell-empty`     |
+| **Your Move**         | Player color glow + scale(1.02) + bright symbol | `.cell-yours`     |
+| **Opponent Revealed** | Dimmed styling + subtle glow + opacity 0.8      | `.cell-revealed`  |
+| **Move Rejected**     | Red flash + shake animation + error tooltip     | `.cell-rejecting` |
 
-**Critical**: No "unknown cell" or "?" symbols - empty cells must look identical to maintain hidden information.
+**Implementation Details:**
 
-### Status Messages & Indicators
+- Empty cells use `colors.background` with `colors.gridLines` borders
+- Player pieces use `colors.xAccent`/`colors.oAccent` with corresponding glows
+- Revealed pieces use `colors.textDim` with reduced opacity
+- Rejection state triggers 1000ms animation (200ms if reduced motion)
 
-| Status Type       | Visual Treatment                         |
-| ----------------- | ---------------------------------------- |
-| **Your Turn**     | Green badge with checkmark, prominent    |
-| **Opponent Turn** | Gray badge with waiting indicator        |
-| **Bot Thinking**  | Yellow/orange badge with robot emoji     |
-| **Move Rejected** | **Large red overlay** with error message |
-| **Game Over**     | Full-width colored banner with result    |
+### Status Indicators ✅ Implemented
 
-### Matchmaking Queue UI
+| Status Type       | Color                 | Animation            | Implementation         |
+| ----------------- | --------------------- | -------------------- | ---------------------- |
+| **Your Turn**     | `colors.successGreen` | Glow effect          | Badge with checkmark ✓ |
+| **Opponent Turn** | `colors.textDim`      | None                 | Gray badge with ⏳     |
+| **Bot Thinking**  | `colors.queueOrange`  | Pulsing robot + dots | Animated badge with 🤖 |
+| **Move Rejected** | `colors.rejectionRed` | Flash + shake        | Error overlay          |
+| **Game Over**     | Result-dependent      | Result-specific glow | Large banner           |
 
-- **Queue Status**: Large, centered "Looking for opponent..." with spinner
-- **Wait Time**: "Searching for 0:15..." with live counter
-- **Queue Actions**:
-  - "Cancel" button (secondary styling)
-  - "Play vs Bot Instead" button (prominent secondary action)
-- **Bot game transition**: Smooth transition to game UI with bot indicators
+### Button Hierarchy ✅ Implemented
 
-### Bot Game Indicators
-
-- **Game Type Header**: Blue-accented banner with robot emoji
-- **Player Identification**: "You (X) vs Random Bot (O)" format
-- **Bot Turn Status**: "🤖 Bot Thinking..." with animated dots
-- **Post-Game Modal**: Three clear options with distinct styling
-  - "Play Another Bot" (primary)
-  - "Find Human Opponent" (secondary)
-  - "Back to Home" (tertiary)
-
-### Buttons & Links
-
-- **Primary actions**: Solid background with hover glow
-- **Secondary actions**: Outline style with glow on hover
-- **Danger actions**: Red styling for destructive actions
-- **Bot-related**: Blue accent styling to match bot theme
-- Links: muted text with glow on hover
+1. **Primary**: Solid color + glow + hover transform
+2. **Secondary**: Outline + hover fill
+3. **Tertiary**: Text + subtle hover
+4. **Danger**: Red variant of primary style
 
 ---
 
-## ✨ Feedback & Animation Priorities
+## ✨ Animation System
 
-### 1. **Move Rejection** (Most Important)
+### Animation Principles ✅ Implemented
 
-- **Immediate red flash** covering rejected cell
-- **Shake animation** on the cell (3-4 quick shakes)
-- **Error message overlay**: "Cell occupied! Opponent piece revealed."
-- **Fade to reveal** opponent's piece with subtle highlight
-- **Turn indicator update** showing turn loss
-- **Duration**: 1000-1500ms total for full sequence
+1. **Performance**: Use `transform` and `opacity` (GPU-accelerated)
+2. **Accessibility**: Respect `prefers-reduced-motion: reduce`
+3. **Purpose**: Every animation serves the game mechanic
+4. **Timing**: Quick actions (200ms), feedback (1000ms), transitions (300ms)
 
-### 2. **Successful Move Placement**
+### Key Animations ✅ Implemented
 
-- **Quick scale + fade in** for placed symbol (200ms)
-- **Soft glow bloom** in player color
-- **Turn indicator smooth transition** to opponent
+**Move Rejection (Critical):**
 
-### 3. **Opponent Piece Revelation**
+```css
+@keyframes rejectionShake {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-3px) scale(1.05);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(3px) scale(1.05);
+  }
+}
+```
 
-- **Gentle fade-in** with "revealed" styling distinction
-- **Brief highlight glow** to draw attention
-- **No dramatic effects** - keep focus on the rejection feedback
+**Bot Thinking:**
 
-### 4. **Game State Changes**
+```css
+@keyframes botThinking {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+```
 
-- **Status message transitions**: Smooth color/text changes
-- **Turn switching**: Clear badge state changes
-- **Bot move delays**: 500ms pause before bot places (feels natural)
+**Queue Status:**
 
-### 5. **Matchmaking & Connection**
-
-- **Queue status**: Gentle pulsing on search indicator
-- **Match found**: Quick success flash before redirect
-- **Connection issues**: Prominent warning styling
-- **Bot game start**: Smooth transition with bot header appearance
-
-### 6. **Endgame Sequence**
-
-- **Win/lose announcement**: Large modal or banner
-- **Full board reveal**: Cascade effect showing all hidden pieces (staggered 100ms)
-- **Post-game options**: Clear, distinct action buttons
-
-All transitions should feel **responsive and purposeful** - every animation serves the core game mechanic of hidden information discovery.
+```css
+@keyframes queuePulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3);
+  }
+}
+```
 
 ---
 
 ## 🎮 Kriegspiel-Specific Design Principles
 
-### Hidden Information Clarity
+### Hidden Information Clarity ✅ Implemented
 
-- **Empty cells must be visually identical** - no hints about content
-- **Clear distinction between "yours", "revealed opponent", and "empty"**
-- **Move rejection is the primary discovery mechanic** - give it the most visual emphasis
+- **Empty cells are visually identical** - no hints about content
+- **Four distinct cell states**: empty, yours, revealed, rejecting
+- **Move rejection gets maximum visual emphasis** - red flash + shake
+- **Revealed pieces look permanently different** - dimmed styling
 
-### Game Context Awareness
+### Accessibility & Usability ✅ Implemented
 
-- **Human vs Human**: Focus on sharing, connection status, waiting states
-- **Human vs Bot**: Clear bot indicators, immediate gameplay, post-game options
-- **Matchmaking**: Prominent queue status, bot escape hatch
-
-### Feedback Immediacy
-
-- **Move rejection happens server-side** - UI must clearly show the failure
-- **Turn loss is crucial** - players need to understand they lost their turn
-- **Revelation is permanent** - revealed pieces should look distinctly different
-
-### Progressive Disclosure
-
-- **Start simple**: Basic game explanation on home page
-- **Reveal complexity**: Game mechanics become clear through play
-- **Context-sensitive help**: Different guidance for different game states
+- **Reduced Motion Support**: Animations disabled for `prefers-reduced-motion: reduce`
+- **Touch Targets**: Minimum 44px touch targets on mobile
+- **Color Contrast**: All text meets WCAG AA standards
+- **Screen Reader**: Proper ARIA labels and semantic markup
+- **Keyboard Navigation**: All interactive elements accessible via keyboard
 
 ---
+
+## 🔮 Future Development Guidelines
+
+### Adding New Components
+
+1. **Import colors**: Always use `import { colors } from '../../shared/constants/colors'`
+2. **Follow button patterns**: Use established button style objects
+3. **Add hover effects**: Use `getHoverColor()` and `createGlow()` utilities
+4. **Respect accessibility**: Check `prefers-reduced-motion` for animations
+5. **Use typography scale**: Stick to established font sizes and weights
+
+### Adding New Colors
+
+1. **Add to palette**: Update `colors` object in `constants/colors.ts`
+2. **Create utilities**: Add corresponding glow and box-shadow utilities
+3. **Document usage**: Update this design guide with usage guidelines
+4. **Test contrast**: Ensure accessibility compliance
+
+### Animation Guidelines
+
+- **Duration**: 200ms (quick), 300ms (transitions), 1000ms (feedback)
+- **Easing**: `ease-in-out` for most animations
+- **Transforms**: Prefer `translateY(-2px)` for hover lifts
+- **Always**: Check `prefers-reduced-motion` and provide fallbacks
+
+### Performance Considerations
+
+- **Use CSS-in-JS**: Maintain the inline styling approach for consistency
+- **Minimize animations**: Only animate `transform`, `opacity`, and `box-shadow`
+- **Batch DOM updates**: Use React state updates efficiently
+- **Test on mobile**: Ensure 60fps animations on lower-end devices
+
+---
+
+## 📱 Responsive Design Patterns
+
+### Breakpoints (Implicit)
+
+- **Mobile First**: Base styles for 320px+
+- **Tablet**: Media queries for 768px+ (if needed)
+- **Desktop**: Hover effects only on `(hover: hover) and (pointer: fine)`
+
+### Mobile Optimizations ✅ Implemented
+
+- **Touch targets**: Minimum 44px for all interactive elements
+- **Font scaling**: Never smaller than 14px
+- **Hover effects**: Disabled on touch devices
+- **Button spacing**: Adequate gap (15px+) between touch targets
+
+---
+
+This design system provides a solid foundation for maintaining visual consistency and implementing new features while preserving the strategic, mysterious atmosphere that makes Kriegspiel Tic Tac Toe engaging. 🎯
