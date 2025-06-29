@@ -28,12 +28,12 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
 
 ## 📋 Phase 1: Foundation & Typography
 
-- [ ] **Add fonts to `src/client/index.html`**
+- [x] **Add fonts to `src/client/index.html`**
 
   - Load Inter and Space Grotesk from Google Fonts
   - Set dark body background (`#0e0e0e`)
 
-- [ ] **Create `src/shared/constants/colors.ts`** (DEPENDENCY for all other phases)
+- [x] **Create `src/shared/constants/colors.ts`** (DEPENDENCY for all other phases)
 
   - Design palette constants from design.md
   - Color functions for hover states and glows (`rgba()` with opacity for glows)
@@ -41,7 +41,7 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
   - Include utility functions: `getPlayerGlow(player)`, `getHoverColor(baseColor)`
   - **Acceptance**: All colors available as named exports, used consistently
 
-- [ ] **Update `src/client/App.tsx`**
+- [x] **Update `src/client/App.tsx`**
   - Add global dark background styles
   - Set base typography to Inter
 
@@ -49,7 +49,7 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
 
 ## 📋 Phase 2: Core Game Mechanics Feedback ⚡ CRITICAL
 
-- [ ] **Create `src/client/hooks/useMoveRejection.ts`**
+- [x] **Create `src/client/hooks/useMoveRejection.ts`**
 
   - Custom hook to handle rejection feedback
   - Listen for socket `makeMove` responses with `success: false` and `revealedPosition`
@@ -57,7 +57,7 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
   - Trigger cell-specific animations via position coordinates
   - **Acceptance**: Animation triggers when you click occupied cell
 
-- [ ] **Transform `src/client/components/Cell.tsx`** (LARGE TASK - consider breaking down)
+- [x] **Transform `src/client/components/Cell.tsx`** (LARGE TASK - consider breaking down)
 
   - Add rejection animation state (red flash + shake + 1000ms duration)
   - Implement glow effects for player pieces (teal/coral with 20% opacity box-shadow)
@@ -67,7 +67,7 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
   - Respect `prefers-reduced-motion` for accessibility
   - **Acceptance**: All 4 cell states visually distinct, animations smooth
 
-- [ ] **Integrate animations with game state updates**
+- [x] **Integrate animations with game state updates**
   - Successful move: scale + fade in + glow bloom (200ms)
   - Rejected move: red flash + shake + error overlay + reveal (1000-1500ms)
   - Turn indicator smooth transitions in GameStatus component
@@ -78,13 +78,13 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
 
 ## 📋 Phase 3: Component Visual Upgrades
 
-- [ ] **Transform `src/client/components/GameBoard.tsx`**
+- [x] **Transform `src/client/components/GameBoard.tsx`**
 
   - Dark theme with `#1a1a1a` grid lines
   - Better spacing and layout
   - Centered design improvements
 
-- [ ] **Upgrade `src/client/components/GameStatus.tsx`**
+- [x] **Upgrade `src/client/components/GameStatus.tsx`**
 
   - Bot header with blue accent (`#2196f3`) and robot emoji
   - Status badges with design colors:
@@ -93,7 +93,7 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
     - Bot Thinking: Orange badge with animated dots
   - Use Inter Medium for status messages
 
-- [ ] **Modernize `src/client/components/HomePage.tsx`**
+- [x] **Modernize `src/client/components/HomePage.tsx`**
 
   - Full dark theme conversion (`#0e0e0e` background)
   - Three primary actions with equal visual weight
@@ -101,12 +101,21 @@ UI transformation to match the Kriegspiel design guide. Organized by priority ph
   - Connection status with proper colors
   - Hero section improvements
 
-- [ ] **Polish `src/client/components/QuickMatch.tsx`**
+- [x] **Polish `src/client/components/QuickMatch.tsx`**
+
   - Queue status with orange accent (`#ffc107`)
   - "Looking for opponent..." with spinner animation
   - Wait time counter styling
   - "Play vs Bot Instead" prominent secondary action
   - Loading animations improvements
+
+- [x] **Transform `src/client/components/GamePage.tsx`** ⚠️ **CRITICAL GAP ADDRESSED**
+  - Dark theme conversion for main game layout
+  - Header with proper typography and styling
+  - Connection status with design palette colors
+  - Invite section with blue accent and proper styling
+  - Game display wrapper with dark theme
+  - Loading state styling with design system
 
 ---
 

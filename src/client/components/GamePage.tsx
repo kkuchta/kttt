@@ -1,6 +1,12 @@
 import { GameResult } from '@shared/types/game';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  colors,
+  createGlow,
+  getHoverColor,
+} from '../../shared/constants/colors';
+import { useMoveRejectionWithSocket } from '../hooks/useMoveRejection';
 import { useSocket } from '../hooks/useSocket';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
@@ -14,6 +20,9 @@ export function GamePage() {
   // State for post-bot game options modal
   const [showPostBotGameOptions, setShowPostBotGameOptions] = useState(false);
   const [botGameResult, setBotGameResult] = useState<GameResult | null>(null);
+
+  // Move rejection hook for animations
+  const { isCellAnimating, handleMoveResult } = useMoveRejectionWithSocket();
 
   const {
     isConnected,
@@ -77,6 +86,7 @@ export function GamePage() {
       alert('Game not found! The game ID might be invalid or expired.');
       navigate('/');
     },
+    onMoveResult: handleMoveResult, // Integrate move rejection animations
   });
 
   // Auto-connect and join game when component loads
@@ -142,8 +152,10 @@ export function GamePage() {
       style={{
         minHeight: '100vh',
         padding: '20px',
-        fontFamily: 'Arial, sans-serif',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: colors.background,
+        backgroundImage:
+          'radial-gradient(circle at 30% 20%, rgba(0, 255, 231, 0.03) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(255, 94, 120, 0.03) 0%, transparent 50%)',
+        fontFamily: 'Inter, sans-serif',
       }}
     >
       {/* Header */}
@@ -152,30 +164,62 @@ export function GamePage() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '20px',
-          backgroundColor: 'white',
-          padding: '15px 20px',
-          borderRadius: '10px',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          marginBottom: '25px',
+          backgroundColor: colors.background,
+          border: `2px solid ${colors.gridLines}`,
+          padding: '20px 25px',
+          borderRadius: '15px',
+          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
         }}
       >
         <div>
-          <h1 style={{ margin: 0, color: '#333', fontSize: '24px' }}>
+          <h1
+            style={{
+              margin: 0,
+              color: '#ffffff',
+              fontSize: '28px',
+              fontWeight: '700',
+              fontFamily: 'Inter, sans-serif',
+              textShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
+            }}
+          >
             Kriegspiel Tic Tac Toe
           </h1>
-          <p style={{ margin: '5px 0 0 0', color: '#666', fontSize: '14px' }}>
-            Game ID: <strong>{gameId}</strong>
+          <p
+            style={{
+              margin: '8px 0 0 0',
+              color: colors.textDim,
+              fontSize: '16px',
+              fontFamily: 'Space Grotesk, monospace',
+              letterSpacing: '1px',
+            }}
+          >
+            Game ID: <strong style={{ color: '#ffffff' }}>{gameId}</strong>
           </p>
         </div>
         <Link
           to="/"
           style={{
-            padding: '8px 16px',
-            backgroundColor: '#6c757d',
-            color: 'white',
+            padding: '12px 20px',
+            backgroundColor: colors.textDim,
+            color: '#ffffff',
             textDecoration: 'none',
-            borderRadius: '5px',
-            fontSize: '14px',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: '500',
+            fontFamily: 'Inter, sans-serif',
+            border: `2px solid ${colors.textDim}`,
+            transition: 'all 0.2s ease-in-out',
+          }}
+          onMouseOver={e => {
+            e.currentTarget.style.backgroundColor = '#ffffff';
+            e.currentTarget.style.color = colors.background;
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.backgroundColor = colors.textDim;
+            e.currentTarget.style.color = '#ffffff';
+            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           ← Home
@@ -185,43 +229,60 @@ export function GamePage() {
       {/* Connection Status */}
       <div
         style={{
-          padding: '15px',
-          margin: '20px 0',
-          borderRadius: '10px',
-          backgroundColor: 'white',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          padding: '20px',
+          margin: '0 0 25px 0',
+          borderRadius: '12px',
+          backgroundColor: colors.background,
+          border: `2px solid ${colors.gridLines}`,
+          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
         }}
       >
-        <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>
+        <h3
+          style={{
+            margin: '0 0 15px 0',
+            color: '#ffffff',
+            fontSize: '18px',
+            fontWeight: '600',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
           Connection Status
         </h3>
         <div
           style={{
-            padding: '10px',
-            borderRadius: '5px',
-            backgroundColor: isConnected ? '#d4edda' : '#f8d7da',
-            border: `1px solid ${isConnected ? '#c3e6cb' : '#f5c6cb'}`,
+            padding: '15px 20px',
+            borderRadius: '10px',
+            backgroundColor: isConnected
+              ? createGlow(colors.successGreen, 0.1)
+              : createGlow(colors.rejectionRed, 0.1),
+            border: `2px solid ${isConnected ? colors.successGreen : colors.rejectionRed}`,
+            boxShadow: isConnected
+              ? `0 0 15px ${createGlow(colors.successGreen, 0.2)}`
+              : `0 0 15px ${createGlow(colors.rejectionRed, 0.2)}`,
           }}
         >
           <p
             style={{
               margin: 0,
-              color: isConnected ? '#155724' : '#721c24',
-              fontSize: '14px',
+              color: isConnected ? colors.successGreen : colors.rejectionRed,
+              fontSize: '16px',
+              fontWeight: '600',
+              fontFamily: 'Inter, sans-serif',
             }}
           >
             {isConnecting
-              ? '🔄 Connecting...'
+              ? '🔄 Connecting to server...'
               : isConnected
-                ? '🟢 Connected to server'
-                : '🔴 Disconnected'}
+                ? '🟢 Connected and ready to play'
+                : '🔴 Connection failed'}
           </p>
           {error && (
             <p
               style={{
-                margin: '5px 0 0 0',
-                color: '#721c24',
-                fontSize: '12px',
+                margin: '8px 0 0 0',
+                color: colors.rejectionRed,
+                fontSize: '14px',
+                fontFamily: 'Inter, sans-serif',
               }}
             >
               {error}
@@ -230,8 +291,26 @@ export function GamePage() {
         </div>
 
         {yourPlayer && (
-          <p style={{ margin: '10px 0 0 0', color: '#333' }}>
-            <strong>You are playing as:</strong> {yourPlayer}
+          <p
+            style={{
+              margin: '15px 0 0 0',
+              color: '#ffffff',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            <strong>You are playing as:</strong>{' '}
+            <span
+              style={{
+                color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
+                fontFamily: 'Space Grotesk, monospace',
+                fontSize: '18px',
+                fontWeight: '600',
+              }}
+            >
+              {yourPlayer}
+            </span>
           </p>
         )}
       </div>
@@ -240,27 +319,43 @@ export function GamePage() {
       {(!gameState || !gameState.botInfo) && (
         <div
           style={{
-            padding: '15px',
-            margin: '20px 0',
-            borderRadius: '10px',
-            backgroundColor: 'white',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            padding: '20px',
+            margin: '0 0 25px 0',
+            borderRadius: '12px',
+            backgroundColor: colors.background,
+            border: `2px solid ${colors.botBlue}`,
+            boxShadow: `0 0 20px ${createGlow(colors.botBlue, 0.1)}`,
           }}
         >
-          <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>
-            Invite a Friend
+          <h3
+            style={{
+              margin: '0 0 15px 0',
+              color: colors.botBlue,
+              fontSize: '18px',
+              fontWeight: '600',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            🔗 Invite a Friend
           </h3>
-          <p style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px' }}>
+          <p
+            style={{
+              margin: '0 0 15px 0',
+              color: colors.textDim,
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
             Share this URL with someone to play together:
           </p>
           <div
             style={{
               display: 'flex',
-              gap: '10px',
-              backgroundColor: '#f8f9fa',
-              padding: '10px',
-              borderRadius: '5px',
-              border: '1px solid #dee2e6',
+              gap: '12px',
+              backgroundColor: createGlow(colors.gridLines, 0.1),
+              padding: '15px',
+              borderRadius: '8px',
+              border: `1px solid ${colors.gridLines}`,
             }}
           >
             <input
@@ -269,11 +364,14 @@ export function GamePage() {
               readOnly
               style={{
                 flex: 1,
-                padding: '8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
+                padding: '12px',
+                border: `2px solid ${colors.gridLines}`,
+                borderRadius: '6px',
                 fontSize: '14px',
-                backgroundColor: 'white',
+                fontFamily: 'Space Grotesk, monospace',
+                backgroundColor: colors.background,
+                color: '#ffffff',
+                outline: 'none',
               }}
             />
             <button
@@ -282,13 +380,26 @@ export function GamePage() {
                 alert('Game URL copied to clipboard!');
               }}
               style={{
-                padding: '8px 16px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '3px',
+                padding: '12px 20px',
+                backgroundColor: colors.botBlue,
+                color: '#ffffff',
+                border: `2px solid ${colors.botBlue}`,
+                borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
+                fontWeight: '600',
+                fontFamily: 'Inter, sans-serif',
+                transition: 'all 0.2s ease-in-out',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.backgroundColor = getHoverColor(
+                  colors.botBlue
+                );
+                e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.3)}`;
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.backgroundColor = colors.botBlue;
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               Copy
@@ -301,15 +412,14 @@ export function GamePage() {
       {gameState ? (
         <div
           style={{
-            padding: '20px',
-            borderRadius: '10px',
-            backgroundColor: 'white',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            padding: '25px',
+            borderRadius: '15px',
+            backgroundColor: colors.background,
+            border: `2px solid ${colors.gridLines}`,
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
             textAlign: 'center',
           }}
         >
-          <h3 style={{ margin: '0 0 20px 0', color: '#333' }}>Game Board</h3>
-
           <GameStatus
             status={gameState.status}
             currentTurn={gameState.currentTurn}
@@ -323,6 +433,9 @@ export function GamePage() {
             board={gameState.visibleBoard}
             canMove={gameState.canMove}
             onCellClick={handleCellClick}
+            yourPlayer={gameState.yourPlayer}
+            revealedCells={gameState.revealedCells}
+            isCellRejectionAnimating={isCellAnimating}
           />
 
           <GameRules />
@@ -330,14 +443,22 @@ export function GamePage() {
       ) : (
         <div
           style={{
-            padding: '40px',
-            borderRadius: '10px',
-            backgroundColor: 'white',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            padding: '50px',
+            borderRadius: '15px',
+            backgroundColor: colors.background,
+            border: `2px solid ${colors.gridLines}`,
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
             textAlign: 'center',
           }}
         >
-          <p style={{ color: '#666', fontSize: '18px' }}>
+          <p
+            style={{
+              color: colors.textDim,
+              fontSize: '20px',
+              fontFamily: 'Inter, sans-serif',
+              margin: 0,
+            }}
+          >
             {isConnecting
               ? '🔄 Connecting to game...'
               : isConnected

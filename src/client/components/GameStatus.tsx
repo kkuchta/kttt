@@ -3,6 +3,8 @@ import {
   GameStatus as GameStatusType,
   Player,
 } from '@shared/types/game';
+import React from 'react';
+import { boxShadows, colors, createGlow } from '../../shared/constants/colors';
 
 interface GameStatusProps {
   status: GameStatusType;
@@ -45,11 +47,12 @@ export function GameStatus({
     return (
       <div
         style={{
-          marginBottom: '15px',
-          padding: '12px',
-          borderRadius: '8px',
-          backgroundColor: '#e3f2fd',
-          border: '2px solid #2196f3',
+          marginBottom: '20px',
+          padding: '15px 20px',
+          borderRadius: '10px',
+          backgroundColor: colors.background,
+          border: `2px solid ${colors.botBlue}`,
+          boxShadow: boxShadows.botIndicator,
           textAlign: 'center',
         }}
       >
@@ -58,16 +61,17 @@ export function GameStatus({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
+            gap: '10px',
           }}
         >
-          <span style={{ fontSize: '20px' }}>🤖</span>
+          <span style={{ fontSize: '24px' }}>🤖</span>
           <p
             style={{
               margin: 0,
-              color: '#1565c0',
-              fontSize: '16px',
-              fontWeight: 'bold',
+              color: colors.botBlue,
+              fontSize: '18px',
+              fontWeight: '600',
+              fontFamily: 'Inter, sans-serif',
             }}
           >
             You ({botInfo.humanPlayer}) vs{' '}
@@ -78,11 +82,94 @@ export function GameStatus({
     );
   };
 
+  // Helper function to render status badge
+  const renderStatusBadge = (
+    text: string,
+    type: 'your-turn' | 'opponent-turn' | 'bot-thinking' | 'waiting'
+  ) => {
+    let badgeStyles: React.CSSProperties = {
+      padding: '8px 16px',
+      borderRadius: '20px',
+      fontSize: '14px',
+      fontWeight: '500',
+      fontFamily: 'Inter, sans-serif',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '6px',
+      border: '2px solid',
+      transition: 'all 0.2s ease-in-out',
+    };
+
+    switch (type) {
+      case 'your-turn':
+        badgeStyles = {
+          ...badgeStyles,
+          backgroundColor: createGlow(colors.successGreen, 0.15),
+          borderColor: colors.successGreen,
+          color: colors.successGreen,
+          boxShadow: `0 0 12px ${createGlow(colors.successGreen, 0.3)}`,
+        };
+        break;
+      case 'opponent-turn':
+        badgeStyles = {
+          ...badgeStyles,
+          backgroundColor: createGlow(colors.textDim, 0.1),
+          borderColor: colors.textDim,
+          color: colors.textDim,
+        };
+        break;
+      case 'bot-thinking':
+        badgeStyles = {
+          ...badgeStyles,
+          backgroundColor: createGlow(colors.queueOrange, 0.15),
+          borderColor: colors.queueOrange,
+          color: colors.queueOrange,
+          boxShadow: `0 0 12px ${createGlow(colors.queueOrange, 0.3)}`,
+        };
+        break;
+      case 'waiting':
+        badgeStyles = {
+          ...badgeStyles,
+          backgroundColor: createGlow(colors.textDim, 0.1),
+          borderColor: colors.textDim,
+          color: colors.textDim,
+        };
+        break;
+    }
+
+    return (
+      <div style={badgeStyles}>
+        {type === 'your-turn' && <span>✓</span>}
+        {type === 'bot-thinking' && (
+          <span
+            style={{
+              animation: 'botThinking 1.5s ease-in-out infinite',
+            }}
+          >
+            🤖
+          </span>
+        )}
+        {type === 'waiting' && <span>⏳</span>}
+        <span>{text}</span>
+        {type === 'bot-thinking' && (
+          <span
+            style={{
+              animation: 'dots 1.5s ease-in-out infinite',
+            }}
+          >
+            ...
+          </span>
+        )}
+      </div>
+    );
+  };
+
   // Handle completed games
   if (status === 'completed' && result) {
     if (result.winner) {
       const isYourWin = result.winner === yourPlayer;
       const isBotWin = botInfo && result.winner === botInfo.botPlayer;
+      const winColor = isYourWin ? colors.successGreen : colors.rejectionRed;
 
       return (
         <div>
@@ -90,18 +177,21 @@ export function GameStatus({
           <div
             style={{
               marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: isYourWin ? '#d4edda' : '#f8d7da',
-              border: `2px solid ${isYourWin ? '#28a745' : '#dc3545'}`,
+              padding: '20px',
+              borderRadius: '12px',
+              backgroundColor: createGlow(winColor, 0.1),
+              border: `2px solid ${winColor}`,
               textAlign: 'center',
+              boxShadow: `0 0 20px ${createGlow(winColor, 0.2)}`,
             }}
           >
             <h3
               style={{
-                margin: '0 0 10px 0',
-                color: isYourWin ? '#155724' : '#721c24',
-                fontSize: '24px',
+                margin: '0 0 12px 0',
+                color: winColor,
+                fontSize: '28px',
+                fontWeight: '600',
+                fontFamily: 'Inter, sans-serif',
               }}
             >
               {isYourWin
@@ -112,10 +202,11 @@ export function GameStatus({
             </h3>
             <p
               style={{
-                margin: '5px 0',
-                color: isYourWin ? '#155724' : '#721c24',
+                margin: '8px 0',
+                color: '#ffffff',
                 fontSize: '18px',
-                fontWeight: 'bold',
+                fontWeight: '500',
+                fontFamily: 'Inter, sans-serif',
               }}
             >
               {isYourWin
@@ -129,9 +220,10 @@ export function GameStatus({
             {result.winningLine && (
               <p
                 style={{
-                  margin: '5px 0',
-                  color: isYourWin ? '#155724' : '#721c24',
+                  margin: '8px 0 0 0',
+                  color: colors.textDim,
                   fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif',
                 }}
               >
                 Winning line:{' '}
@@ -151,27 +243,31 @@ export function GameStatus({
           <div
             style={{
               marginBottom: '20px',
-              padding: '15px',
-              borderRadius: '8px',
-              backgroundColor: '#fff3cd',
-              border: '2px solid #ffc107',
+              padding: '20px',
+              borderRadius: '12px',
+              backgroundColor: createGlow(colors.queueOrange, 0.1),
+              border: `2px solid ${colors.queueOrange}`,
               textAlign: 'center',
+              boxShadow: `0 0 20px ${createGlow(colors.queueOrange, 0.2)}`,
             }}
           >
             <h3
               style={{
-                margin: '0 0 10px 0',
-                color: '#856404',
-                fontSize: '24px',
+                margin: '0 0 12px 0',
+                color: colors.queueOrange,
+                fontSize: '28px',
+                fontWeight: '600',
+                fontFamily: 'Inter, sans-serif',
               }}
             >
               🤝 It&apos;s a Draw!
             </h3>
             <p
               style={{
-                margin: '5px 0',
-                color: '#856404',
+                margin: '8px 0',
+                color: '#ffffff',
                 fontSize: '16px',
+                fontFamily: 'Inter, sans-serif',
               }}
             >
               {botInfo
@@ -192,19 +288,32 @@ export function GameStatus({
         <div
           style={{
             marginBottom: '20px',
-            padding: '15px',
-            borderRadius: '8px',
-            backgroundColor: '#cce5ff',
-            border: '2px solid #007bff',
+            padding: '20px',
+            borderRadius: '12px',
+            backgroundColor: createGlow(colors.botBlue, 0.1),
+            border: `2px solid ${colors.botBlue}`,
             textAlign: 'center',
+            boxShadow: boxShadows.botIndicator,
           }}
         >
           <h3
-            style={{ margin: '0 0 10px 0', color: '#004085', fontSize: '18px' }}
+            style={{
+              margin: '0 0 12px 0',
+              color: colors.botBlue,
+              fontSize: '20px',
+              fontWeight: '500',
+              fontFamily: 'Inter, sans-serif',
+            }}
           >
             ⏳ Waiting for another player to join...
           </h3>
-          <p style={{ margin: '5px 0', color: '#004085' }}>
+          <p
+            style={{
+              margin: '8px 0',
+              color: colors.textDim,
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
             Share the game URL to invite someone!
           </p>
         </div>
@@ -217,59 +326,62 @@ export function GameStatus({
   const isYourTurn = canMove && !isBotTurn;
 
   return (
-    <div style={{ marginBottom: '20px' }}>
-      {renderGameTypeHeader()}
+    <>
+      {/* CSS for animations */}
+      <style>{`
+        @keyframes botThinking {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+        
+        @keyframes dots {
+          0%, 20% { opacity: 0; }
+          50% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+      `}</style>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px 15px',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '8px',
-          border: '1px solid #dee2e6',
-          marginBottom: '10px',
-        }}
-      >
-        <div>
-          <p style={{ margin: '0', color: '#333', fontSize: '16px' }}>
-            <strong>Current Turn:</strong>{' '}
-            {botInfo
-              ? currentTurn === botInfo.botPlayer
-                ? `${getBotDisplayName(botInfo.botDifficulty)} (${currentTurn})`
-                : `You (${currentTurn})`
-              : `Player ${currentTurn}`}
-          </p>
-        </div>
+      <div style={{ marginBottom: '20px' }}>
+        {renderGameTypeHeader()}
+
         <div
           style={{
-            padding: '5px 12px',
-            borderRadius: '15px',
-            backgroundColor: isYourTurn
-              ? '#d4edda'
-              : isBotTurn
-                ? '#fff3cd'
-                : '#f8d7da',
-            border: `1px solid ${isYourTurn ? '#28a745' : isBotTurn ? '#ffc107' : '#dc3545'}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '15px 20px',
+            backgroundColor: colors.background,
+            borderRadius: '12px',
+            border: `2px solid ${colors.gridLines}`,
+            marginBottom: '15px',
           }}
         >
-          <p
-            style={{
-              margin: '0',
-              color: isYourTurn ? '#155724' : isBotTurn ? '#856404' : '#721c24',
-              fontSize: '14px',
-              fontWeight: 'bold',
-            }}
-          >
-            {isYourTurn
-              ? '✓ Your Turn'
-              : isBotTurn
-                ? '🤖 Bot Thinking...'
-                : '⏳ Waiting for opponent'}
-          </p>
+          <div>
+            <p
+              style={{
+                margin: '0',
+                color: '#ffffff',
+                fontSize: '16px',
+                fontWeight: '500',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              <strong>Current Turn:</strong>{' '}
+              {botInfo
+                ? currentTurn === botInfo.botPlayer
+                  ? `${getBotDisplayName(botInfo.botDifficulty)} (${currentTurn})`
+                  : `You (${currentTurn})`
+                : `Player ${currentTurn}`}
+            </p>
+          </div>
+
+          {isYourTurn && renderStatusBadge('Your Turn', 'your-turn')}
+          {isBotTurn && renderStatusBadge('Bot Thinking', 'bot-thinking')}
+          {!isYourTurn &&
+            !isBotTurn &&
+            renderStatusBadge("Opponent's Turn", 'opponent-turn')}
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,4 +1,10 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  colors,
+  createGlow,
+  getHoverColor,
+} from '../../shared/constants/colors';
 import { useMatchmaking } from '../hooks/useMatchmaking';
 import { useSocket } from '../hooks/useSocket';
 
@@ -48,44 +54,100 @@ export function QuickMatch() {
     }
   };
 
+  // Primary button style for Quick Match
+  const primaryButtonStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '18px 24px',
+    fontSize: '18px',
+    fontWeight: '600',
+    fontFamily: 'Inter, sans-serif',
+    backgroundColor: colors.queueOrange,
+    color: '#ffffff',
+    border: `2px solid ${colors.queueOrange}`,
+    borderRadius: '10px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    boxShadow: `0 0 15px ${createGlow(colors.queueOrange, 0.2)}`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+  };
+
+  // Secondary button styles
+  const botButtonStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '15px 20px',
+    fontSize: '16px',
+    fontWeight: '600',
+    fontFamily: 'Inter, sans-serif',
+    backgroundColor: colors.botBlue,
+    color: '#ffffff',
+    border: `2px solid ${colors.botBlue}`,
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+    boxShadow: `0 0 12px ${createGlow(colors.botBlue, 0.2)}`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+  };
+
+  const cancelButtonStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '12px 20px',
+    fontSize: '14px',
+    fontWeight: '500',
+    fontFamily: 'Inter, sans-serif',
+    backgroundColor: 'transparent',
+    color: colors.textDim,
+    border: `2px solid ${colors.textDim}`,
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out',
+  };
+
   // If not in queue, show the Quick Match button
   if (!isInQueue) {
     return (
-      <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ color: '#333', marginBottom: '15px' }}>Quick Match</h3>
+      <div>
         <button
           onClick={handleJoinQueue}
           disabled={isConnecting}
           style={{
-            width: '100%',
-            padding: '15px',
-            fontSize: '18px',
-            backgroundColor: '#fd7e14',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
+            ...primaryButtonStyle,
+            opacity: isConnecting ? 0.6 : 1,
             cursor: isConnecting ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.2s',
           }}
           onMouseOver={e => {
             if (!isConnecting) {
-              e.currentTarget.style.backgroundColor = '#e8680f';
+              e.currentTarget.style.backgroundColor = getHoverColor(
+                colors.queueOrange
+              );
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = `0 0 25px ${createGlow(colors.queueOrange, 0.3)}`;
             }
           }}
           onMouseOut={e => {
             if (!isConnecting) {
-              e.currentTarget.style.backgroundColor = '#fd7e14';
+              e.currentTarget.style.backgroundColor = colors.queueOrange;
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.queueOrange, 0.2)}`;
             }
           }}
         >
-          {isConnecting ? 'Connecting...' : 'Find Opponent'}
+          <span>⚡</span>
+          {isConnecting ? 'Connecting...' : 'Find Opponent Now'}
         </button>
+
         <p
           style={{
-            color: '#666',
-            fontSize: '12px',
-            margin: '10px 0 0 0',
+            color: colors.textDim,
+            fontSize: '14px',
+            margin: '12px 0 0 0',
             textAlign: 'center',
+            fontFamily: 'Inter, sans-serif',
           }}
         >
           Get matched with a random opponent instantly!
@@ -94,16 +156,18 @@ export function QuickMatch() {
         {error && (
           <div
             style={{
-              marginTop: '10px',
-              padding: '10px',
-              backgroundColor: '#f8d7da',
-              border: '1px solid #f5c6cb',
-              borderRadius: '5px',
-              color: '#721c24',
+              marginTop: '15px',
+              padding: '15px',
+              backgroundColor: createGlow(colors.rejectionRed, 0.1),
+              border: `2px solid ${colors.rejectionRed}`,
+              borderRadius: '8px',
+              color: colors.rejectionRed,
               fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              boxShadow: `0 0 15px ${createGlow(colors.rejectionRed, 0.1)}`,
             }}
           >
-            {error}
+            <strong>⚠️ Error:</strong> {error}
           </div>
         )}
       </div>
@@ -112,103 +176,151 @@ export function QuickMatch() {
 
   // If in queue, show the queue status with bot option
   return (
-    <div style={{ marginBottom: '30px' }}>
-      <h3 style={{ color: '#333', marginBottom: '15px' }}>
-        Looking for Opponent...
-      </h3>
-
+    <div>
+      {/* Queue Status Display */}
       <div
         style={{
           padding: '20px',
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffeaa7',
-          borderRadius: '5px',
-          marginBottom: '15px',
+          backgroundColor: createGlow(colors.queueOrange, 0.1),
+          border: `2px solid ${colors.queueOrange}`,
+          borderRadius: '12px',
+          marginBottom: '20px',
+          boxShadow: `0 0 20px ${createGlow(colors.queueOrange, 0.2)}`,
         }}
       >
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '10px',
+            justifyContent: 'center',
+            marginBottom: '15px',
           }}
         >
           <div
             style={{
-              width: '20px',
-              height: '20px',
+              width: '12px',
+              height: '12px',
               borderRadius: '50%',
-              backgroundColor: '#fd7e14',
-              marginRight: '10px',
-              animation: 'pulse 2s infinite',
+              backgroundColor: colors.queueOrange,
+              marginRight: '12px',
+              animation: 'queuePulse 2s ease-in-out infinite',
             }}
           />
-          <span style={{ color: '#856404', fontWeight: 'bold' }}>
-            Searching for opponent...
+          <span
+            style={{
+              color: colors.queueOrange,
+              fontWeight: '600',
+              fontSize: '18px',
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            Looking for opponent
+          </span>
+          <span
+            style={{
+              color: colors.queueOrange,
+              fontSize: '18px',
+              marginLeft: '8px',
+              animation: 'dots 1.5s ease-in-out infinite',
+            }}
+          >
+            ...
           </span>
         </div>
 
         {queueStatus && (
-          <div style={{ color: '#856404', fontSize: '14px' }}>
-            <div style={{ marginBottom: '5px' }}>
-              <strong>Position in queue:</strong> {queueStatus.position} of{' '}
-              {queueStatus.queueSize}
+          <div
+            style={{
+              color: '#ffffff',
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                marginBottom: '8px',
+                padding: '8px 12px',
+                backgroundColor: colors.background,
+                borderRadius: '6px',
+                border: `1px solid ${colors.gridLines}`,
+              }}
+            >
+              <span style={{ color: colors.textDim }}>Position:</span>{' '}
+              <strong style={{ color: colors.queueOrange }}>
+                {queueStatus.position} of {queueStatus.queueSize}
+              </strong>
             </div>
-            <div style={{ marginBottom: '5px' }}>
-              <strong>Waiting time:</strong>{' '}
-              {formatWaitTime(queueStatus.elapsedTime)}
+            <div
+              style={{
+                marginBottom: '8px',
+                padding: '8px 12px',
+                backgroundColor: colors.background,
+                borderRadius: '6px',
+                border: `1px solid ${colors.gridLines}`,
+              }}
+            >
+              <span style={{ color: colors.textDim }}>Waiting:</span>{' '}
+              <strong style={{ color: colors.queueOrange }}>
+                {formatWaitTime(queueStatus.elapsedTime)}
+              </strong>
             </div>
-            <div>
-              <strong>Estimated wait:</strong>{' '}
-              {formatWaitTime(queueStatus.estimatedWait)}
+            <div
+              style={{
+                padding: '8px 12px',
+                backgroundColor: colors.background,
+                borderRadius: '6px',
+                border: `1px solid ${colors.gridLines}`,
+              }}
+            >
+              <span style={{ color: colors.textDim }}>Estimated:</span>{' '}
+              <strong style={{ color: colors.queueOrange }}>
+                {formatWaitTime(queueStatus.estimatedWait)}
+              </strong>
             </div>
           </div>
         )}
       </div>
 
-      {/* Bot game option - NEW! */}
-      <button
-        onClick={handlePlayBot}
-        style={{
-          width: '100%',
-          padding: '12px',
-          fontSize: '16px',
-          backgroundColor: '#17a2b8',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-          marginBottom: '10px',
-        }}
-        onMouseOver={e => {
-          e.currentTarget.style.backgroundColor = '#138496';
-        }}
-        onMouseOut={e => {
-          e.currentTarget.style.backgroundColor = '#17a2b8';
-        }}
-      >
-        🤖 Play vs Bot Instead
-      </button>
+      {/* Primary Bot Option - Prominent */}
+      <div style={{ marginBottom: '15px' }}>
+        <button
+          onClick={handlePlayBot}
+          style={botButtonStyle}
+          onMouseOver={e => {
+            e.currentTarget.style.backgroundColor = getHoverColor(
+              colors.botBlue
+            );
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = `0 0 20px ${createGlow(colors.botBlue, 0.3)}`;
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.backgroundColor = colors.botBlue;
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = `0 0 12px ${createGlow(colors.botBlue, 0.2)}`;
+          }}
+        >
+          <span>🤖</span>
+          <span>Play vs Bot Instead</span>
+        </button>
+      </div>
 
+      {/* Secondary Cancel Option */}
       <button
         onClick={handleLeaveQueue}
-        style={{
-          width: '100%',
-          padding: '12px',
-          fontSize: '16px',
-          backgroundColor: '#6c757d',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
+        style={cancelButtonStyle}
         onMouseOver={e => {
-          e.currentTarget.style.backgroundColor = '#5a6268';
+          e.currentTarget.style.backgroundColor = createGlow(
+            colors.textDim,
+            0.1
+          );
+          e.currentTarget.style.borderColor = '#ffffff';
+          e.currentTarget.style.color = '#ffffff';
         }}
         onMouseOut={e => {
-          e.currentTarget.style.backgroundColor = '#6c757d';
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.borderColor = colors.textDim;
+          e.currentTarget.style.color = colors.textDim;
         }}
       >
         Cancel Search
@@ -217,33 +329,46 @@ export function QuickMatch() {
       {error && (
         <div
           style={{
-            marginTop: '10px',
-            padding: '10px',
-            backgroundColor: '#f8d7da',
-            border: '1px solid #f5c6cb',
-            borderRadius: '5px',
-            color: '#721c24',
+            marginTop: '15px',
+            padding: '15px',
+            backgroundColor: createGlow(colors.rejectionRed, 0.1),
+            border: `2px solid ${colors.rejectionRed}`,
+            borderRadius: '8px',
+            color: colors.rejectionRed,
             fontSize: '14px',
+            fontFamily: 'Inter, sans-serif',
+            boxShadow: `0 0 15px ${createGlow(colors.rejectionRed, 0.1)}`,
           }}
         >
-          {error}
+          <strong>⚠️ Error:</strong> {error}
         </div>
       )}
 
       <style>
         {`
-          @keyframes pulse {
-            0% {
+          @keyframes queuePulse {
+            0%, 100% {
               transform: scale(1);
               opacity: 1;
             }
             50% {
-              transform: scale(1.2);
-              opacity: 0.5;
+              transform: scale(1.3);
+              opacity: 0.6;
             }
-            100% {
-              transform: scale(1);
-              opacity: 1;
+          }
+          
+          @keyframes dots {
+            0%, 20% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+          
+          /* Respect reduced motion preference */
+          @media (prefers-reduced-motion: reduce) {
+            * {
+              animation-duration: 0.01ms !important;
+              animation-iteration-count: 1 !important;
+              transition-duration: 0.01ms !important;
             }
           }
         `}
