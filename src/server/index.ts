@@ -28,6 +28,8 @@ const storage = createStorage(storageConfig);
 
 console.log(`🗄️  Using Redis storage`);
 console.log(`🔗 Redis URL: ${storageConfig.redis.url}`);
+console.log(`🔍 REDIS_URL env var: ${process.env.REDIS_URL || 'NOT SET'}`);
+console.log(`🔍 NODE_ENV: ${process.env.NODE_ENV || 'NOT SET'}`);
 
 // Initialize Express app
 const app = express();
