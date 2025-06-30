@@ -25,6 +25,7 @@ interface RevealState {
   // Winner line highlighting
   isHighlightingWinnerLine: boolean;
   winnerLineCells: Position[]; // Cells in the winning line to highlight
+  isWinnerLineAnimating: boolean; // Whether winner line animation is active
 }
 
 // Initial reveal state
@@ -37,6 +38,7 @@ const initialRevealState: RevealState = {
   revealSequence: [],
   isHighlightingWinnerLine: false,
   winnerLineCells: [],
+  isWinnerLineAnimating: false,
 };
 
 // Calculate the sequence of cells to reveal (hidden pieces)
@@ -210,11 +212,15 @@ export function GamePage() {
     }
     // Note: GameStatus component now handles result display, no need for alerts
 
-    // Reset reveal state but keep the final board for completed games
+    // Reset reveal state but keep the final board and winner line for completed games
     setRevealState(prev => ({
       ...initialRevealState,
       // Keep the revealed board so completed games continue showing all pieces
       revealedBoard: prev.revealedBoard,
+      // Keep winner line highlighted but stop animation
+      isHighlightingWinnerLine: prev.isHighlightingWinnerLine,
+      winnerLineCells: prev.winnerLineCells,
+      isWinnerLineAnimating: false, // Stop the pulsing animation
     }));
   }, [botGameResult, gameState?.botInfo, gameState?.yourPlayer, yourPlayer]);
 
@@ -286,6 +292,7 @@ export function GamePage() {
                       ...prev,
                       isHighlightingWinnerLine: true,
                       winnerLineCells: botGameResult.winningLine!,
+                      isWinnerLineAnimating: true,
                     }));
 
                     // Phase 4: End winner line highlight and show final result UI
@@ -358,6 +365,7 @@ export function GamePage() {
       revealSequence: revealSequence,
       isHighlightingWinnerLine: false,
       winnerLineCells: [],
+      isWinnerLineAnimating: false,
     });
   };
 
@@ -706,6 +714,7 @@ export function GamePage() {
             revealStep={revealState.revealStep}
             isHighlightingWinnerLine={revealState.isHighlightingWinnerLine}
             winnerLineCells={revealState.winnerLineCells}
+            isWinnerLineAnimating={revealState.isWinnerLineAnimating}
             gameCompleted={gameState.status === 'completed'}
           />
 

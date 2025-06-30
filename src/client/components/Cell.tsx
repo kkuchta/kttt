@@ -16,6 +16,7 @@ interface CellProps {
   isRejectionAnimating?: boolean; // Whether rejection animation is active
   isRevealing?: boolean; // Whether this cell is currently in reveal animation
   isHighlightingWinnerLine?: boolean; // Whether this cell is part of the winning line
+  isWinnerLineAnimating?: boolean; // Whether winner line is actively animating (vs permanent)
 }
 
 // Cell state types for styling
@@ -49,7 +50,8 @@ function getCellStyles(
   state: CellDisplayState,
   value: CellState,
   canMove: boolean,
-  canHover: boolean
+  canHover: boolean,
+  isWinnerLineAnimating: boolean = false
 ) {
   const baseStyles: React.CSSProperties = {
     width: '80px',
@@ -141,15 +143,20 @@ function getCellStyles(
     }
 
     case 'winningLine': {
-      // Use enhanced player color with golden glow animation for winning line
+      // Use enhanced player color with golden glow for winning line
       const winnerColor = value === 'X' ? colors.xAccent : colors.oAccent;
       return {
         ...baseStyles,
         color: winnerColor,
         backgroundColor: createGlow(colors.winningLine, 0.2),
         border: `2px solid ${colors.winningLine}`,
-        boxShadow: `0 0 30px ${createGlow(colors.winningLine, 0.6)}`,
-        animation: 'winningLineGlow 1s ease-in-out infinite',
+        // Use stronger glow and animation during active phase, subtle glow when permanent
+        boxShadow: isWinnerLineAnimating
+          ? `0 0 30px ${createGlow(colors.winningLine, 0.6)}`
+          : `0 0 15px ${createGlow(colors.winningLine, 0.3)}`,
+        animation: isWinnerLineAnimating
+          ? 'winningLineGlow 1s ease-in-out infinite'
+          : 'none',
         zIndex: 15, // Above revealing but below rejecting
         transform: 'scale(1.05)', // Slightly larger for emphasis
       };
@@ -169,6 +176,7 @@ export function Cell({
   isRejectionAnimating = false,
   isRevealing = false,
   isHighlightingWinnerLine = false,
+  isWinnerLineAnimating = false,
 }: CellProps) {
   const state = getCellDisplayState(
     value,
@@ -179,7 +187,13 @@ export function Cell({
     isHighlightingWinnerLine
   );
   const canHover = !window.matchMedia('(pointer: coarse)').matches; // No hover on touch devices
-  const styles = getCellStyles(state, value, canMove, canHover);
+  const styles = getCellStyles(
+    state,
+    value,
+    canMove,
+    canHover,
+    isWinnerLineAnimating
+  );
 
   // Respect reduced motion preference
   const prefersReducedMotion = window.matchMedia(

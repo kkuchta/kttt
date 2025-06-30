@@ -19,6 +19,7 @@ interface GameBoardProps {
   // Winner line highlighting
   isHighlightingWinnerLine?: boolean;
   winnerLineCells?: Position[];
+  isWinnerLineAnimating?: boolean; // Whether winner line is actively animating
   // Game completion state
   gameCompleted?: boolean; // Whether the game has ended (to show full board)
 }
@@ -36,6 +37,7 @@ export function GameBoard({
   revealStep = 0,
   isHighlightingWinnerLine = false,
   winnerLineCells = [],
+  isWinnerLineAnimating,
   gameCompleted,
 }: GameBoardProps) {
   // Helper function to check if a cell is revealed
@@ -167,6 +169,7 @@ export function GameBoard({
                 isHighlightingWinnerLine={
                   isHighlightingWinnerLine && isCellInWinnerLine(row, col)
                 }
+                isWinnerLineAnimating={isWinnerLineAnimating}
               />
             );
           })}
