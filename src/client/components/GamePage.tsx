@@ -22,6 +22,9 @@ interface RevealState {
   totalSteps: number;
   revealingCells: Position[]; // Cells currently being revealed with animation
   revealSequence: Position[]; // Order in which cells will be revealed
+  // Winner line highlighting
+  isHighlightingWinnerLine: boolean;
+  winnerLineCells: Position[]; // Cells in the winning line to highlight
 }
 
 // Initial reveal state
@@ -32,6 +35,8 @@ const initialRevealState: RevealState = {
   totalSteps: 0,
   revealingCells: [],
   revealSequence: [],
+  isHighlightingWinnerLine: false,
+  winnerLineCells: [],
 };
 
 // Calculate the sequence of cells to reveal (hidden pieces)
@@ -205,8 +210,12 @@ export function GamePage() {
     }
     // Note: GameStatus component now handles result display, no need for alerts
 
-    // Reset reveal state
-    setRevealState(initialRevealState);
+    // Reset reveal state but keep the final board for completed games
+    setRevealState(prev => ({
+      ...initialRevealState,
+      // Keep the revealed board so completed games continue showing all pieces
+      revealedBoard: prev.revealedBoard,
+    }));
   }, [botGameResult, gameState?.botInfo, gameState?.yourPlayer, yourPlayer]);
 
   // Reveal animation orchestration - removed handleRevealComplete from deps to prevent loop
@@ -233,9 +242,9 @@ export function GamePage() {
     revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
     revealTimeoutRefs.current = [];
 
-    // Phase 1: Initial pause (500ms)
+    // Phase 1: Initial pause (700ms)
     const initialPauseTimeout = setTimeout(() => {
-      // Phase 2: Sequential piece reveal (200ms per piece)
+      // Phase 2: Sequential piece reveal (300ms per piece)
       revealState.revealSequence.forEach((position, index) => {
         const revealTimeout = setTimeout(
           () => {
@@ -266,23 +275,45 @@ export function GamePage() {
 
               // Check if this was the last piece
               if (index === revealState.revealSequence.length - 1) {
-                // Phase 4: Show final result UI after slight delay
-                const completeTimeout = setTimeout(() => {
-                  console.log(
-                    '🎭 All pieces revealed, calling handleRevealComplete'
-                  );
-                  handleRevealComplete();
-                }, 200); // Small delay after last animation
-                revealTimeoutRefs.current.push(completeTimeout);
+                // Phase 3: Winner line highlight (if applicable)
+                const startWinnerHighlightTimeout = setTimeout(() => {
+                  if (
+                    botGameResult?.winningLine &&
+                    botGameResult.winningLine.length > 0
+                  ) {
+                    console.log('🎭 Starting winner line highlight');
+                    setRevealState(prev => ({
+                      ...prev,
+                      isHighlightingWinnerLine: true,
+                      winnerLineCells: botGameResult.winningLine!,
+                    }));
+
+                    // Phase 4: End winner line highlight and show final result UI
+                    const endHighlightTimeout = setTimeout(() => {
+                      console.log(
+                        '🎭 Winner line highlight complete, calling handleRevealComplete'
+                      );
+                      handleRevealComplete();
+                    }, 700); // Winner line highlight duration
+                    revealTimeoutRefs.current.push(endHighlightTimeout);
+                  } else {
+                    // No winner line (draw), proceed directly to final result
+                    console.log(
+                      '🎭 No winner line to highlight, calling handleRevealComplete'
+                    );
+                    handleRevealComplete();
+                  }
+                }, 300); // Small delay after last piece animation
+                revealTimeoutRefs.current.push(startWinnerHighlightTimeout);
               }
             }, 800); // Match pieceReveal animation duration
             revealTimeoutRefs.current.push(removeTimeout);
           },
-          500 + index * 200
+          700 + index * 300
         ); // Initial pause + staggered timing
         revealTimeoutRefs.current.push(revealTimeout);
       });
-    }, 500); // Initial pause
+    }, 700); // Initial pause
 
     revealTimeoutRefs.current.push(initialPauseTimeout);
 
@@ -325,6 +356,8 @@ export function GamePage() {
       totalSteps: hiddenPieces,
       revealingCells: [],
       revealSequence: revealSequence,
+      isHighlightingWinnerLine: false,
+      winnerLineCells: [],
     });
   };
 
@@ -671,6 +704,9 @@ export function GamePage() {
             revealBoard={revealState.revealedBoard}
             revealingCells={revealState.revealingCells}
             revealStep={revealState.revealStep}
+            isHighlightingWinnerLine={revealState.isHighlightingWinnerLine}
+            winnerLineCells={revealState.winnerLineCells}
+            gameCompleted={gameState.status === 'completed'}
           />
 
           <GameRules />

@@ -46,7 +46,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 - [x] Implement reveal phases
   - [x] Phase 1: Initial pause with board dimming (500ms)
   - [x] Phase 2: Sequential piece reveal (1500ms total, ~200ms per piece)
-  - [ ] Phase 3: Winner line highlight if applicable (500ms)
+  - [x] Phase 3: Winner line highlight if applicable (500ms)
   - [x] Phase 4: Show final result UI
 
 **🎉 CORE REVEAL EXPERIENCE NOW WORKING! 🎉**
@@ -117,4 +117,4 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 - [ ] The reveal feels like a reward, not a delay
 - [ ] All edge cases (draws, quick games, disconnects) work smoothly
 
-**🎭 Animation timing reset to production speeds (500ms pause, 200ms per piece) ✅**
+**🎭 Animation timing updated to slower, more dramatic speeds (700ms pause, 300ms per piece) ✅**

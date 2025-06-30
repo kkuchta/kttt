@@ -15,6 +15,7 @@ interface CellProps {
   isRevealed?: boolean; // Whether this opponent piece was revealed
   isRejectionAnimating?: boolean; // Whether rejection animation is active
   isRevealing?: boolean; // Whether this cell is currently in reveal animation
+  isHighlightingWinnerLine?: boolean; // Whether this cell is part of the winning line
 }
 
 // Cell state types for styling
@@ -23,16 +24,19 @@ type CellDisplayState =
   | 'yours'
   | 'revealed'
   | 'rejecting'
-  | 'revealing';
+  | 'revealing'
+  | 'winningLine';
 
 function getCellDisplayState(
   value: CellState,
   yourPlayer: Player | null,
   isRevealed: boolean = false,
   isRejectionAnimating: boolean = false,
-  isRevealing: boolean = false
+  isRevealing: boolean = false,
+  isHighlightingWinnerLine: boolean = false
 ): CellDisplayState {
   if (isRejectionAnimating) return 'rejecting';
+  if (isHighlightingWinnerLine && value !== null) return 'winningLine';
   if (isRevealing) return 'revealing';
   if (value === null) return 'empty';
   if (value === yourPlayer) return 'yours';
@@ -136,6 +140,21 @@ function getCellStyles(
       };
     }
 
+    case 'winningLine': {
+      // Use enhanced player color with golden glow animation for winning line
+      const winnerColor = value === 'X' ? colors.xAccent : colors.oAccent;
+      return {
+        ...baseStyles,
+        color: winnerColor,
+        backgroundColor: createGlow(colors.winningLine, 0.2),
+        border: `2px solid ${colors.winningLine}`,
+        boxShadow: `0 0 30px ${createGlow(colors.winningLine, 0.6)}`,
+        animation: 'winningLineGlow 1s ease-in-out infinite',
+        zIndex: 15, // Above revealing but below rejecting
+        transform: 'scale(1.05)', // Slightly larger for emphasis
+      };
+    }
+
     default:
       return baseStyles;
   }
@@ -149,13 +168,15 @@ export function Cell({
   isRevealed = false,
   isRejectionAnimating = false,
   isRevealing = false,
+  isHighlightingWinnerLine = false,
 }: CellProps) {
   const state = getCellDisplayState(
     value,
     yourPlayer,
     isRevealed,
     isRejectionAnimating,
-    isRevealing
+    isRevealing,
+    isHighlightingWinnerLine
   );
   const canHover = !window.matchMedia('(pointer: coarse)').matches; // No hover on touch devices
   const styles = getCellStyles(state, value, canMove, canHover);
@@ -193,6 +214,17 @@ export function Cell({
           }
         }
         
+        @keyframes winningLineGlow {
+          0%, 100% { 
+            box-shadow: 0 0 20px ${createGlow(colors.winningLine, 0.4)};
+            transform: scale(1.05);
+          }
+          50% { 
+            box-shadow: 0 0 40px ${createGlow(colors.winningLine, 0.8)};
+            transform: scale(1.08);
+          }
+        }
+        
         /* Hover effects for desktop */
         @media (hover: hover) and (pointer: fine) {
           .cell-empty:hover {
@@ -216,7 +248,9 @@ export function Cell({
                 ? `Revealed ${value}`
                 : state === 'rejecting'
                   ? 'Move rejected'
-                  : 'Revealing'
+                  : state === 'winningLine'
+                    ? 'Winning line'
+                    : 'Revealing'
         }
       >
         {/* Cell content */}

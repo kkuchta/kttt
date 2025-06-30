@@ -16,6 +16,11 @@ interface GameBoardProps {
   // Phase 3: Animation orchestration
   revealingCells?: Position[];
   revealStep?: number; // Track how many pieces have been revealed
+  // Winner line highlighting
+  isHighlightingWinnerLine?: boolean;
+  winnerLineCells?: Position[];
+  // Game completion state
+  gameCompleted?: boolean; // Whether the game has ended (to show full board)
 }
 
 export function GameBoard({
@@ -29,6 +34,9 @@ export function GameBoard({
   revealBoard = null,
   revealingCells = [],
   revealStep = 0,
+  isHighlightingWinnerLine = false,
+  winnerLineCells = [],
+  gameCompleted,
 }: GameBoardProps) {
   // Helper function to check if a cell is revealed
   const isCellRevealed = (row: number, col: number): boolean => {
@@ -40,8 +48,18 @@ export function GameBoard({
     return revealingCells.some(pos => pos.row === row && pos.col === col);
   };
 
+  // Helper function to check if a cell is in the winner line
+  const isCellInWinnerLine = (row: number, col: number): boolean => {
+    return winnerLineCells.some(pos => pos.row === row && pos.col === col);
+  };
+
   // Create progressive board for reveal mode
   const getDisplayBoard = (): Board => {
+    // If game is completed and we have the final board, but we're NOT currently revealing, show complete board
+    if (gameCompleted && revealBoard && !isInRevealMode) {
+      return revealBoard; // Show complete final board for completed games (after reveal finishes)
+    }
+
     if (!isInRevealMode || !revealBoard) {
       return board; // Normal mode - use filtered board
     }
@@ -146,6 +164,9 @@ export function GameBoard({
                   isCellRejectionAnimating?.(row, col) ?? false
                 }
                 isRevealing={isCellRevealing(row, col)}
+                isHighlightingWinnerLine={
+                  isHighlightingWinnerLine && isCellInWinnerLine(row, col)
+                }
               />
             );
           })}

@@ -12,6 +12,7 @@ export const colors = {
   // Feedback colors
   rejectionRed: '#ff3c3c', // Primary - Move rejection flash
   successGreen: '#00ff99', // Move accepted confirmation
+  winningLine: '#ffd700', // Golden yellow for winning line highlight
 
   // UI accent colors
   botBlue: '#2196f3', // Bot game indicators and headers
@@ -55,6 +56,7 @@ export const glows = {
   oGlow: createGlow(colors.oAccent, 0.2),
   rejectionGlow: createGlow(colors.rejectionRed, 0.3),
   successGlow: createGlow(colors.successGreen, 0.2),
+  winningLineGlow: createGlow(colors.winningLine, 0.4),
   botGlow: createGlow(colors.botBlue, 0.2),
   queueGlow: createGlow(colors.queueOrange, 0.2),
 } as const;
@@ -65,6 +67,7 @@ export const boxShadows = {
   oPiece: `0 0 20px ${glows.oGlow}`,
   rejection: `0 0 25px ${glows.rejectionGlow}`,
   success: `0 0 15px ${glows.successGlow}`,
+  winningLine: `0 0 30px ${glows.winningLineGlow}`,
   botIndicator: `0 0 15px ${glows.botGlow}`,
   queueStatus: `0 0 15px ${glows.queueGlow}`,
 } as const;
