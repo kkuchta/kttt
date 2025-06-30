@@ -1,5 +1,5 @@
-import { GameResult } from '@shared/types/game';
-import { useEffect, useState } from 'react';
+import { Board, GameResult, Player, Position } from '@shared/types/game';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   colors,
@@ -14,6 +14,95 @@ import { GameStatus } from './GameStatus';
 import { PageLayout } from './PageLayout';
 import { PostBotGameOptions } from './PostBotGameOptions';
 
+// Board reveal state interface
+interface RevealState {
+  isRevealing: boolean;
+  revealedBoard: Board | null;
+  revealStep: number;
+  totalSteps: number;
+  revealingCells: Position[]; // Cells currently being revealed with animation
+  revealSequence: Position[]; // Order in which cells will be revealed
+}
+
+// Initial reveal state
+const initialRevealState: RevealState = {
+  isRevealing: false,
+  revealedBoard: null,
+  revealStep: 0,
+  totalSteps: 0,
+  revealingCells: [],
+  revealSequence: [],
+};
+
+// Calculate the sequence of cells to reveal (hidden pieces)
+const calculateRevealSequence = (
+  currentVisibleBoard: Board,
+  finalBoard: Board,
+  yourPlayer: Player | null
+): Position[] => {
+  const hiddenCells: Position[] = [];
+
+  console.log('🔍 Calculating reveal sequence:');
+  console.log('Current visible board:', currentVisibleBoard);
+  console.log('Final board:', finalBoard);
+  console.log('Your player:', yourPlayer);
+
+  // Create a proper pre-reveal board that includes ALL player pieces from final board
+  const preRevealBoard: Board = currentVisibleBoard.map(row => [
+    ...row,
+  ]) as Board;
+
+  // Add any missing player pieces from final board (like the winning move)
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const finalCell = finalBoard[row][col];
+
+      // If final board has player's piece but current visible doesn't, add it
+      if (finalCell === yourPlayer && preRevealBoard[row][col] === null) {
+        console.log(
+          `🔍 Adding missing player piece at (${row},${col}): ${finalCell}`
+        );
+        preRevealBoard[row][col] = finalCell;
+      }
+    }
+  }
+
+  console.log('Pre-reveal board (with all player pieces):', preRevealBoard);
+
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const preRevealCell = preRevealBoard[row][col];
+      const finalCell = finalBoard[row][col];
+
+      // Find opponent pieces that are in finalBoard but not in preRevealBoard
+      if (
+        finalCell !== null &&
+        finalCell !== yourPlayer &&
+        preRevealCell === null
+      ) {
+        console.log(
+          `🔍 Hidden opponent piece found at (${row},${col}): ${finalCell}`
+        );
+        hiddenCells.push({ row, col });
+      } else if (preRevealCell !== finalCell) {
+        console.log(
+          `🔍 Mismatch at (${row},${col}): preReveal=${preRevealCell}, final=${finalCell}`
+        );
+      } else {
+        console.log(`🔍 Same at (${row},${col}): ${preRevealCell}`);
+      }
+    }
+  }
+
+  console.log('🔍 Hidden opponent cells to reveal:', hiddenCells);
+
+  // For now, reveal in reading order (top-left to bottom-right)
+  return hiddenCells.sort((a, b) => {
+    if (a.row !== b.row) return a.row - b.row;
+    return a.col - b.col;
+  });
+};
+
 export function GamePage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
@@ -21,6 +110,14 @@ export function GamePage() {
   // State for post-bot game options modal
   const [showPostBotGameOptions, setShowPostBotGameOptions] = useState(false);
   const [botGameResult, setBotGameResult] = useState<GameResult | null>(null);
+
+  // Board reveal state
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [revealState, setRevealState] =
+    useState<RevealState>(initialRevealState);
+
+  // Refs for managing reveal animation timing
+  const revealTimeoutRefs = useRef<number[]>([]);
 
   // Move rejection hook for animations
   const { isCellAnimating, handleMoveResult } = useMoveRejectionWithSocket();
@@ -52,21 +149,28 @@ export function GamePage() {
     onGameOver: data => {
       console.log('Game over:', data);
 
-      // Check if this is a bot game
-      if (gameState?.botInfo) {
-        // For bot games, show the post-game options modal
-        setBotGameResult(data.result);
-        setShowPostBotGameOptions(true);
+      // Instead of showing immediate alerts/modals, start the reveal animation
+      if (data.finalBoard) {
+        startReveal(data.finalBoard, data.result);
       } else {
-        // For human games, keep the existing alert behavior
-        const currentPlayer = yourPlayer || gameState?.yourPlayer;
+        // Fallback to old behavior if no finalBoard (shouldn't happen)
+        console.warn('No finalBoard received in game-over event');
 
-        // Show win announcement
-        if (data.result.winner) {
-          const isYourWin = data.result.winner === currentPlayer;
-          alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+        // Check if this is a bot game
+        if (gameState?.botInfo) {
+          setBotGameResult(data.result);
+          setShowPostBotGameOptions(true);
         } else {
-          alert('🤝 Game ended in a draw!');
+          // For human games, keep the existing alert behavior
+          const currentPlayer = yourPlayer || gameState?.yourPlayer;
+
+          // Show win announcement
+          if (data.result.winner) {
+            const isYourWin = data.result.winner === currentPlayer;
+            alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+          } else {
+            alert('🤝 Game ended in a draw!');
+          }
         }
       }
 
@@ -89,6 +193,149 @@ export function GamePage() {
     },
     onMoveResult: handleMoveResult, // Integrate move rejection animations
   });
+
+  // Reveal completion callback - memoized to prevent useEffect loops
+  const handleRevealComplete = useCallback(() => {
+    console.log('🎭 Board reveal animation completed');
+
+    // After reveal completes, show the appropriate game over UI
+    if (botGameResult && gameState?.botInfo) {
+      // For bot games, show the post-game options modal
+      setShowPostBotGameOptions(true);
+    } else {
+      // For human games, show win announcement
+      const currentPlayer = yourPlayer || gameState?.yourPlayer;
+
+      if (botGameResult?.winner) {
+        const isYourWin = botGameResult.winner === currentPlayer;
+        alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+      } else {
+        alert('🤝 Game ended in a draw!');
+      }
+    }
+
+    // Reset reveal state
+    setRevealState(initialRevealState);
+  }, [botGameResult, gameState?.botInfo, gameState?.yourPlayer, yourPlayer]);
+
+  // Reveal animation orchestration - removed handleRevealComplete from deps to prevent loop
+  useEffect(() => {
+    if (!revealState.isRevealing || revealState.revealSequence.length === 0) {
+      return;
+    }
+
+    console.log('🎭 Starting sequential reveal animation');
+
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    if (prefersReducedMotion) {
+      // Instant reveal for accessibility
+      console.log('🎭 Using instant reveal (reduced motion)');
+      handleRevealComplete();
+      return;
+    }
+
+    // Clear any existing timeouts
+    revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+    revealTimeoutRefs.current = [];
+
+    // Phase 1: Initial pause (2000ms - slowed for debugging)
+    const initialPauseTimeout = setTimeout(() => {
+      // Phase 2: Sequential piece reveal (1000ms per piece - slowed for debugging)
+      revealState.revealSequence.forEach((position, index) => {
+        const revealTimeout = setTimeout(
+          () => {
+            console.log(
+              `🎭 Revealing piece ${index + 1}/${revealState.revealSequence.length} at (${position.row},${position.col})`
+            );
+
+            // Add this cell to revealing cells
+            setRevealState(prev => ({
+              ...prev,
+              revealStep: index + 1,
+              revealingCells: [...prev.revealingCells, position],
+            }));
+
+            // Remove from revealing cells after animation (800ms, matching CSS animation)
+            const removeTimeout = setTimeout(() => {
+              console.log(
+                `🎭 Finished revealing piece at (${position.row},${position.col})`
+              );
+
+              setRevealState(prev => ({
+                ...prev,
+                revealingCells: prev.revealingCells.filter(
+                  cell =>
+                    !(cell.row === position.row && cell.col === position.col)
+                ),
+              }));
+
+              // Check if this was the last piece
+              if (index === revealState.revealSequence.length - 1) {
+                // Phase 4: Show final result UI after delay (1000ms - slowed for debugging)
+                const completeTimeout = setTimeout(() => {
+                  console.log(
+                    '🎭 All pieces revealed, calling handleRevealComplete'
+                  );
+                  handleRevealComplete();
+                }, 1000); // Longer delay for debugging
+                revealTimeoutRefs.current.push(completeTimeout);
+              }
+            }, 800); // Match pieceReveal animation duration
+            revealTimeoutRefs.current.push(removeTimeout);
+          },
+          2000 + index * 1000
+        ); // Initial pause + much slower staggered timing
+        revealTimeoutRefs.current.push(revealTimeout);
+      });
+    }, 2000); // Longer initial pause for debugging
+
+    revealTimeoutRefs.current.push(initialPauseTimeout);
+
+    // Cleanup function
+    return () => {
+      revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+      revealTimeoutRefs.current = [];
+    };
+  }, [revealState.isRevealing, revealState.revealSequence]);
+
+  // Start reveal animation
+  const startReveal = (finalBoard: Board, gameResult: GameResult) => {
+    console.log('🎭 Starting board reveal animation', {
+      finalBoard,
+      gameResult,
+    });
+
+    // Store the game result for use after reveal
+    setBotGameResult(gameResult);
+
+    // Calculate total steps (number of hidden pieces to reveal)
+    const currentVisibleBoard = gameState?.visibleBoard;
+    let hiddenPieces = 0;
+    let revealSequence: Position[] = [];
+
+    if (currentVisibleBoard) {
+      revealSequence = calculateRevealSequence(
+        currentVisibleBoard,
+        finalBoard,
+        yourPlayer || gameState?.yourPlayer
+      );
+      hiddenPieces = revealSequence.length;
+    }
+
+    // Set reveal state
+    setRevealState({
+      isRevealing: true,
+      revealedBoard: finalBoard,
+      revealStep: 0,
+      totalSteps: hiddenPieces,
+      revealingCells: [],
+      revealSequence: revealSequence,
+    });
+  };
 
   // Auto-connect and join game when component loads
   useEffect(() => {
@@ -428,6 +675,10 @@ export function GamePage() {
             yourPlayer={gameState.yourPlayer}
             revealedCells={gameState.revealedCells}
             isCellRejectionAnimating={isCellAnimating}
+            isInRevealMode={revealState.isRevealing}
+            revealBoard={revealState.revealedBoard}
+            revealingCells={revealState.revealingCells}
+            revealStep={revealState.revealStep}
           />
 
           <GameRules />

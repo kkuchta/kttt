@@ -14,18 +14,26 @@ interface CellProps {
   yourPlayer: Player | null;
   isRevealed?: boolean; // Whether this opponent piece was revealed
   isRejectionAnimating?: boolean; // Whether rejection animation is active
+  isRevealing?: boolean; // Whether this cell is currently in reveal animation
 }
 
 // Cell state types for styling
-type CellDisplayState = 'empty' | 'yours' | 'revealed' | 'rejecting';
+type CellDisplayState =
+  | 'empty'
+  | 'yours'
+  | 'revealed'
+  | 'rejecting'
+  | 'revealing';
 
 function getCellDisplayState(
   value: CellState,
   yourPlayer: Player | null,
   isRevealed: boolean = false,
-  isRejectionAnimating: boolean = false
+  isRejectionAnimating: boolean = false,
+  isRevealing: boolean = false
 ): CellDisplayState {
   if (isRejectionAnimating) return 'rejecting';
+  if (isRevealing) return 'revealing';
   if (value === null) return 'empty';
   if (value === yourPlayer) return 'yours';
   if (isRevealed || value !== yourPlayer) return 'revealed';
@@ -112,6 +120,22 @@ function getCellStyles(
         zIndex: 10, // Ensure rejection animation is above other elements
       };
 
+    case 'revealing': {
+      // Use opponent color with fade-in animation
+      const revealingColor = value === 'X' ? colors.xAccent : colors.oAccent;
+      const revealingGlow =
+        value === 'X' ? boxShadows.xPiece : boxShadows.oPiece;
+      return {
+        ...baseStyles,
+        color: revealingColor,
+        boxShadow: revealingGlow,
+        border: `2px solid ${revealingColor}`,
+        opacity: 0.8, // Slightly transparent as per design
+        animation: 'pieceReveal 0.8s ease-in-out',
+        zIndex: 10, // Ensure revealing animation is above other elements
+      };
+    }
+
     default:
       return baseStyles;
   }
@@ -124,12 +148,14 @@ export function Cell({
   yourPlayer,
   isRevealed = false,
   isRejectionAnimating = false,
+  isRevealing = false,
 }: CellProps) {
   const state = getCellDisplayState(
     value,
     yourPlayer,
     isRevealed,
-    isRejectionAnimating
+    isRejectionAnimating,
+    isRevealing
   );
   const canHover = !window.matchMedia('(pointer: coarse)').matches; // No hover on touch devices
   const styles = getCellStyles(state, value, canMove, canHover);
@@ -156,6 +182,17 @@ export function Cell({
           20%, 40%, 60%, 80% { transform: translateX(3px) scale(1.05); }
         }
         
+        @keyframes pieceReveal {
+          0% { 
+            opacity: 0; 
+            transform: scale(0.5); 
+          }
+          100% { 
+            opacity: 0.8; 
+            transform: scale(1); 
+          }
+        }
+        
         /* Hover effects for desktop */
         @media (hover: hover) and (pointer: fine) {
           .cell-empty:hover {
@@ -177,7 +214,9 @@ export function Cell({
               ? `Your ${value}`
               : state === 'revealed'
                 ? `Revealed ${value}`
-                : 'Move rejected'
+                : state === 'rejecting'
+                  ? 'Move rejected'
+                  : 'Revealing'
         }
       >
         {/* Cell content */}

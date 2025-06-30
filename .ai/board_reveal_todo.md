@@ -8,54 +8,54 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 
 ## Phase 1: State Management & Infrastructure
 
-- [ ] Add reveal state management to GamePage
+- [x] Add reveal state management to GamePage
 
-  - [ ] Create RevealState interface with isRevealing, revealedBoard, revealStep, totalSteps
-  - [ ] Add useState for reveal state in GamePage component
-  - [ ] Add reveal completion callback system
+  - [x] Create RevealState interface with isRevealing, revealedBoard, revealStep, totalSteps
+  - [x] Add useState for reveal state in GamePage component
+  - [x] Add reveal completion callback system
 
-- [ ] Enhance GameBoard component props
-  - [ ] Add isInRevealMode prop to GameBoard
-  - [ ] Add revealBoard prop (the complete final board)
-  - [ ] Add revealStep prop for animation timing
-  - [ ] Update GameBoard to conditionally render based on reveal mode
+- [x] Enhance GameBoard component props
+  - [x] Add isInRevealMode prop to GameBoard
+  - [x] Add revealBoard prop (the complete final board)
+  - [x] Add revealStep prop for animation timing
+  - [x] Update GameBoard to conditionally render based on reveal mode
 
 ## Phase 2: Cell Component Animation System
 
-- [ ] Add "revealing" cell state to Cell component
+- [x] Add "revealing" cell state to Cell component
 
-  - [ ] Update CellDisplayState type to include 'revealing'
-  - [ ] Add revealing state styling (opponent color with fade-in animation)
-  - [ ] Update getCellDisplayState function to handle revealing pieces
+  - [x] Update CellDisplayState type to include 'revealing'
+  - [x] Add revealing state styling (opponent color with fade-in animation)
+  - [x] Update getCellDisplayState function to handle revealing pieces
 
-- [ ] Implement reveal animations in Cell
-  - [ ] Add CSS keyframes for piece reveal (fade-in + slight scale)
-  - [ ] Add revealing state styles with smooth transitions
-  - [ ] Ensure accessibility compliance (prefers-reduced-motion support)
+- [x] Implement reveal animations in Cell
+  - [x] Add CSS keyframes for piece reveal (fade-in + slight scale)
+  - [x] Add revealing state styles with smooth transitions
+  - [x] Ensure accessibility compliance (prefers-reduced-motion support)
   - [ ] Test animations on different devices/browsers
 
 ## Phase 3: Animation Orchestration
 
-- [ ] Create reveal sequence controller
+- [x] Create reveal sequence controller
 
-  - [ ] Implement calculateRevealSequence function (determine piece order)
-  - [ ] Add timing logic for staggered piece appearance
-  - [ ] Create reveal step progression system
-  - [ ] Handle both sequential and instant reveal modes
+  - [x] Implement calculateRevealSequence function (determine piece order)
+  - [x] Add timing logic for staggered piece appearance
+  - [x] Create reveal step progression system
+  - [x] Handle both sequential and instant reveal modes
 
-- [ ] Implement reveal phases
-  - [ ] Phase 1: Initial pause with board dimming (500ms)
-  - [ ] Phase 2: Sequential piece reveal (1500ms total, ~200ms per piece)
+- [x] Implement reveal phases
+  - [x] Phase 1: Initial pause with board dimming (500ms)
+  - [x] Phase 2: Sequential piece reveal (1500ms total, ~200ms per piece)
   - [ ] Phase 3: Winner line highlight if applicable (500ms)
-  - [ ] Phase 4: Show final result UI
+  - [x] Phase 4: Show final result UI
 
 ## Phase 4: Integration & Flow Control
 
-- [ ] Update GamePage onGameOver handler
+- [x] Update GamePage onGameOver handler
 
-  - [ ] Replace immediate alerts/modals with reveal trigger
-  - [ ] Store finalBoard data for reveal animation
-  - [ ] Coordinate reveal start timing
+  - [x] Replace immediate alerts/modals with reveal trigger
+  - [x] Store finalBoard data for reveal animation
+  - [x] Coordinate reveal start timing
 
 - [ ] Modify GameStatus component behavior
 
