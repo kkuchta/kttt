@@ -79,11 +79,18 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [ ] Disconnection during reveal - store reveal state, show on reconnect
   - [ ] Multiple rapid game endings - queue/cancel reveals properly
 
-- [ ] Visual enhancements
-  - [ ] Add subtle particle effects or glow trails for piece reveals
-  - [ ] Ensure winning line highlight is prominent but not jarring
-  - [ ] Test color contrast and visibility in all game states
-  - [ ] Optimize animation performance (60fps target)
+- [x] Visual enhancements
+  - [x] Add subtle particle effects or glow trails for piece reveals
+  - [x] Ensure winning line highlight is prominent but not jarring
+  - [x] Test color contrast and visibility in all game states
+  - [x] Optimize animation performance (60fps target)
+
+**🚀 Performance optimizations completed:**
+
+- Hardware acceleration with `transform: translateZ(0)` and `will-change` hints
+- GPU-optimized animations using only `transform`, `opacity`, and `box-shadow`
+- Layout containment for particle effects to prevent thrashing
+- Backface visibility hidden to prevent flickering during transforms
 
 ## Phase 6: Testing & Validation
 

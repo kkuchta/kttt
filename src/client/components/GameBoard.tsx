@@ -149,11 +149,27 @@ export function GameBoard({
             gap: '6px',
             position: 'relative',
             zIndex: 1,
+            // Performance optimizations for smooth animations
+            willChange: 'auto',
+            transform: 'translateZ(0)', // Force hardware acceleration
+            backfaceVisibility: 'hidden', // Prevent flickering
           }}
         >
           {displayBoard.flat().map((cell, index) => {
             const row = Math.floor(index / 3);
             const col = index % 3;
+            const isCurrentlyRevealing = isCellRevealing(row, col);
+
+            // DEBUG: Log revealing cells
+            if (isCurrentlyRevealing) {
+              console.log('🎮 GAMEBOARD: Cell is revealing:', {
+                row,
+                col,
+                cell,
+                revealingCells,
+              });
+            }
+
             return (
               <Cell
                 key={index}
@@ -165,7 +181,7 @@ export function GameBoard({
                 isRejectionAnimating={
                   isCellRejectionAnimating?.(row, col) ?? false
                 }
-                isRevealing={isCellRevealing(row, col)}
+                isRevealing={isCurrentlyRevealing}
                 isHighlightingWinnerLine={
                   isHighlightingWinnerLine && isCellInWinnerLine(row, col)
                 }

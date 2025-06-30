@@ -68,8 +68,12 @@ function getCellStyles(
     backgroundColor: colors.background,
     color: '#ffffff',
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'hidden', // Prevent content from overflowing rounded corners
     transition: 'all 0.2s ease-in-out',
+    // Performance optimizations for smooth animations
+    willChange: 'auto', // Let browser optimize automatically
+    backfaceVisibility: 'hidden', // Prevent flickering during transforms
+    transform: 'translateZ(0)', // Force hardware acceleration
   };
 
   // State-specific styling
@@ -186,6 +190,7 @@ export function Cell({
     isRevealing,
     isHighlightingWinnerLine
   );
+
   const canHover = !window.matchMedia('(pointer: coarse)').matches; // No hover on touch devices
   const styles = getCellStyles(
     state,
@@ -212,15 +217,23 @@ export function Cell({
       {/* CSS keyframes for rejection animation */}
       <style>{`
         @keyframes rejectionShake {
-          0%, 100% { transform: translateX(0) scale(1); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) scale(1.05); }
-          20%, 40%, 60%, 80% { transform: translateX(3px) scale(1.05); }
+          0%, 100% { 
+            transform: translateX(0) scale(1); 
+            will-change: transform;
+          }
+          10%, 30%, 50%, 70%, 90% { 
+            transform: translateX(-3px) scale(1.05); 
+          }
+          20%, 40%, 60%, 80% { 
+            transform: translateX(3px) scale(1.05); 
+          }
         }
         
         @keyframes pieceReveal {
           0% { 
             opacity: 0; 
             transform: scale(0.5); 
+            will-change: transform, opacity;
           }
           100% { 
             opacity: 0.8; 
@@ -232,12 +245,17 @@ export function Cell({
           0%, 100% { 
             box-shadow: 0 0 20px ${createGlow(colors.winningLine, 0.4)};
             transform: scale(1.05);
+            will-change: transform, box-shadow;
           }
           50% { 
             box-shadow: 0 0 40px ${createGlow(colors.winningLine, 0.8)};
             transform: scale(1.08);
           }
         }
+        
+
+        
+
         
         /* Hover effects for desktop */
         @media (hover: hover) and (pointer: fine) {

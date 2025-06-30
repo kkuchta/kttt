@@ -104,10 +104,13 @@ const calculateRevealSequence = (
   console.log('🔍 Hidden opponent cells to reveal:', hiddenCells);
 
   // For now, reveal in reading order (top-left to bottom-right)
-  return hiddenCells.sort((a, b) => {
+  const sortedCells = hiddenCells.sort((a, b) => {
     if (a.row !== b.row) return a.row - b.row;
     return a.col - b.col;
   });
+
+  console.log('🔍 DEBUG: Final reveal sequence:', sortedCells);
+  return sortedCells;
 };
 
 export function GamePage() {
@@ -265,6 +268,13 @@ export function GamePage() {
               revealingCells: [...prev.revealingCells, position],
             }));
 
+            console.log(
+              '🎭 DEBUG: Added to revealingCells:',
+              position,
+              'Total revealing:',
+              [...revealState.revealingCells, position].length
+            );
+
             // Remove from revealing cells after animation (800ms, matching CSS animation)
             const removeTimeout = setTimeout(() => {
               console.log(
@@ -366,6 +376,14 @@ export function GamePage() {
       isHighlightingWinnerLine: false,
       winnerLineCells: [],
       isWinnerLineAnimating: false,
+    });
+
+    console.log('🎭 DEBUG: Reveal state set:', {
+      hiddenPieces,
+      revealSequenceLength: revealSequence.length,
+      revealSequence,
+      currentVisibleBoard,
+      finalBoard,
     });
   };
 
