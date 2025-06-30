@@ -2,7 +2,7 @@
 
 A modern, mobile-first design system for a two-player hidden-information tic-tac-toe variant with matchmaking and bot opponents.
 
-**Status: ✅ Fully Implemented** | **Last Updated: 2024**
+**Status: ✅ Implemented + 🚧 Board Reveal In Progress** | **Last Updated: 2024**
 
 ---
 
@@ -150,6 +150,7 @@ const containerStyle = {
 | **Your Move**         | Player color glow + scale(1.02) + bright symbol | `.cell-yours`     |
 | **Opponent Revealed** | Dimmed styling + subtle glow + opacity 0.8      | `.cell-revealed`  |
 | **Move Rejected**     | Red flash + shake animation + error tooltip     | `.cell-rejecting` |
+| **Revealing**         | Fade-in animation + scale from 0.5 to 1.0       | `.cell-revealing` |
 
 **Implementation Details:**
 
@@ -157,6 +158,7 @@ const containerStyle = {
 - Player pieces use `colors.xAccent`/`colors.oAccent` with corresponding glows
 - Revealed pieces use `colors.textDim` with reduced opacity
 - Rejection state triggers 1000ms animation (200ms if reduced motion)
+- Revealing state uses `pieceReveal` animation with staggered timing for dramatic effect
 
 ### Status Indicators ✅ Implemented
 
@@ -238,6 +240,33 @@ const containerStyle = {
   50% {
     opacity: 0.6;
     transform: scale(1.3);
+  }
+}
+```
+
+**Board Reveal (Coming Soon):**
+
+```css
+@keyframes pieceReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+@keyframes winningLineGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    box-shadow:
+      0 0 25px currentColor,
+      0 0 35px currentColor;
   }
 }
 ```

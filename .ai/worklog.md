@@ -41,6 +41,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 - [ ] UI/UX Polish
   - [x] Game status indicators (turn, winner, etc.)
   - [x] Error handling and user messaging
+  - [ ] **Board Reveal Animation** - Complete board reveal when game ends (HIGH PRIORITY)
   - [ ] Responsive game board design
   - [ ] Move feedback and animations
 - [ ] Deployment

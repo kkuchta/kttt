@@ -16,7 +16,7 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 4. Player 2 visits URL and joins game
 5. Game starts automatically when both players connected
 6. Real-time gameplay via WebSocket connection
-7. Game ends with winner announcement and full board reveal
+7. Game ends with winner announcement and **dramatic board reveal animation** showing all previously hidden pieces
 
 #### Flow 2: Quick Match (New)
 
@@ -25,7 +25,7 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 3. System matches first two players in queue (FIFO)
 4. Both players automatically redirected to new game
 5. Game starts immediately with real-time gameplay
-6. Game ends with winner announcement and full board reveal
+6. Game ends with winner announcement and **dramatic board reveal animation** showing all previously hidden pieces
 
 #### Flow 3: Bot Opponent While Waiting (New)
 
@@ -89,6 +89,15 @@ Web-based multiplayer implementation of Kriegspiel Tic Tac Toe (see `game_rules.
 - **Recently completed games**: Show final board state to returning players
 - **Old/expired games**: Return 404 or redirect to home page
 - **Game persistence**: Keep completed games for reasonable time period
+
+### Board Reveal Experience
+
+- **Emotional Payoff**: The reveal of all hidden pieces is the climactic moment of Kriegspiel gameplay
+- **Sequential Animation**: Previously hidden opponent pieces appear one by one in a satisfying sequence
+- **Winner Highlight**: If there's a winning line, highlight it with animated effects after piece reveal
+- **Accessibility**: Provide instant reveal option for users with motion sensitivity
+- **Information Resolution**: Players can see exactly why moves were rejected and understand opponent strategy
+- **Timing**: Balanced to feel rewarding without being slow (target ~2-3 seconds total)
 
 ## Technical Architecture
 
