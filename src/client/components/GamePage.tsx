@@ -202,17 +202,8 @@ export function GamePage() {
     if (botGameResult && gameState?.botInfo) {
       // For bot games, show the post-game options modal
       setShowPostBotGameOptions(true);
-    } else {
-      // For human games, show win announcement
-      const currentPlayer = yourPlayer || gameState?.yourPlayer;
-
-      if (botGameResult?.winner) {
-        const isYourWin = botGameResult.winner === currentPlayer;
-        alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
-      } else {
-        alert('🤝 Game ended in a draw!');
-      }
     }
+    // Note: GameStatus component now handles result display, no need for alerts
 
     // Reset reveal state
     setRevealState(initialRevealState);
@@ -242,9 +233,9 @@ export function GamePage() {
     revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
     revealTimeoutRefs.current = [];
 
-    // Phase 1: Initial pause (2000ms - slowed for debugging)
+    // Phase 1: Initial pause (500ms)
     const initialPauseTimeout = setTimeout(() => {
-      // Phase 2: Sequential piece reveal (1000ms per piece - slowed for debugging)
+      // Phase 2: Sequential piece reveal (200ms per piece)
       revealState.revealSequence.forEach((position, index) => {
         const revealTimeout = setTimeout(
           () => {
@@ -275,23 +266,23 @@ export function GamePage() {
 
               // Check if this was the last piece
               if (index === revealState.revealSequence.length - 1) {
-                // Phase 4: Show final result UI after delay (1000ms - slowed for debugging)
+                // Phase 4: Show final result UI after slight delay
                 const completeTimeout = setTimeout(() => {
                   console.log(
                     '🎭 All pieces revealed, calling handleRevealComplete'
                   );
                   handleRevealComplete();
-                }, 1000); // Longer delay for debugging
+                }, 200); // Small delay after last animation
                 revealTimeoutRefs.current.push(completeTimeout);
               }
             }, 800); // Match pieceReveal animation duration
             revealTimeoutRefs.current.push(removeTimeout);
           },
-          2000 + index * 1000
-        ); // Initial pause + much slower staggered timing
+          500 + index * 200
+        ); // Initial pause + staggered timing
         revealTimeoutRefs.current.push(revealTimeout);
       });
-    }, 2000); // Longer initial pause for debugging
+    }, 500); // Initial pause
 
     revealTimeoutRefs.current.push(initialPauseTimeout);
 
@@ -666,6 +657,7 @@ export function GamePage() {
             result={gameState.result}
             yourPlayer={gameState.yourPlayer}
             botInfo={gameState.botInfo}
+            isRevealing={revealState.isRevealing}
           />
 
           <GameBoard

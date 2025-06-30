@@ -19,6 +19,8 @@ interface GameStatusProps {
     humanPlayer: Player;
     botDifficulty: string;
   };
+  // Board reveal state
+  isRevealing?: boolean;
 }
 
 export function GameStatus({
@@ -28,6 +30,7 @@ export function GameStatus({
   result,
   yourPlayer,
   botInfo,
+  isRevealing = false,
 }: GameStatusProps) {
   // Helper function to get bot difficulty display name
   const getBotDisplayName = (difficulty: string): string => {
@@ -166,6 +169,70 @@ export function GameStatus({
 
   // Handle completed games
   if (status === 'completed' && result) {
+    // If revealing is in progress, show revealing status instead of final result
+    if (isRevealing) {
+      return (
+        <>
+          {/* CSS for animations */}
+          <style>{`
+            @keyframes revealPulse {
+              0%, 100% { opacity: 1; transform: scale(1); }
+              50% { opacity: 0.7; transform: scale(1.05); }
+            }
+          `}</style>
+
+          <div style={{ marginBottom: '20px' }}>
+            {renderGameTypeHeader()}
+
+            <div
+              style={{
+                padding: '20px',
+                backgroundColor: createGlow(colors.queueOrange, 0.1),
+                border: `2px solid ${colors.queueOrange}`,
+                borderRadius: '12px',
+                textAlign: 'center',
+                boxShadow: `0 0 15px ${createGlow(colors.queueOrange, 0.2)}`,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  animation: 'revealPulse 2s ease-in-out infinite',
+                }}
+              >
+                <span style={{ fontSize: '24px' }}>🎭</span>
+                <h3
+                  style={{
+                    margin: 0,
+                    color: colors.queueOrange,
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                >
+                  Revealing hidden pieces...
+                </h3>
+              </div>
+              <p
+                style={{
+                  margin: '10px 0 0 0',
+                  color: colors.textDim,
+                  fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                Watch as the opponent&apos;s hidden moves are revealed!
+              </p>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // Show final result after reveal is complete
     if (result.winner) {
       const isYourWin = result.winner === yourPlayer;
       const isBotWin = botInfo && result.winner === botInfo.botPlayer;
