@@ -242,6 +242,9 @@ export class GameManager {
       }
 
       await this.sendGameStateToAllPlayers(game);
+
+      // Clean up socket mappings after all notifications are sent
+      await this.cleanupCompletedGame(gameId);
     } else {
       // Game continues - switch turns
       game.currentTurn = getOpponentPlayer(botPlayer);
@@ -650,6 +653,28 @@ export class GameManager {
     if (game.players.O && game.players.O !== 'BOT') {
       const clientStateO = createClientGameState(game, 'O');
       this.io.to(game.players.O).emit('game-state-update', clientStateO);
+    }
+  }
+
+  // Clean up socket mappings for completed games
+  async cleanupCompletedGame(gameId: string): Promise<void> {
+    const game = await this.storage.getGame(gameId);
+    if (!game || game.status !== 'completed') {
+      return;
+    }
+
+    // Clean up socket-to-game mappings for both players so they can join new games/queue
+    if (game.players.X && game.players.X !== 'BOT') {
+      await this.storage.removeSocketGame(game.players.X);
+      console.log(
+        `🧹 Cleaned up socket mapping for player X: ${game.players.X}`
+      );
+    }
+    if (game.players.O && game.players.O !== 'BOT') {
+      await this.storage.removeSocketGame(game.players.O);
+      console.log(
+        `🧹 Cleaned up socket mapping for player O: ${game.players.O}`
+      );
     }
   }
 }

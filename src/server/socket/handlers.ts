@@ -291,6 +291,9 @@ export function setupSocketHandlers(
                     result: result.gameResult,
                     finalBoard: game.board, // Show full board when game ends
                   });
+
+                  // Clean up socket mappings after all notifications are sent
+                  await gameManager.cleanupCompletedGame(gameId);
                 }
 
                 // Send updated game state to all players
