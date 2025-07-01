@@ -251,7 +251,15 @@ export function GamePage() {
     revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
     revealTimeoutRefs.current = [];
 
-    // Phase 1: Initial pause (700ms)
+    // Adaptive timing for quick games: shorter initial pause for ≤2 hidden pieces
+    const isQuickGame = revealState.revealSequence.length <= 2;
+    const initialPauseDuration = isQuickGame ? 400 : 700; // Reduced pause for quick games
+
+    console.log(
+      `🎭 ${isQuickGame ? 'Quick game' : 'Normal game'} detected: ${revealState.revealSequence.length} pieces, using ${initialPauseDuration}ms initial pause`
+    );
+
+    // Phase 1: Initial pause (adaptive timing)
     const initialPauseTimeout = setTimeout(() => {
       // Phase 2: Sequential piece reveal (300ms per piece)
       revealState.revealSequence.forEach((position, index) => {
@@ -326,11 +334,11 @@ export function GamePage() {
             }, 800); // Match pieceReveal animation duration
             revealTimeoutRefs.current.push(removeTimeout);
           },
-          700 + index * 300
-        ); // Initial pause + staggered timing
+          initialPauseDuration + index * 300
+        ); // Adaptive initial pause + staggered timing
         revealTimeoutRefs.current.push(revealTimeout);
       });
-    }, 700); // Initial pause
+    }, initialPauseDuration); // Adaptive initial pause
 
     revealTimeoutRefs.current.push(initialPauseTimeout);
 

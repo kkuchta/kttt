@@ -74,7 +74,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
 
 - [ ] Handle edge cases gracefully
 
-  - [ ] Very quick games (1-2 moves) - still do full reveal
+  - [x] Very quick games (1-2 moves) - adaptive timing implemented (400ms vs 700ms initial pause)
   - [x] Draw games - reveal all pieces, emphasize full board (properly implemented!)
   - [ ] Disconnection during reveal - store reveal state, show on reconnect
   - [ ] Multiple rapid game endings - queue/cancel reveals properly
