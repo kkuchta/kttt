@@ -129,6 +129,9 @@ export function GamePage() {
   // Refs for managing reveal animation timing
   const revealTimeoutRefs = useRef<number[]>([]);
 
+  // Ref to track if component is mounted (prevent state updates after unmount)
+  const isMounted = useRef(true);
+
   // Move rejection hook for animations
   const { isCellAnimating, handleMoveResult } = useMoveRejectionWithSocket();
 
@@ -204,8 +207,18 @@ export function GamePage() {
     onMoveResult: handleMoveResult, // Integrate move rejection animations
   });
 
+  // Set mounted flag on mount
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   // Reveal completion callback - memoized to prevent useEffect loops
   const handleRevealComplete = useCallback(() => {
+    if (!isMounted.current) return; // Prevent state updates after unmount
+
     console.log('🎭 Board reveal animation completed');
 
     // After reveal completes, show the appropriate game over UI
@@ -229,7 +242,16 @@ export function GamePage() {
 
   // Reveal animation orchestration - removed handleRevealComplete from deps to prevent loop
   useEffect(() => {
+    console.log('🎭 Reveal useEffect triggered with:', {
+      isRevealing: revealState.isRevealing,
+      sequenceLength: revealState.revealSequence.length,
+      revealSequence: revealState.revealSequence,
+    });
+
     if (!revealState.isRevealing || revealState.revealSequence.length === 0) {
+      console.log(
+        '🎭 Skipping reveal animation - not revealing or empty sequence'
+      );
       return;
     }
 
@@ -269,12 +291,14 @@ export function GamePage() {
               `🎭 Revealing piece ${index + 1}/${revealState.revealSequence.length} at (${position.row},${position.col})`
             );
 
-            // Add this cell to revealing cells
-            setRevealState(prev => ({
-              ...prev,
-              revealStep: index + 1,
-              revealingCells: [...prev.revealingCells, position],
-            }));
+            // Add this cell to revealing cells (only if component is still mounted)
+            if (isMounted.current) {
+              setRevealState(prev => ({
+                ...prev,
+                revealStep: index + 1,
+                revealingCells: [...prev.revealingCells, position],
+              }));
+            }
 
             console.log(
               '🎭 DEBUG: Added to revealingCells:',
@@ -289,13 +313,15 @@ export function GamePage() {
                 `🎭 Finished revealing piece at (${position.row},${position.col})`
               );
 
-              setRevealState(prev => ({
-                ...prev,
-                revealingCells: prev.revealingCells.filter(
-                  cell =>
-                    !(cell.row === position.row && cell.col === position.col)
-                ),
-              }));
+              if (isMounted.current) {
+                setRevealState(prev => ({
+                  ...prev,
+                  revealingCells: prev.revealingCells.filter(
+                    cell =>
+                      !(cell.row === position.row && cell.col === position.col)
+                  ),
+                }));
+              }
 
               // Check if this was the last piece
               if (index === revealState.revealSequence.length - 1) {
@@ -306,12 +332,14 @@ export function GamePage() {
                     botGameResult.winningLine.length > 0
                   ) {
                     console.log('🎭 Starting winner line highlight');
-                    setRevealState(prev => ({
-                      ...prev,
-                      isHighlightingWinnerLine: true,
-                      winnerLineCells: botGameResult.winningLine!,
-                      isWinnerLineAnimating: true,
-                    }));
+                    if (isMounted.current) {
+                      setRevealState(prev => ({
+                        ...prev,
+                        isHighlightingWinnerLine: true,
+                        winnerLineCells: botGameResult.winningLine!,
+                        isWinnerLineAnimating: true,
+                      }));
+                    }
 
                     // Phase 4: End winner line highlight and show final result UI
                     const endHighlightTimeout = setTimeout(() => {
@@ -349,12 +377,37 @@ export function GamePage() {
     };
   }, [revealState.isRevealing, revealState.revealSequence]);
 
+  // Cancel any ongoing reveal animation
+  const cancelReveal = useCallback((clearBotResult: boolean = true) => {
+    console.log(
+      '🎭 Canceling ongoing reveal animation, clearBotResult:',
+      clearBotResult
+    );
+
+    // Clear all timeouts
+    revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+    revealTimeoutRefs.current = [];
+
+    // Reset reveal state (only if component is mounted)
+    if (isMounted.current) {
+      setRevealState(initialRevealState);
+      // Only clear bot result if explicitly requested
+      if (clearBotResult) {
+        setBotGameResult(null);
+      }
+    }
+  }, []);
+
   // Start reveal animation
   const startReveal = (finalBoard: Board, gameResult: GameResult) => {
     console.log('🎭 Starting board reveal animation', {
       finalBoard,
       gameResult,
     });
+
+    // Only clear timeouts, don't reset state (that's too aggressive)
+    revealTimeoutRefs.current.forEach(timeout => clearTimeout(timeout));
+    revealTimeoutRefs.current = [];
 
     // Store the game result for use after reveal
     setBotGameResult(gameResult);
@@ -373,18 +426,29 @@ export function GamePage() {
       hiddenPieces = revealSequence.length;
     }
 
-    // Set reveal state
-    setRevealState({
-      isRevealing: true,
-      revealedBoard: finalBoard,
-      revealStep: 0,
-      totalSteps: hiddenPieces,
-      revealingCells: [],
-      revealSequence: revealSequence,
-      isHighlightingWinnerLine: false,
-      winnerLineCells: [],
-      isWinnerLineAnimating: false,
-    });
+    // Set reveal state (only if component is mounted)
+    if (isMounted.current) {
+      console.log('🎭 Setting reveal state with:', {
+        isRevealing: true,
+        hiddenPieces,
+        revealSequence,
+        isMounted: isMounted.current,
+      });
+
+      setRevealState({
+        isRevealing: true,
+        revealedBoard: finalBoard,
+        revealStep: 0,
+        totalSteps: hiddenPieces,
+        revealingCells: [],
+        revealSequence: revealSequence,
+        isHighlightingWinnerLine: false,
+        winnerLineCells: [],
+        isWinnerLineAnimating: false,
+      });
+    } else {
+      console.log('🎭 ERROR: Component not mounted, cannot set reveal state');
+    }
 
     console.log('🎭 DEBUG: Reveal state set:', {
       hiddenPieces,
@@ -431,7 +495,16 @@ export function GamePage() {
     }
   }, [gameId, isConnected, yourPlayer, joinGame]);
 
-  // Cleanup localStorage when component unmounts or game changes
+  // Cancel reveal animation when gameId changes (new game started)
+  useEffect(() => {
+    return () => {
+      // Cancel any ongoing reveal when switching games (but keep botGameResult for new game)
+      console.log('🎭 gameId changed, canceling reveal for old game');
+      cancelReveal(false); // Don't clear botGameResult - we might be starting a new reveal soon
+    };
+  }, [gameId, cancelReveal]);
+
+  // Cleanup localStorage when game changes
   useEffect(() => {
     return () => {
       // Clean up localStorage for this game when navigating away
@@ -440,6 +513,17 @@ export function GamePage() {
       }
     };
   }, [gameId]);
+
+  // Component unmount cleanup only
+  useEffect(() => {
+    return () => {
+      // Mark component as unmounted
+      isMounted.current = false;
+
+      // Cancel any ongoing reveal animations (and clear bot result since unmounting)
+      cancelReveal(true);
+    };
+  }, []); // No dependencies - only runs on actual unmount
 
   const handleCellClick = (row: number, col: number) => {
     if (!gameState?.canMove || !gameId) return;
