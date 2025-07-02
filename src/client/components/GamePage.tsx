@@ -8,6 +8,7 @@ import {
 } from '../../shared/constants/colors';
 import { useMoveRejectionWithSocket } from '../hooks/useMoveRejection';
 import { useSocket } from '../hooks/useSocket';
+import { ConnectionIndicator } from './ConnectionIndicator';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
 import { GameStatus } from './GameStatus';
@@ -539,6 +540,13 @@ export function GamePage() {
 
   return (
     <PageLayout variant="game" maxWidth="700px">
+      {/* Connection Indicator - subtle dot in top-right corner */}
+      <ConnectionIndicator
+        isConnected={isConnected}
+        isConnecting={isConnecting}
+        error={error}
+      />
+
       {/* Header */}
       <div
         style={{
@@ -577,6 +585,29 @@ export function GamePage() {
           >
             Game ID: <strong style={{ color: '#ffffff' }}>{gameId}</strong>
           </p>
+          {yourPlayer && (
+            <p
+              style={{
+                margin: '8px 0 0 0',
+                color: '#ffffff',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Playing as:{' '}
+              <span
+                style={{
+                  color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
+                  fontFamily: 'Space Grotesk, monospace',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                }}
+              >
+                {yourPlayer}
+              </span>
+            </p>
+          )}
         </div>
         <Link
           to="/"
@@ -605,95 +636,6 @@ export function GamePage() {
         >
           ← Home
         </Link>
-      </div>
-
-      {/* Connection Status */}
-      <div
-        style={{
-          padding: '20px',
-          margin: '0 0 25px 0',
-          borderRadius: '12px',
-          backgroundColor: colors.background,
-          border: `2px solid ${colors.gridLines}`,
-          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
-        }}
-      >
-        <h3
-          style={{
-            margin: '0 0 15px 0',
-            color: '#ffffff',
-            fontSize: '18px',
-            fontWeight: '600',
-            fontFamily: 'Inter, sans-serif',
-          }}
-        >
-          Connection Status
-        </h3>
-        <div
-          style={{
-            padding: '15px 20px',
-            borderRadius: '10px',
-            backgroundColor: isConnected
-              ? createGlow(colors.successGreen, 0.1)
-              : createGlow(colors.rejectionRed, 0.1),
-            border: `2px solid ${isConnected ? colors.successGreen : colors.rejectionRed}`,
-            boxShadow: isConnected
-              ? `0 0 15px ${createGlow(colors.successGreen, 0.2)}`
-              : `0 0 15px ${createGlow(colors.rejectionRed, 0.2)}`,
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              color: isConnected ? colors.successGreen : colors.rejectionRed,
-              fontSize: '16px',
-              fontWeight: '600',
-              fontFamily: 'Inter, sans-serif',
-            }}
-          >
-            {isConnecting
-              ? '🔄 Connecting to server...'
-              : isConnected
-                ? '🟢 Connected and ready to play'
-                : '🔴 Connection failed'}
-          </p>
-          {error && (
-            <p
-              style={{
-                margin: '8px 0 0 0',
-                color: colors.rejectionRed,
-                fontSize: '14px',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              {error}
-            </p>
-          )}
-        </div>
-
-        {yourPlayer && (
-          <p
-            style={{
-              margin: '15px 0 0 0',
-              color: '#ffffff',
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Inter, sans-serif',
-            }}
-          >
-            <strong>You are playing as:</strong>{' '}
-            <span
-              style={{
-                color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
-                fontFamily: 'Space Grotesk, monospace',
-                fontSize: '18px',
-                fontWeight: '600',
-              }}
-            >
-              {yourPlayer}
-            </span>
-          </p>
-        )}
       </div>
 
       {/* Share Game URL - only show for human vs human games */}

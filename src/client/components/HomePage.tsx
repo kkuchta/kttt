@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   colors,
@@ -6,6 +6,7 @@ import {
   getHoverColor,
 } from '../../shared/constants/colors';
 import { useSocket } from '../hooks/useSocket';
+import { ConnectionIndicator } from './ConnectionIndicator';
 import { PageLayout } from './PageLayout';
 import { QuickMatch } from './QuickMatch';
 
@@ -60,77 +61,50 @@ export function HomePage() {
       return;
     }
 
+    // Clean the game ID (remove spaces, convert to uppercase)
+    const cleanGameId = joinGameId.trim().toUpperCase();
+
+    if (cleanGameId.length !== 4) {
+      alert('Game ID must be 4 characters');
+      return;
+    }
+
     if (isConnected) {
-      // Navigate to the game page first, then join
-      navigate(`/game/${joinGameId.toUpperCase()}`);
+      // Navigate to the game page - the GamePage component will handle joining
+      navigate(`/game/${cleanGameId}`);
     } else {
       alert('Connecting to server...');
       connect();
     }
   };
 
-  const handleGameIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Auto-uppercase and limit to 4 characters
-    const value = event.target.value.toUpperCase().slice(0, 4);
-    setJoinGameId(value);
-  };
-
-  // Auto-connect when component loads
+  // Auto-connect when component mounts
   useEffect(() => {
     if (!isConnected && !isConnecting) {
       connect();
     }
   }, [isConnected, isConnecting, connect]);
 
-  // Button styles for primary actions
-  const primaryButtonStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '18px 24px',
-    fontSize: '18px',
-    fontWeight: '600',
-    fontFamily: 'Inter, sans-serif',
-    backgroundColor: colors.successGreen,
-    color: '#ffffff',
-    border: `2px solid ${colors.successGreen}`,
-    borderRadius: '10px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-    boxShadow: `0 0 15px ${createGlow(colors.successGreen, 0.2)}`,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
-  };
-
-  const secondaryButtonStyle: React.CSSProperties = {
-    padding: '14px 20px',
-    fontSize: '16px',
-    fontWeight: '500',
-    fontFamily: 'Inter, sans-serif',
-    backgroundColor: 'transparent',
-    color: colors.botBlue,
-    border: `2px solid ${colors.botBlue}`,
-    borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-  };
-
   return (
-    <PageLayout variant="home" maxWidth="500px">
+    <PageLayout>
+      {/* Connection Indicator - subtle dot in top-right corner */}
+      <ConnectionIndicator
+        isConnected={isConnected}
+        isConnecting={isConnecting}
+        error={error}
+      />
+
       {/* Hero Section */}
       <div
         style={{
-          backgroundColor: colors.background,
-          border: `2px solid ${colors.gridLines}`,
-          padding: '50px 40px',
-          borderRadius: '20px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
           textAlign: 'center',
+          maxWidth: '600px',
+          margin: '0 auto',
+          padding: '40px 20px',
           position: 'relative',
-          overflow: 'hidden',
         }}
       >
-        {/* Subtle background gradient */}
+        {/* Background gradient */}
         <div
           style={{
             position: 'absolute',
@@ -138,13 +112,12 @@ export function HomePage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background:
-              'radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 70%)',
-            pointerEvents: 'none',
+            background: `radial-gradient(600px circle at center, rgba(0, 255, 231, 0.03), transparent 70%)`,
+            borderRadius: '20px',
+            zIndex: 0,
           }}
         />
 
-        {/* Content */}
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h1
             style={{
@@ -172,106 +145,79 @@ export function HomePage() {
             opponent&apos;s moves until you try to place on their squares!
           </p>
 
-          {/* Connection Status */}
-          <div
-            style={{
-              padding: '15px 20px',
-              margin: '0 0 40px 0',
-              borderRadius: '10px',
-              backgroundColor: isConnected
-                ? createGlow(colors.successGreen, 0.1)
-                : createGlow(colors.rejectionRed, 0.1),
-              border: `2px solid ${isConnected ? colors.successGreen : colors.rejectionRed}`,
-              boxShadow: isConnected
-                ? `0 0 15px ${createGlow(colors.successGreen, 0.2)}`
-                : `0 0 15px ${createGlow(colors.rejectionRed, 0.2)}`,
-            }}
-          >
-            <p
-              style={{
-                margin: 0,
-                color: isConnected ? colors.successGreen : colors.rejectionRed,
-                fontSize: '16px',
-                fontWeight: '600',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              {isConnecting
-                ? '🔄 Connecting to server...'
-                : isConnected
-                  ? '🟢 Connected and ready to play'
-                  : '🔴 Connection failed'}
-            </p>
-            {error && (
-              <p
-                style={{
-                  margin: '8px 0 0 0',
-                  color: colors.rejectionRed,
-                  fontSize: '14px',
-                  fontFamily: 'Inter, sans-serif',
-                }}
-              >
-                {error}
-              </p>
-            )}
-          </div>
-
           {/* Three Primary Actions with Equal Visual Weight */}
           <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              maxWidth: '400px',
+              margin: '0 auto',
+            }}
           >
-            {/* 1. Create Game */}
+            {/* Create Game & Share Link */}
             <div>
               <h3
                 style={{
                   color: '#ffffff',
-                  marginBottom: '12px',
                   fontSize: '18px',
                   fontWeight: '600',
                   fontFamily: 'Inter, sans-serif',
+                  margin: '0 0 15px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
               >
-                🎮 Start New Game
+                ✨ Start New Game
               </h3>
               <button
                 onClick={handleCreateGame}
-                disabled={isConnecting}
                 style={{
-                  ...primaryButtonStyle,
-                  opacity: isConnecting ? 0.6 : 1,
-                  cursor: isConnecting ? 'not-allowed' : 'pointer',
+                  width: '100%',
+                  padding: '16px 20px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  fontFamily: 'Inter, sans-serif',
+                  backgroundColor: colors.successGreen,
+                  color: colors.background,
+                  border: 'none',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease-in-out',
+                  boxShadow: `0 0 20px ${createGlow(colors.successGreen, 0.3)}`,
                 }}
                 onMouseOver={e => {
-                  if (!isConnecting) {
-                    e.currentTarget.style.backgroundColor = getHoverColor(
-                      colors.successGreen
-                    );
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = `0 0 25px ${createGlow(colors.successGreen, 0.3)}`;
-                  }
+                  e.currentTarget.style.backgroundColor = getHoverColor(
+                    colors.successGreen
+                  );
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 0 25px ${createGlow(colors.successGreen, 0.4)}`;
                 }}
                 onMouseOut={e => {
-                  if (!isConnecting) {
-                    e.currentTarget.style.backgroundColor = colors.successGreen;
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.successGreen, 0.2)}`;
-                  }
+                  e.currentTarget.style.backgroundColor = colors.successGreen;
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 0 20px ${createGlow(colors.successGreen, 0.3)}`;
                 }}
               >
-                <span>✨</span>
-                {isConnecting ? 'Connecting...' : 'Create Game & Share Link'}
+                Create Game & Share Link
               </button>
             </div>
 
-            {/* 2. Quick Match */}
+            {/* Quick Match */}
             <div>
               <h3
                 style={{
                   color: '#ffffff',
-                  marginBottom: '12px',
                   fontSize: '18px',
                   fontWeight: '600',
                   fontFamily: 'Inter, sans-serif',
+                  margin: '0 0 15px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
               >
                 ⚡ Quick Match
@@ -279,46 +225,47 @@ export function HomePage() {
               <QuickMatch />
             </div>
 
-            {/* 3. Join Game */}
+            {/* Join Existing Game */}
             <div>
               <h3
                 style={{
                   color: '#ffffff',
-                  marginBottom: '12px',
                   fontSize: '18px',
                   fontWeight: '600',
                   fontFamily: 'Inter, sans-serif',
+                  margin: '0 0 15px 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
               >
                 🔗 Join Existing Game
               </h3>
-              <div
-                style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}
-              >
+              <div style={{ display: 'flex', gap: '10px' }}>
                 <input
                   type="text"
+                  placeholder="ENTER GAME ID"
                   value={joinGameId}
-                  onChange={handleGameIdChange}
-                  placeholder="Enter Game ID"
+                  onChange={e => setJoinGameId(e.target.value)}
                   style={{
                     flex: 1,
-                    padding: '16px',
-                    fontSize: '18px',
-                    fontWeight: '600',
+                    padding: '16px 20px',
+                    fontSize: '16px',
+                    fontWeight: '500',
                     fontFamily: 'Space Grotesk, monospace',
                     backgroundColor: colors.background,
                     color: '#ffffff',
                     border: `2px solid ${colors.gridLines}`,
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    textTransform: 'uppercase',
-                    letterSpacing: '3px',
+                    borderRadius: '10px',
                     outline: 'none',
                     transition: 'all 0.2s ease-in-out',
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
                   }}
                   onFocus={e => {
-                    e.currentTarget.style.borderColor = colors.botBlue;
-                    e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.2)}`;
+                    e.currentTarget.style.borderColor = colors.xAccent;
+                    e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.xAccent, 0.2)}`;
                   }}
                   onBlur={e => {
                     e.currentTarget.style.borderColor = colors.gridLines;
@@ -328,29 +275,30 @@ export function HomePage() {
                 />
                 <button
                   onClick={handleJoinGame}
-                  disabled={isConnecting || !joinGameId.trim()}
                   style={{
-                    ...secondaryButtonStyle,
-                    opacity: isConnecting || !joinGameId.trim() ? 0.5 : 1,
-                    cursor:
-                      isConnecting || !joinGameId.trim()
-                        ? 'not-allowed'
-                        : 'pointer',
+                    padding: '16px 20px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    fontFamily: 'Inter, sans-serif',
+                    backgroundColor: 'transparent',
+                    color: colors.xAccent,
+                    border: `2px solid ${colors.xAccent}`,
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease-in-out',
+                    minWidth: '100px',
                   }}
                   onMouseOver={e => {
-                    if (!isConnecting && joinGameId.trim()) {
-                      e.currentTarget.style.backgroundColor = createGlow(
-                        colors.botBlue,
-                        0.1
-                      );
-                      e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.2)}`;
-                    }
+                    e.currentTarget.style.backgroundColor = colors.xAccent;
+                    e.currentTarget.style.color = colors.background;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = `0 0 20px ${createGlow(colors.xAccent, 0.3)}`;
                   }}
                   onMouseOut={e => {
-                    if (!isConnecting && joinGameId.trim()) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.xAccent;
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   Join Game
@@ -360,8 +308,9 @@ export function HomePage() {
                 style={{
                   color: colors.textDim,
                   fontSize: '14px',
-                  margin: 0,
                   fontFamily: 'Inter, sans-serif',
+                  margin: '8px 0 0 0',
+                  textAlign: 'center',
                 }}
               >
                 Game IDs are 4-character codes (e.g., H3K8)
@@ -369,22 +318,6 @@ export function HomePage() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div
-        style={{
-          marginTop: '30px',
-          textAlign: 'center',
-          color: colors.textDim,
-          fontSize: '14px',
-          fontFamily: 'Inter, sans-serif',
-        }}
-      >
-        <p>
-          🎯 Perfect your strategy in this hidden information variant of the
-          classic game
-        </p>
       </div>
     </PageLayout>
   );
