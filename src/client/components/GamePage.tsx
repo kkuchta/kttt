@@ -612,33 +612,65 @@ export function GamePage() {
             </p>
           )}
         </div>
-        <Link
-          to="/"
-          style={{
-            padding: '12px 20px',
-            backgroundColor: colors.textDim,
-            color: '#ffffff',
-            textDecoration: 'none',
-            borderRadius: '8px',
-            fontSize: '16px',
-            fontWeight: '500',
-            fontFamily: 'Inter, sans-serif',
-            border: `2px solid ${colors.textDim}`,
-            transition: 'all 0.2s ease-in-out',
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.backgroundColor = '#ffffff';
-            e.currentTarget.style.color = colors.background;
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.backgroundColor = colors.textDim;
-            e.currentTarget.style.color = '#ffffff';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          ← Home
-        </Link>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Link
+            to="/about"
+            style={{
+              padding: '8px 16px',
+              backgroundColor: 'transparent',
+              color: colors.textDim,
+              textDecoration: 'none',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: '500',
+              fontFamily: 'Inter, sans-serif',
+              border: `1px solid ${colors.gridLines}`,
+              transition: 'all 0.2s ease-in-out',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.backgroundColor = createGlow(
+                colors.gridLines,
+                0.1
+              );
+              e.currentTarget.style.borderColor = colors.textDim;
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.borderColor = colors.gridLines;
+              e.currentTarget.style.color = colors.textDim;
+            }}
+          >
+            About
+          </Link>
+          <Link
+            to="/"
+            style={{
+              padding: '12px 20px',
+              backgroundColor: colors.textDim,
+              color: '#ffffff',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Inter, sans-serif',
+              border: `2px solid ${colors.textDim}`,
+              transition: 'all 0.2s ease-in-out',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.color = colors.background;
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.backgroundColor = colors.textDim;
+              e.currentTarget.style.color = '#ffffff';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            ← Home
+          </Link>
+        </div>
       </div>
 
       {/* Share Game URL - only show for human vs human games */}

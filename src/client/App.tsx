@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { colors } from '../shared/constants/colors';
+import { AboutPage } from './components/AboutPage';
 import { GamePage } from './components/GamePage';
 import { HomePage } from './components/HomePage';
 
@@ -18,6 +19,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/game/:gameId" element={<GamePage />} />
         </Routes>
       </Router>

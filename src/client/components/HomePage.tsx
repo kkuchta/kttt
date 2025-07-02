@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   colors,
   createGlow,
@@ -317,6 +317,65 @@ export function HomePage() {
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Subtle Footer Navigation */}
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '30px 20px 20px 20px',
+          borderTop: `1px solid ${colors.gridLines}`,
+          marginTop: '40px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '20px',
+            alignItems: 'center',
+          }}
+        >
+          <Link
+            to="/about"
+            style={{
+              color: colors.textDim,
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'color 0.2s ease-in-out',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.color = colors.textDim;
+            }}
+          >
+            About
+          </Link>
+          <span style={{ color: colors.gridLines, fontSize: '14px' }}>•</span>
+          <a
+            href="https://kevinhighwater.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: colors.textDim,
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontFamily: 'Inter, sans-serif',
+              transition: 'color 0.2s ease-in-out',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.color = colors.textDim;
+            }}
+          >
+            Created by Kevin Highwater
+          </a>
         </div>
       </div>
     </PageLayout>
