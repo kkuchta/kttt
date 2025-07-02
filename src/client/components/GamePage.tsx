@@ -122,6 +122,9 @@ export function GamePage() {
   const [showPostBotGameOptions, setShowPostBotGameOptions] = useState(false);
   const [botGameResult, setBotGameResult] = useState<GameResult | null>(null);
 
+  // Copy button state
+  const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
+
   // Board reveal state
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [revealState, setRevealState] =
@@ -700,32 +703,49 @@ export function GamePage() {
             <button
               onClick={() => {
                 navigator.clipboard.writeText(gameUrl);
-                alert('Game URL copied to clipboard!');
+                setCopyState('copied');
+                // Revert back to idle state after 2 seconds
+                setTimeout(() => {
+                  setCopyState('idle');
+                }, 2000);
               }}
               style={{
                 padding: '12px 20px',
-                backgroundColor: colors.botBlue,
+                backgroundColor:
+                  copyState === 'copied' ? colors.successGreen : colors.botBlue,
                 color: '#ffffff',
-                border: `2px solid ${colors.botBlue}`,
+                border: `2px solid ${copyState === 'copied' ? colors.successGreen : colors.botBlue}`,
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: '600',
                 fontFamily: 'Inter, sans-serif',
                 transition: 'all 0.2s ease-in-out',
+                minWidth: '100px', // Prevent button width changes
               }}
               onMouseOver={e => {
-                e.currentTarget.style.backgroundColor = getHoverColor(
-                  colors.botBlue
-                );
-                e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.3)}`;
+                if (copyState === 'idle') {
+                  e.currentTarget.style.backgroundColor = getHoverColor(
+                    colors.botBlue
+                  );
+                  e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.3)}`;
+                }
               }}
               onMouseOut={e => {
-                e.currentTarget.style.backgroundColor = colors.botBlue;
-                e.currentTarget.style.boxShadow = 'none';
+                if (copyState === 'idle') {
+                  e.currentTarget.style.backgroundColor = colors.botBlue;
+                  e.currentTarget.style.boxShadow = 'none';
+                }
               }}
             >
-              Copy
+              {copyState === 'copied' ? (
+                <>
+                  <span>Copied!</span>
+                  <span style={{ marginLeft: '4px' }}>✓</span>
+                </>
+              ) : (
+                'Copy'
+              )}
             </button>
           </div>
         </div>
