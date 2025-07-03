@@ -6,7 +6,7 @@ A modern, mobile-first design system for a two-player hidden-information tic-tac
 
 ---
 
-## 🎯 Design Goals
+## Design Goals
 
 - **Tone**: Strategic, mysterious, clean
 - **Visual Style**: Abstract + symbolic, modern dark UI, subtle glow feedback
@@ -16,7 +16,7 @@ A modern, mobile-first design system for a two-player hidden-information tic-tac
 
 ---
 
-## 🎨 Color Palette & Implementation
+## Color Palette & Implementation
 
 | Name             | Hex       | Usage                               | Implementation        |
 | ---------------- | --------- | ----------------------------------- | --------------------- |
@@ -55,7 +55,7 @@ boxShadows.xPiece, boxShadows.oPiece, boxShadows.rejection, etc.
 
 ---
 
-## 🔤 Typography System
+## Typography System
 
 | Role               | Font                     | Implementation                           | Usage                                        |
 | ------------------ | ------------------------ | ---------------------------------------- | -------------------------------------------- |
@@ -73,7 +73,7 @@ boxShadows.xPiece, boxShadows.oPiece, boxShadows.rejection, etc.
 
 ---
 
-## 🏗️ Component Architecture
+## Component Architecture
 
 ### Established Patterns
 
@@ -116,7 +116,7 @@ const containerStyle = {
 
 ---
 
-## 🧩 Layout & Navigation
+## Layout & Navigation
 
 ### Home Page Layout ✅ Implemented
 
@@ -140,7 +140,7 @@ const containerStyle = {
 
 ---
 
-## 🧠 Component Specifications
+## Component Specifications
 
 ### Board Cells ✅ Implemented
 
@@ -162,13 +162,13 @@ const containerStyle = {
 
 ### Status Indicators ✅ Implemented
 
-| Status Type       | Color                 | Animation            | Implementation         |
-| ----------------- | --------------------- | -------------------- | ---------------------- |
-| **Your Turn**     | `colors.successGreen` | Glow effect          | Badge with checkmark ✓ |
-| **Opponent Turn** | `colors.textDim`      | None                 | Gray badge with ⏳     |
-| **Bot Thinking**  | `colors.queueOrange`  | Pulsing robot + dots | Animated badge with 🤖 |
-| **Move Rejected** | `colors.rejectionRed` | Flash + shake        | Error overlay          |
-| **Game Over**     | Result-dependent      | Result-specific glow | Large banner           |
+| Status Type       | Color                 | Animation            | Implementation                      |
+| ----------------- | --------------------- | -------------------- | ----------------------------------- |
+| **Your Turn**     | `colors.successGreen` | Glow effect          | Badge with Lucide Check icon        |
+| **Opponent Turn** | `colors.textDim`      | None                 | Gray badge with Lucide Clock icon   |
+| **Bot Thinking**  | `colors.queueOrange`  | Pulsing dots         | Animated badge with Lucide Bot icon |
+| **Move Rejected** | `colors.rejectionRed` | Flash + shake        | Error overlay with Lucide X icon    |
+| **Game Over**     | Result-dependent      | Result-specific glow | Large banner with appropriate icon  |
 
 ### Button Hierarchy ✅ Implemented
 
@@ -179,7 +179,7 @@ const containerStyle = {
 
 ---
 
-## ✨ Animation System
+## Animation System
 
 ### Animation Principles ✅ Implemented
 
@@ -273,7 +273,7 @@ const containerStyle = {
 
 ---
 
-## 🎮 Kriegspiel-Specific Design Principles
+## Kriegspiel-Specific Design Principles
 
 ### Hidden Information Clarity ✅ Implemented
 
@@ -292,7 +292,69 @@ const containerStyle = {
 
 ---
 
-## 🔮 Future Development Guidelines
+## Icon Strategy & Visual Elements
+
+### Anti-Emoji Philosophy
+
+**Core Principle:** Avoid emoji in user-facing interfaces to maintain professional, clean aesthetics.
+
+**Problems with Emoji:**
+
+- Inconsistent rendering across platforms/devices
+- Accessibility issues for screen readers
+- Unprofessional appearance for strategic game audience
+- Typography hierarchy disruption
+- Maintenance burden (Unicode updates, platform differences)
+
+**Replacement Strategy:**
+
+- Use descriptive text for primary communication
+- Implement Lucide React icons for functional indicators
+- Apply CSS styling for visual states (colors, animations)
+- Maintain consistent typography throughout
+
+### Lucide React Icons
+
+**Primary icon library** for functional UI elements:
+
+```bash
+npm install lucide-react
+```
+
+**Usage Pattern:**
+
+```typescript
+import { Check, Clock, Bot, X, Loader2 } from 'lucide-react';
+
+// Status indicators
+<Check size={16} color={colors.successGreen} />
+<Clock size={16} color={colors.textDim} />
+<Bot size={16} color={colors.botBlue} />
+
+// Loading states
+<Loader2 size={16} className="animate-spin" />
+```
+
+**Icon Guidelines:**
+
+- **Size**: 16px for inline, 20px for buttons, 24px for headers
+- **Color**: Use color constants from `colors.ts`
+- **Consistency**: All icons from Lucide React family
+- **Accessibility**: Proper ARIA labels for screen readers
+
+**Common Icon Mappings:**
+
+- `Check` → replaces ✓
+- `Clock` → replaces ⏳
+- `Bot` → replaces 🤖
+- `X` → replaces ❌
+- `Loader2` → replaces 🔄 (with spin animation)
+- `Wifi`/`WifiOff` → replaces 🟢🔴
+- `Trophy` → replaces 🎉 (victory states)
+
+---
+
+## Future Development Guidelines
 
 ### Adding New Components
 
@@ -301,6 +363,8 @@ const containerStyle = {
 3. **Add hover effects**: Use `getHoverColor()` and `createGlow()` utilities
 4. **Respect accessibility**: Check `prefers-reduced-motion` for animations
 5. **Use typography scale**: Stick to established font sizes and weights
+6. **No emoji**: Use descriptive text and Lucide React icons instead
+7. **Icon consistency**: Import icons from `lucide-react` with proper sizing and colors
 
 ### Adding New Colors
 
@@ -325,7 +389,7 @@ const containerStyle = {
 
 ---
 
-## 📱 Responsive Design Patterns
+## Responsive Design Patterns
 
 ### Breakpoints (Implicit)
 
@@ -342,4 +406,4 @@ const containerStyle = {
 
 ---
 
-This design system provides a solid foundation for maintaining visual consistency and implementing new features while preserving the strategic, mysterious atmosphere that makes Kriegspiel Tic Tac Toe engaging. 🎯
+This design system provides a solid foundation for maintaining visual consistency and implementing new features while preserving the strategic, mysterious atmosphere that makes Kriegspiel Tic Tac Toe engaging.

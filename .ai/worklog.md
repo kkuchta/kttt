@@ -44,6 +44,11 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] **Board Reveal Animation** - Complete board reveal when game ends ✅ FULLY IMPLEMENTED & TESTED!
   - [x] Responsive game board design (mobile tested 375x667)
   - [ ] Move feedback and animations
+  - [ ] **Emoji Removal** - Replace all emoji with clean text/icons using Lucide React
+    - [ ] Remove decorative emoji from headers and buttons
+    - [ ] Replace status indicators with Lucide React icons
+    - [ ] Update connection indicators to use CSS instead of Unicode
+    - [ ] Clean up debug console logs
 - [ ] Deployment
   - [ ] Production build setup
   - [ ] Environment configuration

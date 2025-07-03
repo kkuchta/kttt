@@ -14,6 +14,7 @@
 
 - React + Socket.io-client + TypeScript
 - Vite for build tooling and development server
+- Lucide React for consistent icon system
 - Responsive design for mobile/desktop
 
 **Shared:**
@@ -183,3 +184,11 @@ REDIS_URL=redis://user:pass@host:port  # Production
 - **Lightweight Storage:** Bot games use shorter TTL (30 minutes vs 4 hours)
 - **Queue Integration:** "Play vs Bot" button removes player from matchmaking queue
 - **Expandable Design:** Interface supports future SmartBot, HardBot implementations
+
+### UI/UX Strategy
+
+- **Anti-Emoji Philosophy:** No emoji in user-facing interfaces for professional appearance
+- **Icon System:** Lucide React for consistent, accessible icons across components
+- **Typography Focus:** Clean text-based communication with Inter/Space Grotesk fonts
+- **Color-Based States:** Use color constants and CSS for visual feedback instead of symbols
+- **Accessibility:** Screen reader friendly with proper ARIA labels and semantic markup
