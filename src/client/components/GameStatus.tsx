@@ -3,7 +3,7 @@ import {
   GameStatus as GameStatusType,
   Player,
 } from '@shared/types/game';
-import { Check } from 'lucide-react';
+import { Bot, Check, Clock } from 'lucide-react';
 import React from 'react';
 import { boxShadows, colors, createGlow } from '../../shared/constants/colors';
 
@@ -68,7 +68,7 @@ export function GameStatus({
             gap: '10px',
           }}
         >
-          <span style={{ fontSize: '24px' }}>🤖</span>
+          <Bot size={24} color={colors.botBlue} />
           <p
             style={{
               margin: 0,
@@ -147,15 +147,15 @@ export function GameStatus({
           <Check size={16} color={colors.successGreen} />
         )}
         {type === 'bot-thinking' && (
-          <span
+          <Bot
+            size={16}
+            color={colors.queueOrange}
             style={{
               animation: 'botThinking 1.5s ease-in-out infinite',
             }}
-          >
-            🤖
-          </span>
+          />
         )}
-        {type === 'waiting' && <span>⏳</span>}
+        {type === 'waiting' && <Clock size={16} color={colors.textDim} />}
         <span>{text}</span>
         {type === 'bot-thinking' && (
           <span
@@ -264,11 +264,7 @@ export function GameStatus({
                 fontFamily: 'Inter, sans-serif',
               }}
             >
-              {isYourWin
-                ? '🎉 You Won!'
-                : isBotWin
-                  ? '🤖 Bot Wins!'
-                  : '😔 You Lost!'}
+              {isYourWin ? 'You Won!' : isBotWin ? '🤖 Bot Wins!' : 'You Lost!'}
             </h3>
             <p
               style={{
@@ -330,7 +326,7 @@ export function GameStatus({
                 fontFamily: 'Inter, sans-serif',
               }}
             >
-              🤝 It&apos;s a Draw!
+              It&apos;s a Draw!
             </h3>
             <p
               style={{
@@ -373,9 +369,14 @@ export function GameStatus({
               fontSize: '20px',
               fontWeight: '500',
               fontFamily: 'Inter, sans-serif',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
             }}
           >
-            ⏳ Waiting for another player to join...
+            <Clock size={18} color={colors.botBlue} />
+            Waiting for another player to join...
           </h3>
           <p
             style={{

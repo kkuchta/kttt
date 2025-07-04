@@ -185,9 +185,9 @@ export function GamePage() {
           // Show win announcement
           if (data.result.winner) {
             const isYourWin = data.result.winner === currentPlayer;
-            alert(isYourWin ? '🎉 You win!' : '😔 You lose!');
+            alert(isYourWin ? 'You Win!' : 'You Lose!');
           } else {
-            alert('🤝 Game ended in a draw!');
+            alert('Game ended in a draw!');
           }
         }
       }
@@ -851,7 +851,7 @@ export function GamePage() {
             {isConnecting
               ? 'Connecting to game...'
               : isConnected
-                ? '🎮 Joining game...'
+                ? 'Joining game...'
                 : 'Connection Failed - Unable to connect to game'}
           </p>
         </div>

@@ -1,5 +1,6 @@
 import { BotDifficulty } from '@shared/types/bot';
 import { GameResult, Player } from '@shared/types/game';
+import { Bot, Target } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -200,7 +201,7 @@ export function PostBotGameOptions({
                 textShadow: `0 0 15px ${createGlow(resultColor, 0.3)}`,
               }}
             >
-              {isYourWin ? '🎉 Victory!' : isDraw ? '🤝 Draw!' : '🤖 Bot Wins!'}
+              {isYourWin ? 'Victory!' : isDraw ? 'Draw!' : '🤖 Bot Wins!'}
             </h2>
             <p
               style={{
@@ -253,7 +254,7 @@ export function PostBotGameOptions({
                 e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.queueOrange, 0.2)}`;
               }}
             >
-              <span>🎯</span>
+              <Target size={16} color="#ffffff" />
               <span>Find Human Opponent</span>
             </button>
 
@@ -274,7 +275,7 @@ export function PostBotGameOptions({
                 e.currentTarget.style.boxShadow = `0 0 15px ${createGlow(colors.botBlue, 0.2)}`;
               }}
             >
-              <span>🤖</span>
+              <Bot size={16} color="#ffffff" />
               <span>Challenge {getBotDisplayName(botDifficulty)} Again</span>
             </button>
 

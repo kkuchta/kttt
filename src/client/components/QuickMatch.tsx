@@ -1,3 +1,4 @@
+import { Bot } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -137,7 +138,6 @@ export function QuickMatch() {
             }
           }}
         >
-          <span>⚡</span>
           {isConnecting ? 'Connecting...' : 'Find Opponent Now'}
         </button>
 
@@ -300,7 +300,7 @@ export function QuickMatch() {
             e.currentTarget.style.boxShadow = `0 0 12px ${createGlow(colors.botBlue, 0.2)}`;
           }}
         >
-          <span>🤖</span>
+          <Bot size={16} color="#ffffff" />
           <span>Play vs Bot Instead</span>
         </button>
       </div>
