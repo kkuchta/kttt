@@ -849,10 +849,10 @@ export function GamePage() {
             }}
           >
             {isConnecting
-              ? '🔄 Connecting to game...'
+              ? 'Connecting to game...'
               : isConnected
                 ? '🎮 Joining game...'
-                : '❌ Unable to connect to game'}
+                : 'Connection Failed - Unable to connect to game'}
           </p>
         </div>
       )}

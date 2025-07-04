@@ -45,11 +45,11 @@ For each emoji, one at a time (no batching):
 | 🎭    | AboutPage.tsx           | Dramatic reveals                | Low      | "🎭 Dramatic Reveals"            | Remove, use text styling             | Feature highlight                  | TODO    |
 | 🎮    | AboutPage.tsx           | Start Playing CTA               | Low      | "🎮 Start Playing"               | Remove, use text styling             | Call to action                     | TODO    |
 | 🎮    | GamePage.tsx            | Joining game status             | Medium   | "🎮 Joining game..."             | Replace with "Joining..."            | Loading state                      | TODO    |
-| ❌    | GamePage.tsx            | Connection error                | High     | "❌ Unable to connect"           | Replace with "Connection Failed"     | Error state                        | TODO    |
-| 🟢    | ConnectionIndicator.tsx | Connected state                 | High     | Green dot for connected          | Replace with CSS green dot           | Connection status                  | TODO    |
-| 🔴    | ConnectionIndicator.tsx | Disconnected state              | High     | Red dot for disconnected         | Replace with CSS red dot             | Connection status                  | TODO    |
-| 🔄    | ConnectionIndicator.tsx | Connecting state                | High     | Spinning indicator               | Replace with CSS spinner             | Loading state                      | TODO    |
-| 🔄    | GamePage.tsx            | Connecting status               | High     | "🔄 Connecting to game..."       | Replace with "Connecting..."         | Loading state                      | TODO    |
+| ❌    | GamePage.tsx            | Connection error                | High     | Error state                      | Replace with "Connection Failed"     | Error state                        | ✅ DONE |
+| 🟢    | ConnectionIndicator.tsx | Connected state                 | High     | Green dot for connected          | Replace with CSS green dot           | Connection status                  | ✅ DONE |
+| 🔴    | ConnectionIndicator.tsx | Disconnected state              | High     | Red dot for disconnected         | Replace with CSS red dot             | Connection status                  | ✅ DONE |
+| 🔄    | ConnectionIndicator.tsx | Connecting state                | High     | Spinning indicator               | Replace with CSS spinner             | Loading state                      | ✅ DONE |
+| 🔄    | GamePage.tsx            | Connecting status               | High     | "🔄 Connecting to game..."       | Replace with "Connecting..."         | Loading state                      | ✅ DONE |
 
 ## Debug/Console Emoji (Not User-Facing)
 

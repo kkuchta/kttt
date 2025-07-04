@@ -1,3 +1,4 @@
+import { Loader2, Wifi, WifiOff } from 'lucide-react';
 import React, { useState } from 'react';
 import { colors, createGlow } from '../../shared/constants/colors';
 
@@ -20,21 +21,27 @@ export function ConnectionIndicator({
       return {
         color: colors.successGreen,
         text: 'Connected',
-        emoji: '🟢',
+        icon: <Wifi size={14} color={colors.successGreen} />,
         showExpanded: false,
       };
     } else if (isConnecting) {
       return {
         color: colors.queueOrange,
         text: 'Connecting...',
-        emoji: '🔄',
+        icon: (
+          <Loader2
+            size={14}
+            color={colors.queueOrange}
+            className="animate-spin"
+          />
+        ),
         showExpanded: true,
       };
     } else {
       return {
         color: colors.rejectionRed,
         text: 'Connection failed',
-        emoji: '🔴',
+        icon: <WifiOff size={14} color={colors.rejectionRed} />,
         showExpanded: true,
       };
     }
@@ -102,7 +109,7 @@ export function ConnectionIndicator({
                 animation: isConnecting ? 'spin 1s linear infinite' : 'none',
               }}
             >
-              {state.emoji}
+              {state.icon}
             </span>
             <span
               style={{
