@@ -1,4 +1,5 @@
 import { Board, GameResult, Player, Position } from '@shared/types/game';
+import { Check } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -773,7 +774,11 @@ export function GamePage() {
               {copyState === 'copied' ? (
                 <>
                   <span>Copied!</span>
-                  <span style={{ marginLeft: '4px' }}>✓</span>
+                  <Check
+                    size={16}
+                    color="#ffffff"
+                    style={{ marginLeft: '4px' }}
+                  />
                 </>
               ) : (
                 'Copy'

@@ -170,7 +170,7 @@ export function HomePage() {
                   gap: '8px',
                 }}
               >
-                ✨ Start New Game
+                Start New Game
               </h3>
               <button
                 onClick={handleCreateGame}
@@ -220,7 +220,7 @@ export function HomePage() {
                   gap: '8px',
                 }}
               >
-                ⚡ Quick Match
+                Quick Match
               </h3>
               <QuickMatch />
             </div>

@@ -3,6 +3,7 @@ import {
   GameStatus as GameStatusType,
   Player,
 } from '@shared/types/game';
+import { Check } from 'lucide-react';
 import React from 'react';
 import { boxShadows, colors, createGlow } from '../../shared/constants/colors';
 
@@ -142,7 +143,9 @@ export function GameStatus({
 
     return (
       <div style={badgeStyles}>
-        {type === 'your-turn' && <span>✓</span>}
+        {type === 'your-turn' && (
+          <Check size={16} color={colors.successGreen} />
+        )}
         {type === 'bot-thinking' && (
           <span
             style={{
