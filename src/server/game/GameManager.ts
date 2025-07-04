@@ -109,14 +109,14 @@ export class GameManager {
     await this.storage.setSocketGame(humanSocketId, gameId);
 
     console.log(
-      `🤖 Created bot game ${gameId}: Human ${humanSocketId} (${humanPlayer}) vs ${botDifficulty} bot (${newGame.botInfo!.botPlayer})`
+      `[BOT] Created bot game ${gameId}: Human ${humanSocketId} (${humanPlayer}) vs ${botDifficulty} bot (${newGame.botInfo!.botPlayer})`
     );
 
     // If bot goes first, schedule bot move
     if (newGame.currentTurn === newGame.botInfo!.botPlayer) {
       this.scheduleBotMove(gameId).catch(error => {
         console.error(
-          `🤖 Error scheduling initial bot move for game ${gameId}:`,
+          `[BOT] Error scheduling initial bot move for game ${gameId}:`,
           error
         );
       });
@@ -150,7 +150,7 @@ export class GameManager {
       // Execute bot move
       await this.executeBotMove(gameId, botPlayer, botMoveResult.position);
     } catch (error) {
-      console.error(`🤖 Bot move error in game ${gameId}:`, error);
+      console.error(`[BOT] Bot move error in game ${gameId}:`, error);
     }
   }
 
@@ -163,7 +163,7 @@ export class GameManager {
     const game = await this.storage.getGame(gameId);
     if (!game || !game.botInfo || game.status !== 'active') {
       console.log(
-        `🤖 Cannot execute bot move - game ${gameId} not found or not active`
+        `[BOT] Cannot execute bot move - game ${gameId} not found or not active`
       );
       return;
     }
@@ -171,7 +171,7 @@ export class GameManager {
     // Validate it's the bot's turn
     if (game.currentTurn !== botPlayer) {
       console.log(
-        `🤖 Bot move attempted but it's not bot's turn in game ${gameId}`
+        `[BOT] Bot move attempted but it's not bot's turn in game ${gameId}`
       );
       return;
     }
@@ -190,7 +190,7 @@ export class GameManager {
         game.currentTurn = getOpponentPlayer(botPlayer);
 
         console.log(
-          `🤖 Bot move failed - revealing piece at ${revealedKey}, switching to ${game.currentTurn}`
+          `[BOT] Bot move failed - revealing piece at ${revealedKey}, switching to ${game.currentTurn}`
         );
 
         await this.storage.updateGame(gameId, game);
@@ -198,7 +198,7 @@ export class GameManager {
         return;
       } else {
         // Other validation error
-        console.error(`🤖 Bot move validation failed: ${moveResult.error}`);
+        console.error(`[BOT] Bot move validation failed: ${moveResult.error}`);
         return;
       }
     }
@@ -214,7 +214,7 @@ export class GameManager {
     });
 
     console.log(
-      `🤖 Bot (${botPlayer}) placed piece at (${position.row},${position.col})`
+      `[BOT] Bot (${botPlayer}) placed piece at (${position.row},${position.col})`
     );
 
     // Check if game is over
@@ -249,7 +249,7 @@ export class GameManager {
       // Game continues - switch turns
       game.currentTurn = getOpponentPlayer(botPlayer);
 
-      console.log(`🔄 Bot game turn switched to ${game.currentTurn}`);
+      console.log(`[STATE] Bot game turn switched to ${game.currentTurn}`);
 
       await this.storage.updateGame(gameId, game);
       await this.sendGameStateToAllPlayers(game);
@@ -258,7 +258,7 @@ export class GameManager {
       if (game.currentTurn === botPlayer) {
         this.scheduleBotMove(gameId).catch(error => {
           console.error(
-            `🤖 Error scheduling follow-up bot move for game ${gameId}:`,
+            `[BOT] Error scheduling follow-up bot move for game ${gameId}:`,
             error
           );
         });
@@ -279,13 +279,13 @@ export class GameManager {
   }> {
     const gameId = await this.storage.getSocketGame(socketId);
     if (!gameId) {
-      console.log(`❌ Player ${socketId} not in any game`);
+      console.log(`[ERROR] Player ${socketId} not in any game`);
       return { success: false, error: 'You are not in a game' };
     }
 
     const game = await this.storage.getGame(gameId);
     if (!game) {
-      console.log(`❌ Game not found: ${gameId}`);
+      console.log(`[ERROR] Game not found: ${gameId}`);
       return { success: false, error: 'Game not found' };
     }
 
@@ -298,7 +298,7 @@ export class GameManager {
     }
 
     if (!currentPlayer) {
-      console.log(`❌ Player ${socketId} not in game ${gameId}`);
+      console.log(`[ERROR] Player ${socketId} not in game ${gameId}`);
       return { success: false, error: 'You are not a player in this game' };
     }
 
@@ -329,7 +329,7 @@ export class GameManager {
         if (game.botInfo && game.currentTurn === game.botInfo.botPlayer) {
           this.scheduleBotMove(gameId).catch(error => {
             console.error(
-              `🤖 Error scheduling bot move after human failed move in game ${gameId}:`,
+              `[BOT] Error scheduling bot move after human failed move in game ${gameId}:`,
               error
             );
           });
@@ -342,7 +342,7 @@ export class GameManager {
         };
       } else {
         // Other validation error (not your turn, invalid position, etc.)
-        console.log(`❌ Move validation failed: ${moveResult.error}`);
+        console.log(`[ERROR] Move validation failed: ${moveResult.error}`);
         return { success: false, error: moveResult.error };
       }
     }
@@ -380,7 +380,7 @@ export class GameManager {
       // Game continues - switch turns
       game.currentTurn = getOpponentPlayer(currentPlayer);
 
-      console.log(`🔄 Turn switched to ${game.currentTurn}`);
+      console.log(`[STATE] Turn switched to ${game.currentTurn}`);
 
       await this.storage.updateGame(gameId, game);
 
@@ -388,7 +388,7 @@ export class GameManager {
       if (game.botInfo && game.currentTurn === game.botInfo.botPlayer) {
         this.scheduleBotMove(gameId).catch(error => {
           console.error(
-            `🤖 Error scheduling bot move after human move in game ${gameId}:`,
+            `[BOT] Error scheduling bot move after human move in game ${gameId}:`,
             error
           );
         });
@@ -405,7 +405,7 @@ export class GameManager {
 
     await this.storage.createGame(gameId, newGame);
 
-    console.log(`🎮 Created game via API: ${gameId}`);
+    console.log(`[GAME] Created game via API: ${gameId}`);
 
     return { gameId, success: true };
   }
@@ -446,7 +446,7 @@ export class GameManager {
     await this.storage.createGame(gameId, newGame);
     await this.storage.setSocketGame(socketId, gameId);
 
-    console.log(`🎮 Created game ${gameId}, creator: ${socketId} (X)`);
+    console.log(`[GAME] Created game ${gameId}, creator: ${socketId} (X)`);
 
     return { gameId, yourPlayer: 'X' };
   }
@@ -464,7 +464,7 @@ export class GameManager {
   }> {
     const game = await this.storage.getGame(gameId);
     if (!game) {
-      console.log(`❌ Game not found: ${gameId}`);
+      console.log(`[ERROR] Game not found: ${gameId}`);
       return { success: false, error: 'Game not found' };
     }
 
@@ -476,7 +476,7 @@ export class GameManager {
 
     // Check if player is already in this game FIRST (exact socket ID match)
     if (game.players.X === socketId || game.players.O === socketId) {
-      console.log(`🔄 Player ${socketId} already in game ${gameId}`);
+      console.log(`[STATE] Player ${socketId} already in game ${gameId}`);
       const yourPlayer = game.players.X === socketId ? 'X' : 'O';
 
       await this.storage.setSocketGame(socketId, gameId);
@@ -502,7 +502,7 @@ export class GameManager {
       ) {
         // There's already a different socket ID for this player - this is a reconnection
         console.log(
-          `🔄 Reconnecting player ${rejoinAsPlayer}: updating socket ${currentSocketForPlayer} → ${socketId}`
+          `[STATE] Reconnecting player ${rejoinAsPlayer}: updating socket ${currentSocketForPlayer} → ${socketId}`
         );
 
         // Update the socket ID for this player

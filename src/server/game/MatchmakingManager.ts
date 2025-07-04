@@ -40,7 +40,7 @@ export class MatchmakingManager {
       MATCHMAKING_CONFIG.QUEUE_STATUS_INTERVAL
     );
 
-    console.log('🎯 MatchmakingManager initialized');
+    console.log('[QUEUE] MatchmakingManager initialized');
   }
 
   // Join the matchmaking queue
@@ -87,7 +87,7 @@ export class MatchmakingManager {
     this.queue.players.push(queuedPlayer);
 
     console.log(
-      `🎯 Player ${socketId} joined queue (position: ${this.queue.players.length})`
+      `[QUEUE] Player ${socketId} joined queue (position: ${this.queue.players.length})`
     );
 
     // Try to find a match immediately
@@ -110,7 +110,7 @@ export class MatchmakingManager {
     const wasRemoved = this.queue.players.length < initialLength;
 
     if (wasRemoved) {
-      console.log(`🎯 Player ${socketId} left queue`);
+      console.log(`[QUEUE] Player ${socketId} left queue`);
     }
 
     return wasRemoved;
@@ -136,7 +136,7 @@ export class MatchmakingManager {
     const playerO = this.queue.players.shift()!;
 
     console.log(
-      `🎯 Matching players: ${playerX.socketId} (X) vs ${playerO.socketId} (O)`
+      `[QUEUE] Matching players: ${playerX.socketId} (X) vs ${playerO.socketId} (O)`
     );
 
     try {
@@ -156,7 +156,7 @@ export class MatchmakingManager {
       );
 
       if (!joinResultX.success || !joinResultO.success) {
-        console.error('🎯 Failed to join players to matched game:', {
+        console.error('[QUEUE] Failed to join players to matched game:', {
           gameId,
           playerXResult: joinResultX,
           playerOResult: joinResultO,
@@ -180,10 +180,10 @@ export class MatchmakingManager {
 
       this.queue.lastMatchedAt = now;
 
-      console.log(`🎯 Successfully matched players in game ${gameId}`);
+      console.log(`[QUEUE] Successfully matched players in game ${gameId}`);
       return true;
     } catch (error) {
-      console.error('🎯 Error creating matched game:', error);
+      console.error('[QUEUE] Error creating matched game:', error);
 
       // Re-add players to queue on error
       this.queue.players.unshift(playerO, playerX);
@@ -200,7 +200,7 @@ export class MatchmakingManager {
       const waitTime = now - player.joinedAt;
       if (waitTime > MATCHMAKING_CONFIG.MAX_QUEUE_TIME) {
         console.log(
-          `🎯 Removing expired player ${player.socketId} from queue (waited ${Math.round(waitTime / 1000)}s)`
+          `[QUEUE] Removing expired player ${player.socketId} from queue (waited ${Math.round(waitTime / 1000)}s)`
         );
 
         // Notify player that they've been removed from queue
@@ -216,7 +216,7 @@ export class MatchmakingManager {
 
     if (this.queue.players.length < initialLength) {
       console.log(
-        `🎯 Cleaned up ${initialLength - this.queue.players.length} expired players from queue`
+        `[QUEUE] Cleaned up ${initialLength - this.queue.players.length} expired players from queue`
       );
     }
   }
@@ -274,7 +274,7 @@ export class MatchmakingManager {
   handlePlayerDisconnect(socketId: string): void {
     const wasInQueue = this.leaveQueue(socketId);
     if (wasInQueue) {
-      console.log(`🎯 Removed disconnected player ${socketId} from queue`);
+      console.log(`[QUEUE] Removed disconnected player ${socketId} from queue`);
     }
   }
 
@@ -286,6 +286,6 @@ export class MatchmakingManager {
     if (this.statusInterval) {
       clearInterval(this.statusInterval);
     }
-    console.log('🎯 MatchmakingManager destroyed');
+    console.log('[QUEUE] MatchmakingManager destroyed');
   }
 }

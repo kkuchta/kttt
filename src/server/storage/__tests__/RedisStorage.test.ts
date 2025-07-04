@@ -47,7 +47,7 @@ describe('RedisStorage', () => {
 
       if (shouldSkipRedisTests) {
         console.warn(
-          '🔄 Redis connection failed - Redis tests will be skipped:',
+          '[TEST] Redis connection failed - Redis tests will be skipped:',
           errorMessage
         );
         console.warn(

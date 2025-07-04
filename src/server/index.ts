@@ -94,7 +94,7 @@ async function initializeStorage() {
       await storage.connect();
       console.log('✅ Redis storage connected successfully');
     } catch (error) {
-      console.error('❌ Failed to connect to Redis:', error);
+      console.error('[ERROR] Failed to connect to Redis:', error);
       console.log('💡 Make sure Redis is running: make redis-up');
       process.exit(1);
     }
@@ -147,6 +147,6 @@ async function startServer() {
 }
 
 startServer().catch(error => {
-  console.error('❌ Failed to start server:', error);
+  console.error('[ERROR] Failed to start server:', error);
   process.exit(1);
 });

@@ -56,7 +56,7 @@ export class RandomBot implements BotPlayer {
     const thinkingTime = this.calculateThinkingTime();
 
     console.log(
-      `🤖 ${this.name} thinking for ${thinkingTime}ms, choosing position (${selectedPosition.row},${selectedPosition.col})`
+      `[BOT] ${this.name} thinking for ${thinkingTime}ms, choosing position (${selectedPosition.row},${selectedPosition.col})`
     );
 
     return {

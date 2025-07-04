@@ -55,7 +55,7 @@ export function setupSocketHandlers(
     socket.on(
       'join-queue',
       withValidationNoData(socket, 'join-queue', async () => {
-        console.log(`🎯 Join queue request from ${socket.id}`);
+        console.log(`[QUEUE] Join queue request from ${socket.id}`);
 
         try {
           const result = await matchmakingManager.joinQueue(socket.id);
@@ -83,7 +83,7 @@ export function setupSocketHandlers(
     socket.on(
       'leave-queue',
       withValidationNoData(socket, 'leave-queue', async () => {
-        console.log(`🎯 Leave queue request from ${socket.id}`);
+        console.log(`[QUEUE] Leave queue request from ${socket.id}`);
 
         try {
           const wasInQueue = matchmakingManager.leaveQueue(socket.id);
@@ -104,14 +104,14 @@ export function setupSocketHandlers(
     socket.on(
       'create-bot-game',
       withValidation(socket, 'create-bot-game', async data => {
-        console.log(`🤖 Create bot game request from ${socket.id}:`, data);
+        console.log(`[BOT] Create bot game request from ${socket.id}:`, data);
 
         try {
           // Remove player from matchmaking queue if they're in one
           const wasInQueue = matchmakingManager.leaveQueue(socket.id);
           if (wasInQueue) {
             console.log(
-              `🎯 Removed ${socket.id} from queue to create bot game`
+              `[QUEUE] Removed ${socket.id} from queue to create bot game`
             );
           }
 
@@ -182,7 +182,7 @@ export function setupSocketHandlers(
         }
 
         console.log(
-          `🎮 Join game request: ${gameId} from ${socket.id}${rejoinAsPlayer ? ` (rejoin as ${rejoinAsPlayer})` : ''}`
+          `[GAME] Join game request: ${gameId} from ${socket.id}${rejoinAsPlayer ? ` (rejoin as ${rejoinAsPlayer})` : ''}`
         );
 
         try {
@@ -265,7 +265,7 @@ export function setupSocketHandlers(
     socket.on(
       'make-move',
       withValidation(socket, 'make-move', async position => {
-        console.log(`🎯 Move attempt from ${socket.id}:`, position);
+        console.log(`[QUEUE] Move attempt from ${socket.id}:`, position);
 
         try {
           const result = await gameManager.makeMove(socket.id, position);

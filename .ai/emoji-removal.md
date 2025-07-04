@@ -1,6 +1,12 @@
 # Emoji Removal Analysis
 
-This document catalogs all emoji usage in the user-facing parts of the application to consider removal and replacement strategies.
+This document catalogs all emoji usage in the application to consider removal and replacement strategies.
+
+## Discovery Notes
+
+**Initial Audit**: Focused on user-facing UI components and identified 33 emoji instances.  
+**Exhaustive Unicode Search**: Revealed additional 10 server-side debug emoji not in original audit.  
+**Status**: All user-facing emoji ✅ COMPLETE. Server debug emoji 🔄 PENDING.
 
 # Instructions
 
@@ -53,7 +59,17 @@ For each emoji, one at a time (no batching):
 
 ## Debug/Console Emoji (Not User-Facing)
 
-| Emoji | File          | Context      | Priority | Purpose                | Action                               | Status  |
-| ----- | ------------- | ------------ | -------- | ---------------------- | ------------------------------------ | ------- |
-| 🎭    | GamePage.tsx  | Console logs | Lowest   | Debug reveal animation | Remove or replace with text prefixes | ✅ DONE |
-| 🎮    | GameBoard.tsx | Console logs | Lowest   | Debug game board       | Remove or replace with text prefixes | ✅ DONE |
+| Emoji | File                  | Context                          | Priority | Purpose                      | Action                               | Status  |
+| ----- | --------------------- | -------------------------------- | -------- | ---------------------------- | ------------------------------------ | ------- |
+| 🎭    | GamePage.tsx          | Console logs                     | Lowest   | Debug reveal animation       | Remove or replace with text prefixes | ✅ DONE |
+| 🎮    | GameBoard.tsx         | Console logs                     | Lowest   | Debug game board             | Remove or replace with text prefixes | ✅ DONE |
+| 🎯    | MatchmakingManager.ts | Queue operations logging         | Low      | Debug queue management       | Replace with "[QUEUE]" prefix        | ✅ DONE |
+| 🎯    | socket/handlers.ts    | Join/leave queue, move logging   | Low      | Debug socket operations      | Replace with "[QUEUE]" prefix        | ✅ DONE |
+| 🤖    | GameManager.ts        | Bot game creation, moves, errors | Low      | Debug bot game operations    | Replace with "[BOT]" prefix          | ✅ DONE |
+| 🤖    | BotPlayer.ts          | Bot thinking logs                | Low      | Debug bot AI behavior        | Replace with "[BOT]" prefix          | ✅ DONE |
+| 🎮    | GameManager.ts        | Game creation logs               | Low      | Debug game lifecycle         | Replace with "[GAME]" prefix         | ✅ DONE |
+| 🎮    | socket/handlers.ts    | Join game requests               | Low      | Debug socket game operations | Replace with "[GAME]" prefix         | ✅ DONE |
+| ❌    | GameManager.ts        | Error states logging             | Low      | Debug error conditions       | Replace with "[ERROR]" prefix        | ✅ DONE |
+| ❌    | server/index.ts       | Redis/server startup errors      | Low      | Debug server startup issues  | Replace with "[ERROR]" prefix        | ✅ DONE |
+| 🔄    | GameManager.ts        | Turn switching, reconnections    | Low      | Debug state transitions      | Replace with "[STATE]" prefix        | ✅ DONE |
+| 🔄    | RedisStorage.test.ts  | Test logging                     | Lowest   | Debug test operations        | Replace with "[TEST]" prefix         | ✅ DONE |
