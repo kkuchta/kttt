@@ -99,7 +99,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.xAccent, 0.3)}`,
             }}
           >
-            🎯 What is Kriegspiel Tic Tac Toe?
+            What is Kriegspiel Tic Tac Toe?
           </h2>
           <p
             style={{
@@ -178,7 +178,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.successGreen, 0.3)}`,
             }}
           >
-            ⚡ Features
+            Features
           </h2>
           <div
             style={{
@@ -237,7 +237,7 @@ export function AboutPage() {
                   margin: '0 0 12px 0',
                 }}
               >
-                ⚡ Quick Match
+                Quick Match
               </h3>
               <p
                 style={{
@@ -270,7 +270,7 @@ export function AboutPage() {
                   margin: '0 0 12px 0',
                 }}
               >
-                🎭 Dramatic Reveals
+                Dramatic Reveals
               </h3>
               <p
                 style={{
@@ -552,7 +552,7 @@ export function AboutPage() {
             e.currentTarget.style.boxShadow = 'none';
           }}
         >
-          🎮 Start Playing
+          Start Playing
         </Link>
       </div>
     </PageLayout>

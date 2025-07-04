@@ -201,7 +201,7 @@ export function PostBotGameOptions({
                 textShadow: `0 0 15px ${createGlow(resultColor, 0.3)}`,
               }}
             >
-              {isYourWin ? 'Victory!' : isDraw ? 'Draw!' : '🤖 Bot Wins!'}
+              {isYourWin ? 'Victory!' : isDraw ? 'Draw!' : 'Bot Wins!'}
             </h2>
             <p
               style={{

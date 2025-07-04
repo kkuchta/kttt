@@ -206,7 +206,6 @@ export function GameStatus({
                   animation: 'revealPulse 2s ease-in-out infinite',
                 }}
               >
-                <span style={{ fontSize: '24px' }}>🎭</span>
                 <h3
                   style={{
                     margin: 0,
@@ -216,7 +215,7 @@ export function GameStatus({
                     fontFamily: 'Inter, sans-serif',
                   }}
                 >
-                  Revealing hidden pieces...
+                  Reveal: Revealing hidden pieces...
                 </h3>
               </div>
               <p
@@ -264,7 +263,7 @@ export function GameStatus({
                 fontFamily: 'Inter, sans-serif',
               }}
             >
-              {isYourWin ? 'You Won!' : isBotWin ? '🤖 Bot Wins!' : 'You Lost!'}
+              {isYourWin ? 'You Won!' : isBotWin ? 'Bot Wins!' : 'You Lost!'}
             </h3>
             <p
               style={{

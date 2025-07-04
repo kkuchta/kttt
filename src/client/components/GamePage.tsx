@@ -224,7 +224,7 @@ export function GamePage() {
   const handleRevealComplete = useCallback(() => {
     if (!isMounted.current) return; // Prevent state updates after unmount
 
-    console.log('🎭 Board reveal animation completed');
+    console.log('REVEAL: Board reveal animation completed');
 
     // After reveal completes, show the appropriate game over UI
     if (botGameResult && gameState?.botInfo) {
@@ -247,7 +247,7 @@ export function GamePage() {
 
   // Reveal animation orchestration - removed handleRevealComplete from deps to prevent loop
   useEffect(() => {
-    console.log('🎭 Reveal useEffect triggered with:', {
+    console.log('REVEAL: Reveal useEffect triggered with:', {
       isRevealing: revealState.isRevealing,
       sequenceLength: revealState.revealSequence.length,
       revealSequence: revealState.revealSequence,
@@ -255,12 +255,12 @@ export function GamePage() {
 
     if (!revealState.isRevealing || revealState.revealSequence.length === 0) {
       console.log(
-        '🎭 Skipping reveal animation - not revealing or empty sequence'
+        'REVEAL: Skipping reveal animation - not revealing or empty sequence'
       );
       return;
     }
 
-    console.log('🎭 Starting sequential reveal animation');
+    console.log('REVEAL: Starting sequential reveal animation');
 
     // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia(
@@ -269,7 +269,7 @@ export function GamePage() {
 
     if (prefersReducedMotion) {
       // Instant reveal for accessibility
-      console.log('🎭 Using instant reveal (reduced motion)');
+      console.log('REVEAL: Using instant reveal (reduced motion)');
       handleRevealComplete();
       return;
     }
@@ -283,7 +283,7 @@ export function GamePage() {
     const initialPauseDuration = isQuickGame ? 400 : 700; // Reduced pause for quick games
 
     console.log(
-      `🎭 ${isQuickGame ? 'Quick game' : 'Normal game'} detected: ${revealState.revealSequence.length} pieces, using ${initialPauseDuration}ms initial pause`
+      `REVEAL: ${isQuickGame ? 'Quick game' : 'Normal game'} detected: ${revealState.revealSequence.length} pieces, using ${initialPauseDuration}ms initial pause`
     );
 
     // Phase 1: Initial pause (adaptive timing)
@@ -293,7 +293,7 @@ export function GamePage() {
         const revealTimeout = setTimeout(
           () => {
             console.log(
-              `🎭 Revealing piece ${index + 1}/${revealState.revealSequence.length} at (${position.row},${position.col})`
+              `REVEAL: Revealing piece ${index + 1}/${revealState.revealSequence.length} at (${position.row},${position.col})`
             );
 
             // Add this cell to revealing cells (only if component is still mounted)
@@ -306,7 +306,7 @@ export function GamePage() {
             }
 
             console.log(
-              '🎭 DEBUG: Added to revealingCells:',
+              'REVEAL: DEBUG: Added to revealingCells:',
               position,
               'Total revealing:',
               [...revealState.revealingCells, position].length
@@ -315,7 +315,7 @@ export function GamePage() {
             // Remove from revealing cells after animation (800ms, matching CSS animation)
             const removeTimeout = setTimeout(() => {
               console.log(
-                `🎭 Finished revealing piece at (${position.row},${position.col})`
+                `REVEAL: Finished revealing piece at (${position.row},${position.col})`
               );
 
               if (isMounted.current) {
@@ -336,7 +336,7 @@ export function GamePage() {
                     botGameResult?.winningLine &&
                     botGameResult.winningLine.length > 0
                   ) {
-                    console.log('🎭 Starting winner line highlight');
+                    console.log('REVEAL: Starting winner line highlight');
                     if (isMounted.current) {
                       setRevealState(prev => ({
                         ...prev,
@@ -349,7 +349,7 @@ export function GamePage() {
                     // Phase 4: End winner line highlight and show final result UI
                     const endHighlightTimeout = setTimeout(() => {
                       console.log(
-                        '🎭 Winner line highlight complete, calling handleRevealComplete'
+                        'REVEAL: Winner line highlight complete, calling handleRevealComplete'
                       );
                       handleRevealComplete();
                     }, 700); // Winner line highlight duration
@@ -357,7 +357,7 @@ export function GamePage() {
                   } else {
                     // No winner line (draw), proceed directly to final result
                     console.log(
-                      '🎭 No winner line to highlight, calling handleRevealComplete'
+                      'REVEAL: No winner line to highlight, calling handleRevealComplete'
                     );
                     handleRevealComplete();
                   }
@@ -385,7 +385,7 @@ export function GamePage() {
   // Cancel any ongoing reveal animation
   const cancelReveal = useCallback((clearBotResult: boolean = true) => {
     console.log(
-      '🎭 Canceling ongoing reveal animation, clearBotResult:',
+      'REVEAL: Canceling ongoing reveal animation, clearBotResult:',
       clearBotResult
     );
 
@@ -405,7 +405,7 @@ export function GamePage() {
 
   // Start reveal animation
   const startReveal = (finalBoard: Board, gameResult: GameResult) => {
-    console.log('🎭 Starting board reveal animation', {
+    console.log('REVEAL: Starting board reveal animation', {
       finalBoard,
       gameResult,
     });
@@ -433,7 +433,7 @@ export function GamePage() {
 
     // Set reveal state (only if component is mounted)
     if (isMounted.current) {
-      console.log('🎭 Setting reveal state with:', {
+      console.log('REVEAL: Setting reveal state with:', {
         isRevealing: true,
         hiddenPieces,
         revealSequence,
@@ -452,10 +452,12 @@ export function GamePage() {
         isWinnerLineAnimating: false,
       });
     } else {
-      console.log('🎭 ERROR: Component not mounted, cannot set reveal state');
+      console.log(
+        'REVEAL: ERROR: Component not mounted, cannot set reveal state'
+      );
     }
 
-    console.log('🎭 DEBUG: Reveal state set:', {
+    console.log('REVEAL: DEBUG: Reveal state set:', {
       hiddenPieces,
       revealSequenceLength: revealSequence.length,
       revealSequence,
@@ -504,7 +506,7 @@ export function GamePage() {
   useEffect(() => {
     return () => {
       // Cancel any ongoing reveal when switching games (but keep botGameResult for new game)
-      console.log('🎭 gameId changed, canceling reveal for old game');
+      console.log('REVEAL: gameId changed, canceling reveal for old game');
       cancelReveal(false); // Don't clear botGameResult - we might be starting a new reveal soon
     };
   }, [gameId, cancelReveal]);

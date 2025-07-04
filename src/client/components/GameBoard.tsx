@@ -162,7 +162,7 @@ export function GameBoard({
 
             // DEBUG: Log revealing cells
             if (isCurrentlyRevealing) {
-              console.log('🎮 GAMEBOARD: Cell is revealing:', {
+              console.log('GAMEBOARD: Cell is revealing:', {
                 row,
                 col,
                 cell,
