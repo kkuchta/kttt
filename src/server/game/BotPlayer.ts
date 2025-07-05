@@ -115,7 +115,7 @@ export function createBot(difficulty: BotDifficulty): BotPlayer {
       // For now, all difficulties use RandomBot
       // TODO: Implement other bot types
       console.warn(
-        `⚠️ Bot difficulty '${difficulty}' not implemented yet, using RandomBot`
+        `[WARNING] Bot difficulty '${difficulty}' not implemented yet, using RandomBot`
       );
       return new RandomBot();
 

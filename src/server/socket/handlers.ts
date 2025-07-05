@@ -26,13 +26,13 @@ export function setupSocketHandlers(
   matchmakingManager: MatchmakingManager
 ): void {
   io.on('connection', socket => {
-    console.log(`🔌 Client connected: ${socket.id}`);
+    console.log(`[SOCKET] Client connected: ${socket.id}`);
 
     // Game creation - with validation
     socket.on(
       'create-game',
       withValidationNoData(socket, 'create-game', async () => {
-        console.log(`📝 Create game request from ${socket.id}`);
+        console.log(`[REQUEST] Create game request from ${socket.id}`);
 
         try {
           const result = await gameManager.createGameViaSocket(socket.id);
@@ -247,7 +247,7 @@ export function setupSocketHandlers(
     socket.on(
       'leave-game',
       withValidationNoData(socket, 'leave-game', async () => {
-        console.log(`👋 Leave game request from ${socket.id}`);
+        console.log(`[REQUEST] Leave game request from ${socket.id}`);
 
         try {
           await gameManager.removePlayerFromGame(socket.id);
@@ -323,7 +323,9 @@ export function setupSocketHandlers(
     socket.on(
       'disconnect',
       withErrorHandling(socket, 'disconnect', async reason => {
-        console.log(`🔌 Client disconnected: ${socket.id}, reason: ${reason}`);
+        console.log(
+          `[SOCKET] Client disconnected: ${socket.id}, reason: ${reason}`
+        );
 
         try {
           // Clean up from both game and matchmaking queue

@@ -1,6 +1,6 @@
 import { BotDifficulty } from '@shared/types/bot';
 import { GameResult, Player } from '@shared/types/game';
-import { Bot, Target } from 'lucide-react';
+import { Bot, Home, Target } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -297,7 +297,7 @@ export function PostBotGameOptions({
                 e.currentTarget.style.color = colors.textDim;
               }}
             >
-              <span>🏠</span>
+              <Home size={16} style={{ marginRight: 6 }} />
               <span>Return to Home</span>
             </button>
           </div>
@@ -331,7 +331,19 @@ export function PostBotGameOptions({
               e.currentTarget.style.color = colors.textDim;
             }}
           >
-            ✕ Close
+            <span
+              style={{
+                fontWeight: 700,
+                fontSize: '18px',
+                marginRight: 6,
+                fontFamily: 'Inter, sans-serif',
+                verticalAlign: 'middle',
+              }}
+              aria-hidden="true"
+            >
+              ×
+            </span>{' '}
+            Close
           </button>
         </div>
       </div>

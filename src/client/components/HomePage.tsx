@@ -1,3 +1,4 @@
+import { Link as LinkIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -240,7 +241,8 @@ export function HomePage() {
                   gap: '8px',
                 }}
               >
-                🔗 Join Existing Game
+                <LinkIcon size={18} style={{ verticalAlign: 'middle' }} /> Join
+                Existing Game
               </h3>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <input

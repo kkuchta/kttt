@@ -225,7 +225,7 @@ export class GameManager {
       game.result = gameResult;
 
       console.log(
-        `🏁 Bot game ${gameId} completed:`,
+        `[GAME] Bot game ${gameId} completed:`,
         gameResult.winner ? `${gameResult.winner} wins!` : 'Draw'
       );
 
@@ -319,7 +319,7 @@ export class GameManager {
         game.currentTurn = getOpponentPlayer(currentPlayer);
 
         console.log(
-          `💥 Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
+          `[MOVE] Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
         );
 
         await this.storage.updateGame(gameId, game);
@@ -358,7 +358,7 @@ export class GameManager {
     });
 
     console.log(
-      `✅ Player ${currentPlayer} placed piece at (${position.row},${position.col})`
+      `[SUCCESS] Player ${currentPlayer} placed piece at (${position.row},${position.col})`
     );
 
     // Check if game is over
@@ -369,7 +369,7 @@ export class GameManager {
       game.result = gameResult;
 
       console.log(
-        `🏁 Game ${gameId} completed:`,
+        `[GAME] Game ${gameId} completed:`,
         gameResult.winner ? `${gameResult.winner} wins!` : 'Draw'
       );
 
@@ -535,7 +535,7 @@ export class GameManager {
         await this.storage.setSocketGame(socketId, gameId);
 
         console.log(
-          `✅ Player ${socketId} joined game ${gameId} as ${rejoinAsPlayer} (requested slot)`
+          `[SUCCESS] Player ${socketId} joined game ${gameId} as ${rejoinAsPlayer} (requested slot)`
         );
 
         return { success: true, yourPlayer: rejoinAsPlayer };
@@ -554,7 +554,7 @@ export class GameManager {
     );
 
     if (humanPlayersCount >= 2 || availableSlots.length === 0) {
-      console.log(`🚫 Game full: ${gameId}`);
+      console.log(`[ERROR] Game full: ${gameId}`);
       return { success: false, error: 'Game is full' };
     }
 
@@ -580,7 +580,7 @@ export class GameManager {
     await this.storage.setSocketGame(socketId, gameId);
 
     console.log(
-      `✅ Player ${socketId} joined game ${gameId} as ${assignedPlayer}`
+      `[SUCCESS] Player ${socketId} joined game ${gameId} as ${assignedPlayer}`
     );
 
     return { success: true, yourPlayer: assignedPlayer };
@@ -667,13 +667,13 @@ export class GameManager {
     if (game.players.X && game.players.X !== 'BOT') {
       await this.storage.removeSocketGame(game.players.X);
       console.log(
-        `🧹 Cleaned up socket mapping for player X: ${game.players.X}`
+        `[CLEANUP] Cleaned up socket mapping for player X: ${game.players.X}`
       );
     }
     if (game.players.O && game.players.O !== 'BOT') {
       await this.storage.removeSocketGame(game.players.O);
       console.log(
-        `🧹 Cleaned up socket mapping for player O: ${game.players.O}`
+        `[CLEANUP] Cleaned up socket mapping for player O: ${game.players.O}`
       );
     }
   }

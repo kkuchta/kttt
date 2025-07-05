@@ -21,7 +21,7 @@ export function GameRules() {
           fontFamily: 'Inter, sans-serif',
         }}
       >
-        💡 Kriegspiel Rules
+        Kriegspiel Rules
       </h4>
       <div
         style={{

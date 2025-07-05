@@ -1,5 +1,5 @@
 import { Board, GameResult, Player, Position } from '@shared/types/game';
-import { Check } from 'lucide-react';
+import { Check, Link as LinkIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -51,7 +51,7 @@ const calculateRevealSequence = (
 ): Position[] => {
   const hiddenCells: Position[] = [];
 
-  console.log('🔍 Calculating reveal sequence:');
+  console.log('[DEBUG] Calculating reveal sequence:');
   console.log('Current visible board:', currentVisibleBoard);
   console.log('Final board:', finalBoard);
   console.log('Your player:', yourPlayer);
@@ -69,7 +69,7 @@ const calculateRevealSequence = (
       // If final board has player's piece but current visible doesn't, add it
       if (finalCell === yourPlayer && preRevealBoard[row][col] === null) {
         console.log(
-          `🔍 Adding missing player piece at (${row},${col}): ${finalCell}`
+          '[DEBUG] Adding missing player piece at (${row},${col}): ${finalCell}'
         );
         preRevealBoard[row][col] = finalCell;
       }
@@ -90,20 +90,20 @@ const calculateRevealSequence = (
         preRevealCell === null
       ) {
         console.log(
-          `🔍 Hidden opponent piece found at (${row},${col}): ${finalCell}`
+          '[DEBUG] Hidden opponent piece found at (${row},${col}): ${finalCell}'
         );
         hiddenCells.push({ row, col });
       } else if (preRevealCell !== finalCell) {
         console.log(
-          `🔍 Mismatch at (${row},${col}): preReveal=${preRevealCell}, final=${finalCell}`
+          '[DEBUG] Mismatch at (${row},${col}): preReveal=${preRevealCell}, final=${finalCell}'
         );
       } else {
-        console.log(`🔍 Same at (${row},${col}): ${preRevealCell}`);
+        console.log(`[DEBUG] Same at (${row},${col}): ${preRevealCell}`);
       }
     }
   }
 
-  console.log('🔍 Hidden opponent cells to reveal:', hiddenCells);
+  console.log('[DEBUG] Hidden opponent cells to reveal:', hiddenCells);
 
   // For now, reveal in reading order (top-left to bottom-right)
   const sortedCells = hiddenCells.sort((a, b) => {
@@ -111,7 +111,7 @@ const calculateRevealSequence = (
     return a.col - b.col;
   });
 
-  console.log('🔍 DEBUG: Final reveal sequence:', sortedCells);
+  console.log('[DEBUG] DEBUG: Final reveal sequence:', sortedCells);
   return sortedCells;
 };
 
@@ -697,7 +697,11 @@ export function GamePage() {
               fontFamily: 'Inter, sans-serif',
             }}
           >
-            🔗 Invite a Friend
+            <LinkIcon
+              size={18}
+              style={{ verticalAlign: 'middle', marginRight: 4 }}
+            />{' '}
+            Invite a Friend
           </h3>
           <p
             style={{

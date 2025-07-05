@@ -51,13 +51,13 @@ describe('RedisStorage', () => {
           errorMessage
         );
         console.warn(
-          '💡 To make Redis tests required, unset SKIP_REDIS_TESTS environment variable'
+          '[INFO] To make Redis tests required, unset SKIP_REDIS_TESTS environment variable'
         );
         redisAvailable = false;
       } else {
         throw new Error(
           `Redis is required but unavailable: ${errorMessage}\n` +
-            '💡 Solutions:\n' +
+            '[INFO] Solutions:\n' +
             '  - Start Redis: make redis-up\n' +
             '  - Skip Redis tests: SKIP_REDIS_TESTS=true npm test\n' +
             '  - Run only other tests: npm test -- --testPathIgnorePatterns=RedisStorage'

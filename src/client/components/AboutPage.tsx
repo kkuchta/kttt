@@ -147,7 +147,7 @@ export function AboutPage() {
                 margin: '0 0 15px 0',
               }}
             >
-              💡 The Strategic Twist
+              The Strategic Twist
             </h3>
             <p
               style={{
@@ -303,7 +303,7 @@ export function AboutPage() {
                   margin: '0 0 12px 0',
                 }}
               >
-                📱 Mobile Ready
+                Mobile Ready
               </h3>
               <p
                 style={{
@@ -333,7 +333,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.botBlue, 0.3)}`,
             }}
           >
-            🛠️ Built With
+            Built With
           </h2>
           <div
             style={{
@@ -438,7 +438,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.queueOrange, 0.3)}`,
             }}
           >
-            👨‍💻 About the Developer
+            About the Developer
           </h2>
           <div
             style={{

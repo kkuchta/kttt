@@ -177,7 +177,7 @@ export function createConnectionValidationMiddleware() {
     }
 
     // Log connection for monitoring
-    console.log(`✅ Validated connection: ${socket.id}`);
+    console.log(`[SUCCESS] Validated connection: ${socket.id}`);
     next();
   };
 }

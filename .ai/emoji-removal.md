@@ -2,12 +2,6 @@
 
 This document catalogs all emoji usage in the application to consider removal and replacement strategies.
 
-## Discovery Notes
-
-**Initial Audit**: Focused on user-facing UI components and identified 33 emoji instances.  
-**Exhaustive Unicode Search**: Revealed additional 10 server-side debug emoji not in original audit.  
-**Status**: All user-facing emoji ✅ COMPLETE. Server debug emoji 🔄 PENDING.
-
 # Instructions
 
 For each emoji, one at a time (no batching):
@@ -56,20 +50,47 @@ For each emoji, one at a time (no batching):
 | 🔴    | ConnectionIndicator.tsx | Disconnected state              | High     | Red dot for disconnected         | Replace with CSS red dot             | Connection status                  | ✅ DONE |
 | 🔄    | ConnectionIndicator.tsx | Connecting state                | High     | Spinning indicator               | Replace with CSS spinner             | Loading state                      | ✅ DONE |
 | 🔄    | GamePage.tsx            | Connecting status               | High     | "🔄 Connecting to game..."       | Replace with "Connecting..."         | Loading state                      | ✅ DONE |
+| 🔗    | HomePage.tsx            | "🔗 Join Existing Game"         | High     | Link/connection indicator        | Remove, use text/icon                | Join button                        | ✅ DONE |
+| 🔗    | GamePage.tsx            | "🔗 Invite a Friend"            | High     | Invite link indicator            | Remove, use text/icon                | Invite section                     | ✅ DONE |
+| 💡    | GameRules.tsx           | "💡 Kriegspiel Rules"           | Medium   | Info/tip indicator               | Remove, use text styling             | Rules section header               | ✅ DONE |
+| 💡    | AboutPage.tsx           | "💡 The Strategic Twist"        | Medium   | Info/tip indicator               | Remove, use text styling             | Feature section header             | ✅ DONE |
+| 👨‍💻    | AboutPage.tsx           | "👨‍💻 About the Developer"        | Low      | Developer section header         | Remove, use text styling             | About section header               | ✅ DONE |
+| 📱    | AboutPage.tsx           | "📱 Mobile Ready"               | Medium   | Mobile feature indicator         | Remove, use text styling             | Feature highlight                  | ✅ DONE |
+| 🏠    | PostBotGameOptions.tsx  | `<span>🏠</span>` button        | Medium   | Home button indicator            | Remove, use text/icon                | Home navigation                    | ✅ DONE |
+| 🛠️    | AboutPage.tsx           | "🛠️ Built With"                 | Low      | Technical section header         | Remove, use text styling             | Tech stack section                 | ✅ DONE |
+| ✕     | PostBotGameOptions.tsx  | "✕ Close" button                | High     | Close button indicator           | Remove, use CSS ×                    | Modal close button                 | ✅ DONE |
+| ⚠️    | QuickMatch.tsx          | Error messages (2 instances)    | High     | Warning indicator                | Replace with "Warning:"              | Error display                      | ✅ DONE |
 
-## Debug/Console Emoji (Not User-Facing)
+## Debug/Console Emoji
 
-| Emoji | File                  | Context                          | Priority | Purpose                      | Action                               | Status  |
-| ----- | --------------------- | -------------------------------- | -------- | ---------------------------- | ------------------------------------ | ------- |
-| 🎭    | GamePage.tsx          | Console logs                     | Lowest   | Debug reveal animation       | Remove or replace with text prefixes | ✅ DONE |
-| 🎮    | GameBoard.tsx         | Console logs                     | Lowest   | Debug game board             | Remove or replace with text prefixes | ✅ DONE |
-| 🎯    | MatchmakingManager.ts | Queue operations logging         | Low      | Debug queue management       | Replace with "[QUEUE]" prefix        | ✅ DONE |
-| 🎯    | socket/handlers.ts    | Join/leave queue, move logging   | Low      | Debug socket operations      | Replace with "[QUEUE]" prefix        | ✅ DONE |
-| 🤖    | GameManager.ts        | Bot game creation, moves, errors | Low      | Debug bot game operations    | Replace with "[BOT]" prefix          | ✅ DONE |
-| 🤖    | BotPlayer.ts          | Bot thinking logs                | Low      | Debug bot AI behavior        | Replace with "[BOT]" prefix          | ✅ DONE |
-| 🎮    | GameManager.ts        | Game creation logs               | Low      | Debug game lifecycle         | Replace with "[GAME]" prefix         | ✅ DONE |
-| 🎮    | socket/handlers.ts    | Join game requests               | Low      | Debug socket game operations | Replace with "[GAME]" prefix         | ✅ DONE |
-| ❌    | GameManager.ts        | Error states logging             | Low      | Debug error conditions       | Replace with "[ERROR]" prefix        | ✅ DONE |
-| ❌    | server/index.ts       | Redis/server startup errors      | Low      | Debug server startup issues  | Replace with "[ERROR]" prefix        | ✅ DONE |
-| 🔄    | GameManager.ts        | Turn switching, reconnections    | Low      | Debug state transitions      | Replace with "[STATE]" prefix        | ✅ DONE |
-| 🔄    | RedisStorage.test.ts  | Test logging                     | Lowest   | Debug test operations        | Replace with "[TEST]" prefix         | ✅ DONE |
+| Emoji | File                  | Context                            | Priority | Purpose                      | Action                               | Status  |
+| ----- | --------------------- | ---------------------------------- | -------- | ---------------------------- | ------------------------------------ | ------- |
+| 🎭    | GamePage.tsx          | Console logs                       | Lowest   | Debug reveal animation       | Remove or replace with text prefixes | ✅ DONE |
+| 🎮    | GameBoard.tsx         | Console logs                       | Lowest   | Debug game board             | Remove or replace with text prefixes | ✅ DONE |
+| 🎯    | MatchmakingManager.ts | Queue operations logging           | Low      | Debug queue management       | Replace with "[QUEUE]" prefix        | ✅ DONE |
+| 🎯    | socket/handlers.ts    | Join/leave queue, move logging     | Low      | Debug socket operations      | Replace with "[QUEUE]" prefix        | ✅ DONE |
+| 🤖    | GameManager.ts        | Bot game creation, moves, errors   | Low      | Debug bot game operations    | Replace with "[BOT]" prefix          | ✅ DONE |
+| 🤖    | BotPlayer.ts          | Bot thinking logs                  | Low      | Debug bot AI behavior        | Replace with "[BOT]" prefix          | ✅ DONE |
+| 🎮    | GameManager.ts        | Game creation logs                 | Low      | Debug game lifecycle         | Replace with "[GAME]" prefix         | ✅ DONE |
+| 🎮    | socket/handlers.ts    | Join game requests                 | Low      | Debug socket game operations | Replace with "[GAME]" prefix         | ✅ DONE |
+| ❌    | GameManager.ts        | Error states logging               | Low      | Debug error conditions       | Replace with "[ERROR]" prefix        | ✅ DONE |
+| ❌    | server/index.ts       | Redis/server startup errors        | Low      | Debug server startup issues  | Replace with "[ERROR]" prefix        | ✅ DONE |
+| 🔄    | GameManager.ts        | Turn switching, reconnections      | Low      | Debug state transitions      | Replace with "[STATE]" prefix        | ✅ DONE |
+| 🔄    | RedisStorage.test.ts  | Test logging                       | Lowest   | Debug test operations        | Replace with "[TEST]" prefix         | ✅ DONE |
+| 🔍    | GamePage.tsx          | Debug console logs (8 instances)   | Lowest   | Debug investigation          | Replace with "[DEBUG]" prefix        | ✅ DONE |
+| 🗄️    | server/index.ts       | "🗄️ Using Redis storage"           | Low      | Storage type logging         | Replace with "[STORAGE]" prefix      | ✅ DONE |
+| 📊    | server/index.ts       | Health check URL                   | Low      | Info logging                 | Replace with "[INFO]" prefix         | ✅ DONE |
+| 📋    | server/index.ts       | API endpoint info                  | Low      | Info logging                 | Replace with "[INFO]" prefix         | ✅ DONE |
+| 🔌    | socket/handlers.ts    | Client connect/disconnect          | Low      | Connection logging           | Replace with "[SOCKET]" prefix       | ✅ DONE |
+| 📝    | socket/handlers.ts    | Create game request                | Low      | Request logging              | Replace with "[REQUEST]" prefix      | ✅ DONE |
+| 👋    | socket/handlers.ts    | Leave game request                 | Low      | Request logging              | Replace with "[REQUEST]" prefix      | ✅ DONE |
+| 🏁    | GameManager.ts        | Game completion (2 instances)      | Low      | Game lifecycle logging       | Replace with "[GAME]" prefix         | ✅ DONE |
+| 💥    | GameManager.ts        | Failed move logging                | Low      | Move failure logging         | Replace with "[MOVE]" prefix         | ✅ DONE |
+| 🚫    | GameManager.ts        | Game full error                    | Low      | Error logging                | Replace with "[ERROR]" prefix        | ✅ DONE |
+| 🛑    | server/index.ts       | Shutdown message                   | Low      | Server lifecycle             | Replace with "[SHUTDOWN]" prefix     | ✅ DONE |
+| 🚀    | server/index.ts       | Server startup message             | Low      | Server lifecycle             | Replace with "[STARTUP]" prefix      | ✅ DONE |
+| 🧹    | server/index.ts       | Cleanup logging                    | Low      | Maintenance logging          | Replace with "[CLEANUP]" prefix      | ✅ DONE |
+| 🧹    | GameManager.ts        | Socket cleanup (2 instances)       | Low      | Maintenance logging          | Replace with "[CLEANUP]" prefix      | ✅ DONE |
+| ✅    | Various files         | Success logging (6 instances)      | Low      | Success confirmation         | Replace with "[SUCCESS]" prefix      | ✅ DONE |
+| 💡    | RedisStorage.test.ts  | Test advice messages (2 instances) | Lowest   | Test guidance                | Replace with "[INFO]" prefix         | ✅ DONE |
+| ⚠️    | BotPlayer.ts          | Bot difficulty warning             | Low      | Development warning          | Replace with "[WARNING]" prefix      | ✅ DONE |

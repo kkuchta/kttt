@@ -167,7 +167,7 @@ export function QuickMatch() {
               boxShadow: `0 0 15px ${createGlow(colors.rejectionRed, 0.1)}`,
             }}
           >
-            <strong>⚠️ Error:</strong> {error}
+            <strong>Warning:</strong> {error}
           </div>
         )}
       </div>
@@ -340,7 +340,7 @@ export function QuickMatch() {
             boxShadow: `0 0 15px ${createGlow(colors.rejectionRed, 0.1)}`,
           }}
         >
-          <strong>⚠️ Error:</strong> {error}
+          <strong>Warning:</strong> {error}
         </div>
       )}
 

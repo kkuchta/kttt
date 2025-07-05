@@ -26,7 +26,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const storageConfig = getStorageConfig();
 const storage = createStorage(storageConfig);
 
-console.log(`🗄️  Using Redis storage`);
+console.log(`[STORAGE] Using Redis storage`);
 console.log(`🔗 Redis URL: ${storageConfig.redis.url}`);
 console.log(`🔍 REDIS_URL env var: ${process.env.REDIS_URL || 'NOT SET'}`);
 console.log(`🔍 NODE_ENV: ${process.env.NODE_ENV || 'NOT SET'}`);
@@ -92,7 +92,7 @@ async function initializeStorage() {
   if (storage instanceof RedisStorage) {
     try {
       await storage.connect();
-      console.log('✅ Redis storage connected successfully');
+      console.log('[SUCCESS] Redis storage connected successfully');
     } catch (error) {
       console.error('[ERROR] Failed to connect to Redis:', error);
       console.log('💡 Make sure Redis is running: make redis-up');
@@ -106,7 +106,7 @@ setInterval(async () => {
   try {
     const cleanedCount = await storage.cleanup();
     if (cleanedCount > 0) {
-      console.log(`🧹 Cleaned up ${cleanedCount} inactive games`);
+      console.log(`[CLEANUP] Cleaned up ${cleanedCount} inactive games`);
     }
   } catch (error) {
     console.error('Error during cleanup:', error);
@@ -115,18 +115,18 @@ setInterval(async () => {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
+  console.log('\n[SHUTDOWN] Shutting down gracefully...');
 
   // Cleanup matchmaking manager
   matchmakingManager.destroy();
 
   if (storage instanceof RedisStorage) {
     await storage.disconnect();
-    console.log('✅ Redis connection closed');
+    console.log('[SUCCESS] Redis connection closed');
   }
 
   server.close(() => {
-    console.log('✅ Server closed');
+    console.log('[SUCCESS] Server closed');
     process.exit(0);
   });
 });
@@ -136,13 +136,13 @@ async function startServer() {
   await initializeStorage();
 
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`[STARTUP] Server running on http://localhost:${PORT}`);
+    console.log(`[INFO] Health check: http://localhost:${PORT}/api/health`);
     console.log(`🆕 Create game: POST http://localhost:${PORT}/api/games`);
     console.log(
-      `📋 Get game state: GET http://localhost:${PORT}/api/games/:gameId`
+      `[INFO] Get game state: GET http://localhost:${PORT}/api/games/:gameId`
     );
-    console.log(`🔌 Socket.io ready for connections`);
+    console.log(`[SOCKET] Socket.io ready for connections`);
   });
 }
 
