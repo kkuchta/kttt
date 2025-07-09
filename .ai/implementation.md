@@ -2,12 +2,12 @@
 
 ## Tech Stack Decision
 
-### Final Choice: Node.js + Socket.io + TypeScript + In-Memory Storage (Redis-ready)
+### Final Choice: Node.js + Socket.io + TypeScript + Redis Storage
 
 **Backend:**
 
 - Node.js + Express + Socket.io + TypeScript
-- In-memory storage with Redis abstraction layer (ready for future Redis implementation)
+- Redis storage for game state persistence (Upstash Redis via Fly.io)
 - Matchmaking queue system for Quick Match feature
 
 **Frontend:**
@@ -75,7 +75,7 @@
 ### Prerequisites
 
 - **Node.js 18+**
-- **Redis server** (Optional - for future Redis storage implementation)
+- **Redis server** (Required - Docker Compose provided for local development)
 
 ### Package Management
 
@@ -94,32 +94,53 @@
 2. Server and client import shared TypeScript files directly
 3. Hot reload for both client and server during development
 4. TypeScript path mapping for clean imports (`@shared/types/game`)
-5. **Redis optional**: Current implementation uses in-memory storage
+5. **Redis required**: Local Docker Redis for development, Upstash for production
 
 ## Deployment Strategy
 
+### Platform: Fly.io
+
+**Live Application**: https://kttt.io
+
 ### Storage Requirements
 
-- **Current**: In-memory storage (automatic cleanup every 60 seconds)
-- **Future**: Redis instance (Redis Cloud, AWS ElastiCache, Fly.io Redis, etc.)
-- **Environment variables** for future Redis connection
+- **Production**: Redis storage via Upstash (managed by Fly.io)
+- **Development**: Local Redis via Docker Compose
+- **Automatic cleanup**: TTL-based game expiration (4 hours)
 
 ### Build Process
 
-1. **Client build**: Vite builds static React app
-2. **Server build**: TypeScript compilation to JavaScript
-3. **Deployment**: Single Node.js app serving static files + Socket.io
+1. **Client build**: Vite builds static React app to `dist/client`
+2. **Server build**: TypeScript compilation to JavaScript in `dist/server`
+3. **Deployment**: Single Node.js app serving static files + Socket.io via Fly.io
 
 ### Environment Configuration
 
 ```env
-# Current - no external dependencies needed
-PORT=3001
+# Production (Fly.io)
+PORT=3000
 NODE_ENV=production
+REDIS_URL=redis://upstash-redis-url  # Managed by Fly.io secrets
+REDIS_TTL_SECONDS=14400  # 4 hours
+REDIS_CONNECTION_TIMEOUT_MS=5000
 
-# Future Redis configuration
-REDIS_URL=redis://localhost:6379  # Development
-REDIS_URL=redis://user:pass@host:port  # Production
+# Development
+PORT=3001
+NODE_ENV=development
+REDIS_URL=redis://localhost:6379  # Local Docker Redis
+```
+
+### Deployment Commands
+
+```bash
+# Deploy to Fly.io
+fly deploy
+
+# View logs
+fly logs
+
+# Open in browser
+fly open
 ```
 
 ## Key Implementation Decisions
@@ -150,12 +171,13 @@ REDIS_URL=redis://user:pass@host:port  # Production
 
 ### Storage Strategy
 
-- **Current Implementation:** In-memory with cleanup intervals
+- **Production:** Redis storage with Upstash (managed by Fly.io)
+- **Development:** Local Redis via Docker Compose
 - **Active games:** 4 hours TTL (expire after inactivity)
 - **Completed games:** Same TTL (players can see final results)
 - **Matchmaking queue:** In-memory with disconnect cleanup
 - **Storage abstraction:** Interface allows swapping storage implementations
-- **Future-ready:** Easy Redis migration via StorageInterface
+- **Implemented:** Redis production deployment complete
 
 ### WebSocket Communication
 

@@ -178,6 +178,14 @@ kttt/
 
 ## 🌐 Deployment
 
+### Production
+
+**Live Application**: https://kttt.io
+
+The application is deployed on Fly.io with Redis storage via Upstash.
+
+### Local Production Build
+
 ```bash
 # Build for production
 make build
@@ -187,6 +195,19 @@ make start
 ```
 
 The built application will be in the `dist/` directory.
+
+### Deployment Commands
+
+```bash
+# Deploy to Fly.io
+fly deploy
+
+# View production logs
+fly logs
+
+# Open live application
+fly open
+```
 
 ## 🧪 Code Quality
 

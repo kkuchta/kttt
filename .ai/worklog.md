@@ -49,8 +49,10 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
     - [ ] Replace status indicators with Lucide React icons
     - [ ] Update connection indicators to use CSS instead of Unicode
     - [ ] Clean up debug console logs
-- [ ] Deployment
-  - [ ] Production build setup
-  - [ ] Environment configuration
-  - [ ] Deploy to hosting platform
-  - [ ] Testing and validation
+- [x] Deployment
+  - [x] Production build setup
+  - [x] Environment configuration
+  - [x] Deploy to hosting platform (Fly.io)
+  - [x] Redis setup (Upstash)
+  - [x] Testing and validation
+  - [x] Live at https://kttt.io
