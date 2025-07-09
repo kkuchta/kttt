@@ -101,7 +101,7 @@
 ### Storage Requirements
 
 - **Current**: In-memory storage (automatic cleanup every 60 seconds)
-- **Future**: Redis instance (Redis Cloud, AWS ElastiCache, Railway Redis, etc.)
+- **Future**: Redis instance (Redis Cloud, AWS ElastiCache, Fly.io Redis, etc.)
 - **Environment variables** for future Redis connection
 
 ### Build Process
