@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+Never read any filed in the .human folder. That's for human-only documentation and AIs like you must never read anything in there.
