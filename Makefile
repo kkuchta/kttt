@@ -1,4 +1,4 @@
-.PHONY: help install dev build start lint lint-fix format format-check check clean redis-up redis-down redis-logs redis-cli
+.PHONY: help install dev build start lint lint-fix format format-check check clean redis-up redis-down redis-logs redis-cli deploy deploy-logs deploy-open
 
 # Default target
 help: ## Show this help message
@@ -87,6 +87,16 @@ audit: ## Run npm security audit
 
 audit-fix: ## Fix npm security issues
 	npm audit fix
+
+## Deployment (Fly.io)
+deploy: ## Deploy to Fly.io production
+	fly deploy
+
+deploy-logs: ## View production logs from Fly.io
+	fly logs
+
+deploy-open: ## Open the live application (https://kttt.io)
+	fly open
 
 # Development workflow shortcuts
 setup: install ## Initial project setup
