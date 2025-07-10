@@ -256,6 +256,11 @@ export function createClientGameState(
     keyToPosition
   );
 
+  // Get hit pieces for the current player (pieces that were hit by opponent)
+  const hitPieces = viewerPlayer
+    ? Array.from(gameState.hitPieces[viewerPlayer]).map(keyToPosition)
+    : [];
+
   return {
     id: gameState.id,
     status: gameState.status,
@@ -263,6 +268,7 @@ export function createClientGameState(
     currentTurn: gameState.currentTurn,
     yourPlayer: viewerPlayer,
     revealedCells: revealedPositions,
+    hitPieces,
     canMove:
       gameState.status === 'active' &&
       gameState.currentTurn === viewerPlayer &&

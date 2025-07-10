@@ -23,10 +23,10 @@ export class RandomBot implements BotPlayer {
 
   async makeMove(
     gameState: ClientGameState,
-    _player: Player // eslint-disable-line @typescript-eslint/no-unused-vars
+    _player: Player
   ): Promise<BotMoveResult> {
     // RandomBot doesn't need to know which player it is - it just makes random moves
-    // The _player parameter is required by the BotPlayer interface
+    // The player parameter is required by the BotPlayer interface but not used
 
     // Get all valid (empty) positions from the visible board
     const validPositions: Position[] = [];

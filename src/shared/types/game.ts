@@ -48,6 +48,10 @@ export interface GameState {
     O: string | null; // Socket ID of player O
   };
   revealedCells: Set<string>; // Positions revealed due to conflicts (as "row,col")
+  hitPieces: {
+    X: Set<string>; // X's pieces that have been hit by O (as "row,col")
+    O: Set<string>; // O's pieces that have been hit by X (as "row,col")
+  };
   moveHistory: Move[];
   result?: GameResult;
   createdAt: number;
@@ -69,6 +73,7 @@ export interface ClientGameState {
   currentTurn: Player;
   yourPlayer: Player | null; // Which player this client is
   revealedCells: Position[]; // Cells revealed due to conflicts
+  hitPieces: Position[]; // Your pieces that have been hit by opponent
   canMove: boolean; // Whether this client can make a move
   result?: GameResult;
   // Bot game information (for UI indicators)

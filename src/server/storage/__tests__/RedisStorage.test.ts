@@ -7,7 +7,7 @@ describe('RedisStorage', () => {
   const shouldSkipRedisTests = process.env.SKIP_REDIS_TESTS === 'true';
 
   const mockGameState: GameState = {
-    id: 'TEST',
+    id: 'TEST123',
     board: [
       [null, null, null],
       [null, null, null],
@@ -15,8 +15,15 @@ describe('RedisStorage', () => {
     ],
     currentTurn: 'X',
     status: 'waiting-for-players',
-    players: { X: 'player1', O: null },
+    players: {
+      X: 'player1',
+      O: null,
+    },
     revealedCells: new Set<string>(),
+    hitPieces: {
+      X: new Set<string>(),
+      O: new Set<string>(),
+    },
     moveHistory: [],
     createdAt: Date.now(),
     lastActivity: Date.now(),

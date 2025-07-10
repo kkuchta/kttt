@@ -211,6 +211,11 @@ export function GamePage() {
       navigate('/');
     },
     onMoveResult: handleMoveResult,
+    onOpponentHitPiece: data => {
+      console.log('Opponent hit your piece!', data);
+      // For now, just log the hit. In the future, we could add immediate animation here
+      // The persistent visual indicator will be shown via the hitPieces in game state
+    },
   });
 
   // Turn-based visual feedback (page title, favicon, etc.)
@@ -835,6 +840,7 @@ export function GamePage() {
             onCellClick={handleCellClick}
             yourPlayer={gameState.yourPlayer}
             revealedCells={gameState.revealedCells}
+            hitPieces={gameState.hitPieces}
             isCellRejectionAnimating={isCellAnimating}
             isInRevealMode={revealState.isRevealing}
             revealBoard={revealState.revealedBoard}

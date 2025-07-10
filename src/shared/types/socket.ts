@@ -72,6 +72,11 @@ export interface ServerToClientEvents {
     revealedPosition?: Position; // If move failed due to occupied cell
   }) => void;
 
+  // Opponent hit notification
+  'opponent-hit-piece': (data: {
+    hitPosition: Position; // Which of your pieces was hit
+  }) => void;
+
   // Game completion
   'game-over': (data: {
     result: GameResult;

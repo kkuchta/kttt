@@ -240,6 +240,10 @@ export class RedisStorage implements GameStorage {
     const serializable = {
       ...gameState,
       revealedCells: Array.from(gameState.revealedCells),
+      hitPieces: {
+        X: Array.from(gameState.hitPieces.X),
+        O: Array.from(gameState.hitPieces.O),
+      },
     };
     return JSON.stringify(serializable);
   }
@@ -250,6 +254,10 @@ export class RedisStorage implements GameStorage {
     return {
       ...parsed,
       revealedCells: new Set(parsed.revealedCells || []),
+      hitPieces: {
+        X: new Set(parsed.hitPieces?.X || []),
+        O: new Set(parsed.hitPieces?.O || []),
+      },
     };
   }
 }

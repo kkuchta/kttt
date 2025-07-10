@@ -52,6 +52,10 @@ export class GameManager {
         O: null,
       },
       revealedCells: new Set<string>(),
+      hitPieces: {
+        X: new Set<string>(),
+        O: new Set<string>(),
+      },
       moveHistory: [],
       createdAt: Date.now(),
       lastActivity: Date.now(),
@@ -76,6 +80,10 @@ export class GameManager {
         O: humanPlayer === 'O' ? null : 'BOT', // BOT is placeholder for bot player
       },
       revealedCells: new Set<string>(),
+      hitPieces: {
+        X: new Set<string>(),
+        O: new Set<string>(),
+      },
       moveHistory: [],
       createdAt: Date.now(),
       lastActivity: Date.now(),
@@ -187,11 +195,29 @@ export class GameManager {
         // Bot hit occupied cell - reveal and switch turns
         const revealedKey = positionToKey(moveResult.revealed);
         game.revealedCells.add(revealedKey);
+
+        // Track that this piece was hit by the bot
+        const pieceOwner = botPlayer === 'X' ? 'O' : 'X';
+        game.hitPieces[pieceOwner].add(revealedKey);
+
         game.currentTurn = getOpponentPlayer(botPlayer);
 
         console.log(
           `[BOT] Bot move failed - revealing piece at ${revealedKey}, switching to ${game.currentTurn}`
         );
+
+        // Emit opponent-hit-piece event to the human player
+        const humanPlayer = game.botInfo.humanPlayer;
+        const humanSocketId = game.players[humanPlayer];
+        if (
+          humanSocketId &&
+          humanSocketId !== 'BOT' &&
+          pieceOwner === humanPlayer
+        ) {
+          this.io.to(humanSocketId).emit('opponent-hit-piece', {
+            hitPosition: moveResult.revealed,
+          });
+        }
 
         await this.storage.updateGame(gameId, game);
         await this.sendGameStateToAllPlayers(game);
@@ -205,6 +231,9 @@ export class GameManager {
 
     // Move is valid - place the piece
     game.board = setCellState(game.board, position, botPlayer);
+
+    // Clear hit pieces for the bot player (they took their turn)
+    game.hitPieces[botPlayer].clear();
 
     // Add to move history
     game.moveHistory.push({
@@ -315,12 +344,24 @@ export class GameManager {
         const revealedKey = positionToKey(moveResult.revealed);
         game.revealedCells.add(revealedKey);
 
+        // Track that this piece was hit by the opponent
+        const pieceOwner = currentPlayer === 'X' ? 'O' : 'X';
+        game.hitPieces[pieceOwner].add(revealedKey);
+
         // Player loses their turn
         game.currentTurn = getOpponentPlayer(currentPlayer);
 
         console.log(
           `[MOVE] Move failed - revealing opponent piece at ${revealedKey}, switching to ${game.currentTurn}`
         );
+
+        // Emit opponent-hit-piece event to the piece owner
+        const pieceOwnerSocketId = game.players[pieceOwner];
+        if (pieceOwnerSocketId && pieceOwnerSocketId !== 'BOT') {
+          this.io.to(pieceOwnerSocketId).emit('opponent-hit-piece', {
+            hitPosition: moveResult.revealed,
+          });
+        }
 
         await this.storage.updateGame(gameId, game);
         await this.sendGameStateToAllPlayers(game);
@@ -349,6 +390,9 @@ export class GameManager {
 
     // Move is valid - place the piece
     game.board = setCellState(game.board, position, currentPlayer);
+
+    // Clear hit pieces for the current player (they took their turn)
+    game.hitPieces[currentPlayer].clear();
 
     // Add to move history
     game.moveHistory.push({

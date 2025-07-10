@@ -58,6 +58,9 @@ export interface SocketEventHandlers {
     botDifficulty: BotDifficulty;
   }) => void;
   onBotGameError?: (data: { message: string }) => void;
+
+  // New event for opponent hit piece
+  onOpponentHitPiece?: (data: { hitPosition: Position }) => void;
 }
 
 export function useSocket(handlers: SocketEventHandlers = {}) {
@@ -145,35 +148,13 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
 
   // Setup socket event listeners
   useEffect(() => {
-    // Connection events
-    const onConnect = () => {
-      setConnectionState(prev => ({
-        ...prev,
-        isConnected: true,
-        isConnecting: false,
-        error: null,
-      }));
-    };
+    if (!socket) return;
 
-    const onDisconnect = () => {
-      setConnectionState(prev => ({
-        ...prev,
-        isConnected: false,
-        isConnecting: false,
-      }));
-    };
-
-    const onConnectError = (error: Error) => {
-      setConnectionState(prev => ({
-        ...prev,
-        isConnected: false,
-        isConnecting: false,
-        error: error.message,
-      }));
-    };
-
-    // Game events
-    const onGameCreated = (data: { gameId: string; yourPlayer: Player }) => {
+    // Game management events
+    const handleGameCreated = (data: {
+      gameId: string;
+      yourPlayer: Player;
+    }) => {
       setConnectionState(prev => ({
         ...prev,
         gameId: data.gameId,
@@ -182,26 +163,7 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       handlersRef.current.onGameCreated?.(data);
     };
 
-    const onBotGameCreated = (data: {
-      gameId: string;
-      yourPlayer: Player;
-      botPlayer: Player;
-      botDifficulty: BotDifficulty;
-    }) => {
-      setConnectionState(prev => ({
-        ...prev,
-        gameId: data.gameId,
-        yourPlayer: data.yourPlayer,
-      }));
-      handlersRef.current.onBotGameCreated?.(data);
-    };
-
-    const onBotGameError = (data: { message: string }) => {
-      setConnectionState(prev => ({ ...prev, error: data.message }));
-      handlersRef.current.onBotGameError?.(data);
-    };
-
-    const onGameJoined = (data: {
+    const handleGameJoined = (data: {
       success: boolean;
       gameState?: ClientGameState;
       yourPlayer?: Player;
@@ -218,75 +180,78 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       handlersRef.current.onGameJoined?.(data);
     };
 
-    const onGameStateUpdate = (gameState: ClientGameState) => {
-      setGameState(gameState);
-      handlersRef.current.onGameStateUpdate?.(gameState);
+    const handleGameStateUpdate = (newGameState: ClientGameState) => {
+      setGameState(newGameState);
+      handlersRef.current.onGameStateUpdate?.(newGameState);
     };
 
-    const onMoveResult = (data: {
+    const handlePlayerJoined = (data: {
+      player: Player;
+      playersCount: number;
+    }) => {
+      handlersRef.current.onPlayerJoined?.(data);
+    };
+
+    const handlePlayerLeft = (data: {
+      player: Player;
+      playersCount: number;
+    }) => {
+      handlersRef.current.onPlayerLeft?.(data);
+    };
+
+    const handleMoveResult = (data: {
       success: boolean;
       error?: string;
-      revealedPosition?: Position;
+      revealedPosition?: { row: number; col: number };
     }) => {
       handlersRef.current.onMoveResult?.(data);
     };
 
-    const onGameOver = (data: {
+    const handleOpponentHitPiece = (data: { hitPosition: Position }) => {
+      console.log('Opponent hit your piece at:', data.hitPosition);
+      handlersRef.current.onOpponentHitPiece?.(data);
+    };
+
+    const handleGameOver = (data: {
       result: GameResult;
       finalBoard: ClientGameState['visibleBoard'];
     }) => {
       handlersRef.current.onGameOver?.(data);
     };
 
-    const onPlayerJoined = (data: { player: Player; playersCount: number }) => {
-      handlersRef.current.onPlayerJoined?.(data);
-    };
-
-    const onPlayerLeft = (data: { player: Player; playersCount: number }) => {
-      handlersRef.current.onPlayerLeft?.(data);
-    };
-
-    const onError = (data: { message: string; code?: string }) => {
-      setConnectionState(prev => ({ ...prev, error: data.message }));
-      handlersRef.current.onError?.(data);
-    };
-
-    const onGameFull = () => {
-      handlersRef.current.onGameFull?.();
-    };
-
-    const onGameNotFound = () => {
-      handlersRef.current.onGameNotFound?.();
-    };
-
-    const onReconnected = (gameState: ClientGameState) => {
-      setGameState(gameState);
+    // Bot game events
+    const handleBotGameCreated = (data: {
+      gameId: string;
+      yourPlayer: Player;
+      botPlayer: Player;
+      botDifficulty: BotDifficulty;
+    }) => {
       setConnectionState(prev => ({
         ...prev,
-        gameId: gameState.id,
-        yourPlayer: gameState.yourPlayer,
+        gameId: data.gameId,
+        yourPlayer: data.yourPlayer,
       }));
-      handlersRef.current.onReconnected?.(gameState);
+      handlersRef.current.onBotGameCreated?.(data);
     };
 
-    const onPong = () => {
-      // Simple ping/pong for connection testing
-      console.log('Pong received');
+    const handleBotGameError = (data: { message: string }) => {
+      setConnectionState(prev => ({ ...prev, error: data.message }));
+      handlersRef.current.onBotGameError?.(data);
     };
 
     // Matchmaking events
-    const onQueueJoined = (data: {
+    const handleQueueJoined = (data: {
       position: number;
       estimatedWait: number;
     }) => {
       handlersRef.current.onQueueJoined?.(data);
     };
 
-    const onQueueLeft = () => {
+    const handleQueueLeft = () => {
       handlersRef.current.onQueueLeft?.();
     };
 
-    const onQueueStatus = (data: {
+    const handleQueueStatus = (data: {
       position: number;
       queueSize: number;
       estimatedWait: number;
@@ -294,64 +259,112 @@ export function useSocket(handlers: SocketEventHandlers = {}) {
       handlersRef.current.onQueueStatus?.(data);
     };
 
-    const onMatchFound = (data: { gameId: string; yourPlayer: Player }) => {
+    const handleMatchFound = (data: { gameId: string; yourPlayer: Player }) => {
+      setConnectionState(prev => ({
+        ...prev,
+        gameId: data.gameId,
+        yourPlayer: data.yourPlayer,
+      }));
       handlersRef.current.onMatchFound?.(data);
     };
 
-    const onQueueError = (data: { message: string }) => {
+    const handleQueueError = (data: { message: string }) => {
       handlersRef.current.onQueueError?.(data);
     };
 
-    // Register all event listeners
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('connect_error', onConnectError);
-    socket.on('game-created', onGameCreated);
-    socket.on('bot-game-created', onBotGameCreated);
-    socket.on('bot-game-error', onBotGameError);
-    socket.on('game-joined', onGameJoined);
-    socket.on('game-state-update', onGameStateUpdate);
-    socket.on('move-result', onMoveResult);
-    socket.on('game-over', onGameOver);
-    socket.on('player-joined', onPlayerJoined);
-    socket.on('player-left', onPlayerLeft);
-    socket.on('error', onError);
-    socket.on('game-full', onGameFull);
-    socket.on('game-not-found', onGameNotFound);
-    socket.on('reconnected', onReconnected);
-    socket.on('pong', onPong);
-    socket.on('queue-joined', onQueueJoined);
-    socket.on('queue-left', onQueueLeft);
-    socket.on('queue-status', onQueueStatus);
-    socket.on('match-found', onMatchFound);
-    socket.on('queue-error', onQueueError);
-
-    // Cleanup function
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('connect_error', onConnectError);
-      socket.off('game-created', onGameCreated);
-      socket.off('bot-game-created', onBotGameCreated);
-      socket.off('bot-game-error', onBotGameError);
-      socket.off('game-joined', onGameJoined);
-      socket.off('game-state-update', onGameStateUpdate);
-      socket.off('move-result', onMoveResult);
-      socket.off('game-over', onGameOver);
-      socket.off('player-joined', onPlayerJoined);
-      socket.off('player-left', onPlayerLeft);
-      socket.off('error', onError);
-      socket.off('game-full', onGameFull);
-      socket.off('game-not-found', onGameNotFound);
-      socket.off('reconnected', onReconnected);
-      socket.off('pong', onPong);
-      socket.off('queue-joined', onQueueJoined);
-      socket.off('queue-left', onQueueLeft);
-      socket.off('queue-status', onQueueStatus);
-      socket.off('match-found', onMatchFound);
-      socket.off('queue-error', onQueueError);
+    // Error handling
+    const handleError = (data: { message: string; code?: string }) => {
+      setConnectionState(prev => ({ ...prev, error: data.message }));
+      handlersRef.current.onError?.(data);
     };
-  }, []);
+
+    const handleGameFull = () => {
+      handlersRef.current.onGameFull?.();
+    };
+
+    const handleGameNotFound = () => {
+      handlersRef.current.onGameNotFound?.();
+    };
+
+    // Connection events
+    const handleConnect = () => {
+      console.log('Connected to server');
+      setConnectionState(prev => ({
+        ...prev,
+        isConnected: true,
+        isConnecting: false,
+        error: null,
+      }));
+    };
+
+    const handleDisconnect = () => {
+      console.log('Disconnected from server');
+      setConnectionState(prev => ({
+        ...prev,
+        isConnected: false,
+        isConnecting: false,
+        error: 'Connection lost',
+      }));
+    };
+
+    const handleConnectError = (error: Error) => {
+      console.error('Connection error:', error);
+      setConnectionState(prev => ({
+        ...prev,
+        isConnected: false,
+        isConnecting: false,
+        error: 'Failed to connect',
+      }));
+    };
+
+    // Set up event listeners
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
+    socket.on('game-created', handleGameCreated);
+    socket.on('game-joined', handleGameJoined);
+    socket.on('game-state-update', handleGameStateUpdate);
+    socket.on('player-joined', handlePlayerJoined);
+    socket.on('player-left', handlePlayerLeft);
+    socket.on('move-result', handleMoveResult);
+    socket.on('opponent-hit-piece', handleOpponentHitPiece);
+    socket.on('game-over', handleGameOver);
+    socket.on('bot-game-created', handleBotGameCreated);
+    socket.on('bot-game-error', handleBotGameError);
+    socket.on('queue-joined', handleQueueJoined);
+    socket.on('queue-left', handleQueueLeft);
+    socket.on('queue-status', handleQueueStatus);
+    socket.on('match-found', handleMatchFound);
+    socket.on('queue-error', handleQueueError);
+    socket.on('error', handleError);
+    socket.on('game-full', handleGameFull);
+    socket.on('game-not-found', handleGameNotFound);
+
+    // Cleanup
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleConnectError);
+      socket.off('game-created', handleGameCreated);
+      socket.off('game-joined', handleGameJoined);
+      socket.off('game-state-update', handleGameStateUpdate);
+      socket.off('player-joined', handlePlayerJoined);
+      socket.off('player-left', handlePlayerLeft);
+      socket.off('move-result', handleMoveResult);
+      socket.off('opponent-hit-piece', handleOpponentHitPiece);
+      socket.off('game-over', handleGameOver);
+      socket.off('bot-game-created', handleBotGameCreated);
+      socket.off('bot-game-error', handleBotGameError);
+      socket.off('queue-joined', handleQueueJoined);
+      socket.off('queue-left', handleQueueLeft);
+      socket.off('queue-status', handleQueueStatus);
+      socket.off('match-found', handleMatchFound);
+      socket.off('queue-error', handleQueueError);
+      socket.off('error', handleError);
+      socket.off('game-full', handleGameFull);
+      socket.off('game-not-found', handleGameNotFound);
+    };
+  }, [socket, handlersRef]);
 
   // Only leave game when the browser/tab is actually closing
   useEffect(() => {

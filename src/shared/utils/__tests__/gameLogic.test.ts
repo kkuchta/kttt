@@ -337,6 +337,10 @@ describe('gameLogic', () => {
         currentTurn: 'X',
         players: { X: 'player1', O: 'player2' },
         revealedCells: new Set(),
+        hitPieces: {
+          X: new Set<string>(),
+          O: new Set<string>(),
+        },
         moveHistory: [],
         createdAt: Date.now(),
         lastActivity: Date.now(),
@@ -444,6 +448,10 @@ describe('gameLogic', () => {
         currentTurn: 'X',
         players: { X: 'player1', O: 'player2' },
         revealedCells: new Set(['0,2']), // O piece at (0,2) is revealed
+        hitPieces: {
+          X: new Set<string>(),
+          O: new Set<string>(),
+        },
         moveHistory: [],
         createdAt: Date.now(),
         lastActivity: Date.now(),

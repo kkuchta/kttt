@@ -17,16 +17,18 @@ interface CellProps {
   isRevealing?: boolean; // Whether this cell is currently in reveal animation
   isHighlightingWinnerLine?: boolean; // Whether this cell is part of the winning line
   isWinnerLineAnimating?: boolean; // Whether winner line is actively animating (vs permanent)
+  isHit?: boolean; // Whether this cell is part of the hit state
 }
 
 // Cell state types for styling
-type CellDisplayState =
+export type CellDisplayState =
   | 'empty'
   | 'yours'
   | 'revealed'
   | 'rejecting'
   | 'revealing'
-  | 'winningLine';
+  | 'winningLine'
+  | 'hit'; // New state for pieces that have been hit by opponent
 
 function getCellDisplayState(
   value: CellState,
@@ -34,13 +36,17 @@ function getCellDisplayState(
   isRevealed: boolean = false,
   isRejectionAnimating: boolean = false,
   isRevealing: boolean = false,
-  isHighlightingWinnerLine: boolean = false
+  isHighlightingWinnerLine: boolean = false,
+  isHit: boolean = false
 ): CellDisplayState {
   if (isRejectionAnimating) return 'rejecting';
   if (isHighlightingWinnerLine && value !== null) return 'winningLine';
   if (isRevealing) return 'revealing';
   if (value === null) return 'empty';
-  if (value === yourPlayer) return 'yours';
+  if (value === yourPlayer) {
+    if (isHit) return 'hit'; // Your piece that was hit by opponent
+    return 'yours';
+  }
   if (isRevealed || value !== yourPlayer) return 'revealed';
   return 'empty';
 }
@@ -51,7 +57,8 @@ function getCellStyles(
   value: CellState,
   canMove: boolean,
   canHover: boolean,
-  isWinnerLineAnimating: boolean = false
+  isWinnerLineAnimating: boolean = false,
+  yourPlayer: Player | null = null
 ) {
   const baseStyles: React.CSSProperties = {
     width: '80px',
@@ -169,6 +176,32 @@ function getCellStyles(
       };
     }
 
+    case 'hit': {
+      // Enhanced styling for pieces that have been hit by opponent
+      // Use opponent's color to show "they tried to place here"
+      const opponentColor =
+        yourPlayer === 'X'
+          ? colors.oAccent
+          : yourPlayer === 'O'
+            ? colors.xAccent
+            : colors.textDim;
+      const opponentGlow =
+        yourPlayer === 'X'
+          ? boxShadows.oPiece
+          : yourPlayer === 'O'
+            ? boxShadows.xPiece
+            : `0 0 15px ${colors.textDim}`;
+      const enhancedGlow = `0 0 20px ${opponentColor}, 0 0 30px ${opponentColor}`;
+      return {
+        ...baseStyles,
+        color: value === 'X' ? colors.xAccent : colors.oAccent, // Keep piece in its original color
+        boxShadow: `${opponentGlow}, ${enhancedGlow}`, // But glow in opponent's color
+        border: `3px solid ${opponentColor}`, // Border in opponent's color
+        transform: 'scale(1.05)', // Slightly larger scale to emphasize
+        backgroundColor: createGlow(opponentColor, 0.05), // Subtle background glow in opponent's color
+      };
+    }
+
     default:
       return baseStyles;
   }
@@ -184,6 +217,7 @@ export function Cell({
   isRevealing = false,
   isHighlightingWinnerLine = false,
   isWinnerLineAnimating = false,
+  isHit = false,
 }: CellProps) {
   const state = getCellDisplayState(
     value,
@@ -191,7 +225,8 @@ export function Cell({
     isRevealed,
     isRejectionAnimating,
     isRevealing,
-    isHighlightingWinnerLine
+    isHighlightingWinnerLine,
+    isHit
   );
 
   const canHover = !window.matchMedia('(pointer: coarse)').matches; // No hover on touch devices
@@ -200,7 +235,8 @@ export function Cell({
     value,
     canMove,
     canHover,
-    isWinnerLineAnimating
+    isWinnerLineAnimating,
+    yourPlayer
   );
 
   // Respect reduced motion preference
@@ -279,13 +315,15 @@ export function Cell({
             ? 'Empty cell'
             : state === 'yours'
               ? `Your ${value}`
-              : state === 'revealed'
-                ? `Revealed ${value}`
-                : state === 'rejecting'
-                  ? 'Move rejected'
-                  : state === 'winningLine'
-                    ? 'Winning line'
-                    : 'Revealing'
+              : state === 'hit'
+                ? `Your ${value} (hit by opponent)`
+                : state === 'revealed'
+                  ? `Revealed ${value}`
+                  : state === 'rejecting'
+                    ? 'Move rejected'
+                    : state === 'winningLine'
+                      ? 'Winning line'
+                      : 'Revealing'
         }
       >
         {/* Cell content */}

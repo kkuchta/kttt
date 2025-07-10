@@ -9,6 +9,7 @@ interface GameBoardProps {
   onCellClick: (row: number, col: number) => void;
   yourPlayer: Player | null;
   revealedCells: Position[];
+  hitPieces: Position[]; // Pieces that have been hit by opponent
   isCellRejectionAnimating?: (row: number, col: number) => boolean;
 
   // Board reveal props (Phase 1)
@@ -33,6 +34,7 @@ export function GameBoard({
   onCellClick,
   yourPlayer,
   revealedCells,
+  hitPieces,
   isCellRejectionAnimating,
   isInRevealMode = false,
   revealBoard = null,
@@ -57,6 +59,11 @@ export function GameBoard({
   // Helper function to check if a cell is in the winner line
   const isCellInWinnerLine = (row: number, col: number): boolean => {
     return winnerLineCells.some(pos => pos.row === row && pos.col === col);
+  };
+
+  // Helper function to check if a cell has been hit by opponent
+  const isCellHit = (row: number, col: number): boolean => {
+    return hitPieces.some(pos => pos.row === row && pos.col === col);
   };
 
   // Create progressive board for reveal mode
@@ -256,6 +263,7 @@ export function GameBoard({
                     isHighlightingWinnerLine && isCellInWinnerLine(row, col)
                   }
                   isWinnerLineAnimating={isWinnerLineAnimating}
+                  isHit={isCellHit(row, col)}
                 />
               );
             })}
