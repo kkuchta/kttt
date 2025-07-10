@@ -91,18 +91,24 @@ export function GameStatus({
     text: string,
     type: 'your-turn' | 'opponent-turn' | 'bot-thinking' | 'waiting'
   ) => {
-    let badgeStyles: React.CSSProperties = {
-      padding: '8px 16px',
-      borderRadius: '20px',
-      fontSize: '14px',
-      fontWeight: '500',
+    // Base styles that all badges share to prevent layout shifts
+    const baseBadgeStyles: React.CSSProperties = {
+      padding: '12px 24px', // Consistent padding for all badges
+      borderRadius: '25px',
+      fontSize: '16px', // Consistent font size for all badges
+      fontWeight: '600', // Consistent weight for all badges
       fontFamily: 'Inter, sans-serif',
       display: 'flex',
       alignItems: 'center',
-      gap: '6px',
-      border: '2px solid',
+      justifyContent: 'center',
+      gap: '8px',
+      border: '3px solid', // Consistent border for all badges
       transition: 'all 0.2s ease-in-out',
+      minWidth: '140px', // Fixed minimum width to prevent layout shifts
+      textAlign: 'center' as const,
     };
+
+    let badgeStyles: React.CSSProperties = { ...baseBadgeStyles };
 
     switch (type) {
       case 'your-turn':
@@ -112,6 +118,9 @@ export function GameStatus({
           borderColor: colors.successGreen,
           color: colors.successGreen,
           boxShadow: `0 0 12px ${createGlow(colors.successGreen, 0.3)}`,
+          animation: 'yourTurnBadgePulse 2s ease-in-out infinite alternate',
+          // Use transform origin to ensure scaling happens from center
+          transformOrigin: 'center',
         };
         break;
       case 'opponent-turn':
@@ -144,7 +153,7 @@ export function GameStatus({
     return (
       <div style={badgeStyles}>
         {type === 'your-turn' && (
-          <Check size={16} color={colors.successGreen} />
+          <Check size={18} color={colors.successGreen} />
         )}
         {type === 'bot-thinking' && (
           <Bot
@@ -397,7 +406,7 @@ export function GameStatus({
 
   return (
     <>
-      {/* CSS for animations */}
+      {/* Optimized CSS animations - much more performant */}
       <style>{`
         @keyframes botThinking {
           0%, 100% { transform: scale(1); }
@@ -408,6 +417,23 @@ export function GameStatus({
           0%, 20% { opacity: 0; }
           50% { opacity: 1; }
           100% { opacity: 0; }
+        }
+        
+        @keyframes yourTurnBadgePulse {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.05);
+          }
+        }
+        
+        /* Disable animations for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .status-badge {
+            animation: none !important;
+            transform: scale(1) !important;
+          }
         }
       `}</style>
 
@@ -445,11 +471,13 @@ export function GameStatus({
             </p>
           </div>
 
-          {isYourTurn && renderStatusBadge('Your Turn', 'your-turn')}
-          {isBotTurn && renderStatusBadge('Bot Thinking', 'bot-thinking')}
-          {!isYourTurn &&
-            !isBotTurn &&
-            renderStatusBadge("Opponent's Turn", 'opponent-turn')}
+          <div className="status-badge">
+            {isYourTurn && renderStatusBadge('Your Turn', 'your-turn')}
+            {isBotTurn && renderStatusBadge('Bot Thinking', 'bot-thinking')}
+            {!isYourTurn &&
+              !isBotTurn &&
+              renderStatusBadge("Opponent's Turn", 'opponent-turn')}
+          </div>
         </div>
       </div>
     </>

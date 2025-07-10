@@ -43,6 +43,7 @@ Do _not_ do multiple tasks at once. Pause for instruction after each task.
   - [x] Error handling and user messaging
   - [x] **Board Reveal Animation** - Complete board reveal when game ends ✅ FULLY IMPLEMENTED & TESTED!
   - [x] Responsive game board design (mobile tested 375x667)
+  - [x] **Grid Visibility Improvements** - Enhanced contrast for better visibility on all screens ✅ COMPLETED!
   - [ ] Move feedback and animations
   - [ ] **Emoji Removal** - Replace all emoji with clean text/icons using Lucide React
     - [ ] Remove decorative emoji from headers and buttons

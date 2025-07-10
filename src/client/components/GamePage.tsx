@@ -9,6 +9,7 @@ import {
 } from '../../shared/constants/colors';
 import { useMoveRejectionWithSocket } from '../hooks/useMoveRejection';
 import { useSocket } from '../hooks/useSocket';
+import { useTurnVisualFeedback } from '../hooks/useTurnVisualFeedback';
 import { ConnectionIndicator } from './ConnectionIndicator';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
@@ -199,7 +200,7 @@ export function GamePage() {
     },
     onError: data => {
       console.error('Socket error:', data);
-      alert(`Error: ${data.message}`);
+      // Don't show error alerts for now, just log
     },
     onGameFull: () => {
       alert('Game is full! This game already has 2 players.');
@@ -209,7 +210,19 @@ export function GamePage() {
       alert('Game not found! The game ID might be invalid or expired.');
       navigate('/');
     },
-    onMoveResult: handleMoveResult, // Integrate move rejection animations
+    onMoveResult: handleMoveResult,
+  });
+
+  // Turn-based visual feedback (page title, favicon, etc.)
+  const isYourTurn = Boolean(
+    gameState?.canMove && gameState?.status === 'active'
+  );
+  const isGameActive = Boolean(gameState?.status === 'active');
+
+  useTurnVisualFeedback({
+    isYourTurn,
+    isGameActive,
+    gameId,
   });
 
   // Set mounted flag on mount
@@ -831,6 +844,7 @@ export function GamePage() {
             winnerLineCells={revealState.winnerLineCells}
             isWinnerLineAnimating={revealState.isWinnerLineAnimating}
             gameCompleted={gameState.status === 'completed'}
+            isYourTurn={isYourTurn}
           />
 
           <GameRules />

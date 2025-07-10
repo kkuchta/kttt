@@ -1,4 +1,5 @@
 import { Board, Player, Position } from '@shared/types/game';
+import React from 'react';
 import { boxShadows, colors } from '../../shared/constants/colors';
 import { Cell } from './Cell';
 
@@ -22,6 +23,8 @@ interface GameBoardProps {
   isWinnerLineAnimating?: boolean; // Whether winner line is actively animating
   // Game completion state
   gameCompleted?: boolean; // Whether the game has ended (to show full board)
+  // Turn-based visual feedback
+  isYourTurn?: boolean; // Whether it's currently the player's turn
 }
 
 export function GameBoard({
@@ -39,6 +42,7 @@ export function GameBoard({
   winnerLineCells = [],
   isWinnerLineAnimating,
   gameCompleted,
+  isYourTurn = false,
 }: GameBoardProps) {
   // Helper function to check if a cell is revealed
   const isCellRevealed = (row: number, col: number): boolean => {
@@ -107,90 +111,157 @@ export function GameBoard({
   // Disable interactions during reveal animation
   const canInteract = canMove && !isInRevealMode;
 
+  // Create enhanced board styling for turn-based feedback
+  const getBoardStyles = (): React.CSSProperties => {
+    const baseStyles: React.CSSProperties = {
+      display: 'inline-block',
+      padding: '30px',
+      backgroundColor: colors.background,
+      borderRadius: '15px',
+      border: `3px solid ${colors.gridLines}`,
+      boxShadow: `0 8px 25px rgba(0, 0, 0, 0.4), ${boxShadows.boardGlow}`,
+      position: 'relative',
+      transition: 'border-color 0.3s ease-in-out',
+    };
+
+    // Add prominent glow effect when it's the player's turn
+    if (isYourTurn && !isInRevealMode && !gameCompleted) {
+      return {
+        ...baseStyles,
+        border: `3px solid ${colors.successGreen}`,
+        // Much simpler, performant styling
+        animation: 'yourTurnBoardPulse 2s ease-in-out infinite alternate',
+      };
+    }
+
+    return baseStyles;
+  };
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '40px 20px',
-      }}
-    >
+    <>
+      {/* Optimized CSS animations - much more performant */}
+      <style>{`
+        @keyframes yourTurnBoardPulse {
+          0% {
+            border-color: ${colors.successGreen};
+            transform: scale(1);
+          }
+          100% {
+            border-color: ${colors.successGreen};
+            transform: scale(1.02);
+          }
+        }
+        
+        /* Glow effect using pseudo-element for better performance */
+        .game-board.your-turn::before {
+          content: '';
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          right: -5px;
+          bottom: -5px;
+          background: ${colors.successGreen};
+          border-radius: 20px;
+          opacity: 0.15;
+          z-index: -1;
+          animation: yourTurnGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes yourTurnGlow {
+          0% { opacity: 0.1; }
+          100% { opacity: 0.25; }
+        }
+        
+        /* Disable animations for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+          .game-board {
+            animation: none !important;
+            transform: none !important;
+          }
+          .game-board.your-turn::before {
+            animation: none !important;
+            opacity: 0.15 !important;
+          }
+        }
+      `}</style>
+
       <div
         style={{
-          display: 'inline-block',
-          padding: '30px',
-          backgroundColor: colors.background,
-          borderRadius: '15px',
-          border: `3px solid ${colors.gridLines}`,
-          boxShadow: `0 8px 25px rgba(0, 0, 0, 0.4), ${boxShadows.boardGlow}`,
-          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '40px 20px',
         }}
       >
-        {/* Optional subtle background pattern */}
         <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            borderRadius: '15px',
-            background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.01) 0%, transparent 70%)`,
-            pointerEvents: 'none',
-          }}
-        />
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 80px)',
-            gridTemplateRows: 'repeat(3, 80px)',
-            gap: '6px',
-            position: 'relative',
-            zIndex: 1,
-            // Performance optimizations for smooth animations
-            willChange: 'auto',
-            transform: 'translateZ(0)', // Force hardware acceleration
-            backfaceVisibility: 'hidden', // Prevent flickering
-          }}
+          className={`game-board ${isYourTurn && !isInRevealMode && !gameCompleted ? 'your-turn' : ''}`}
+          style={getBoardStyles()}
         >
-          {displayBoard.flat().map((cell, index) => {
-            const row = Math.floor(index / 3);
-            const col = index % 3;
-            const isCurrentlyRevealing = isCellRevealing(row, col);
+          {/* Optional subtle background pattern */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              borderRadius: '15px',
+              background: `radial-gradient(circle at center, rgba(255, 255, 255, 0.01) 0%, transparent 70%)`,
+              pointerEvents: 'none',
+            }}
+          />
 
-            // DEBUG: Log revealing cells
-            if (isCurrentlyRevealing) {
-              console.log('GAMEBOARD: Cell is revealing:', {
-                row,
-                col,
-                cell,
-                revealingCells,
-              });
-            }
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 80px)',
+              gridTemplateRows: 'repeat(3, 80px)',
+              gap: '6px',
+              position: 'relative',
+              zIndex: 1,
+              // Performance optimizations for smooth animations
+              willChange: 'auto',
+              transform: 'translateZ(0)', // Force hardware acceleration
+              backfaceVisibility: 'hidden', // Prevent flickering
+            }}
+          >
+            {displayBoard.flat().map((cell, index) => {
+              const row = Math.floor(index / 3);
+              const col = index % 3;
+              const isCurrentlyRevealing = isCellRevealing(row, col);
 
-            return (
-              <Cell
-                key={index}
-                value={cell}
-                canMove={canInteract}
-                onClick={() => onCellClick(row, col)}
-                yourPlayer={yourPlayer}
-                isRevealed={isCellRevealed(row, col)}
-                isRejectionAnimating={
-                  isCellRejectionAnimating?.(row, col) ?? false
-                }
-                isRevealing={isCurrentlyRevealing}
-                isHighlightingWinnerLine={
-                  isHighlightingWinnerLine && isCellInWinnerLine(row, col)
-                }
-                isWinnerLineAnimating={isWinnerLineAnimating}
-              />
-            );
-          })}
+              // DEBUG: Log revealing cells
+              if (isCurrentlyRevealing) {
+                console.log('GAMEBOARD: Cell is revealing:', {
+                  row,
+                  col,
+                  cell,
+                  revealingCells,
+                });
+              }
+
+              return (
+                <Cell
+                  key={index}
+                  value={cell}
+                  canMove={canInteract}
+                  onClick={() => onCellClick(row, col)}
+                  yourPlayer={yourPlayer}
+                  isRevealed={isCellRevealed(row, col)}
+                  isRejectionAnimating={
+                    isCellRejectionAnimating?.(row, col) ?? false
+                  }
+                  isRevealing={isCurrentlyRevealing}
+                  isHighlightingWinnerLine={
+                    isHighlightingWinnerLine && isCellInWinnerLine(row, col)
+                  }
+                  isWinnerLineAnimating={isWinnerLineAnimating}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

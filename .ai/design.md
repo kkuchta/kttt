@@ -21,14 +21,23 @@ A modern, mobile-first design system for a two-player hidden-information tic-tac
 | Name             | Hex       | Usage                               | Implementation        |
 | ---------------- | --------- | ----------------------------------- | --------------------- |
 | Background       | `#0e0e0e` | Main background                     | `colors.background`   |
-| Grid Lines       | `#1a1a1a` | Board grid + UI frames              | `colors.gridLines`    |
-| Text (dim)       | `#666666` | Secondary text, status messages     | `colors.textDim`      |
+| Grid Lines       | `#555555` | Board grid + UI frames              | `colors.gridLines`    |
+| Text (dim)       | `#888888` | Secondary text, status messages     | `colors.textDim`      |
 | X Accent (Teal)  | `#00ffe7` | Player X moves, glow, hover effects | `colors.xAccent`      |
 | O Accent (Coral) | `#ff5e78` | Player O moves, glow, hover effects | `colors.oAccent`      |
 | Rejection Red    | `#ff3c3c` | **Primary** - Move rejection flash  | `colors.rejectionRed` |
 | Success Green    | `#00ff99` | Move accepted confirmation          | `colors.successGreen` |
+| Winning Line     | `#ffd700` | Golden highlight for winning lines  | `colors.winningLine`  |
 | Bot Blue         | `#2196f3` | Bot game indicators and headers     | `colors.botBlue`      |
 | Queue Orange     | `#ffc107` | Matchmaking queue status            | `colors.queueOrange`  |
+
+### Enhanced Grid Contrast Colors ✅ **NEW**
+
+| Name       | Hex       | Usage                            | Implementation     |
+| ---------- | --------- | -------------------------------- | ------------------ |
+| Grid Dark  | `#1a1a1a` | Darker variant for depth effects | `colors.gridDark`  |
+| Grid Light | `#404040` | Lighter variant for highlights   | `colors.gridLight` |
+| Cell Depth | `#0a0a0a` | Darker cell background for depth | `colors.cellDepth` |
 
 ### Color Utility Functions
 
@@ -44,11 +53,17 @@ createGlow(color: string, opacity: number) // Returns rgba() for glows
 // Hover state colors
 getHoverColor(baseColor: string) // Returns lighter version for hover
 
+// Enhanced grid contrast utilities ✅ NEW
+createCellDepthShadow(intensity: number) // Returns inset shadow for cell depth
+createGridGlow(opacity: number) // Returns subtle glow for board enhancement
+
 // Pre-computed glow effects
 glows.xGlow, glows.oGlow, glows.rejectionGlow, etc.
 
 // Box shadow utilities
 boxShadows.xPiece, boxShadows.oPiece, boxShadows.rejection, etc.
+// Enhanced grid shadows ✅ NEW
+boxShadows.boardGlow, boxShadows.cellDepth, boxShadows.cellDepthSubtle
 ```
 
 **Usage Pattern:** Always use `colors.colorName` constants, never hardcode hex values.
@@ -61,7 +76,7 @@ boxShadows.xPiece, boxShadows.oPiece, boxShadows.rejection, etc.
 | ------------------ | ------------------------ | ---------------------------------------- | -------------------------------------------- |
 | **UI Text**        | Inter (400, 500, 600)    | `fontFamily: 'Inter, sans-serif'`        | All interface elements, labels, descriptions |
 | **Game Symbols**   | Space Grotesk (500, 700) | `fontFamily: 'Space Grotesk, monospace'` | X/O symbols, Game IDs                        |
-| **Status/Headers** | Inter Medium (500, 600)  | `fontWeight: '500'` or `'600'`           | Important status messages, headers           |
+| **Status/Headers** | Inter Medium (500, 600)  | `fontWeight: '500' or '600'`             | Important status messages, headers           |
 
 **Typography Hierarchy:**
 
@@ -154,11 +169,13 @@ const containerStyle = {
 
 **Implementation Details:**
 
-- Empty cells use `colors.background` with `colors.gridLines` borders
+- Empty cells use `colors.cellDepth` background with `colors.gridLines` borders and subtle depth shadows
 - Player pieces use `colors.xAccent`/`colors.oAccent` with corresponding glows
 - Revealed pieces use `colors.textDim` with reduced opacity
+- Enhanced hover states use `colors.gridDark` background with `colors.gridLight` borders
 - Rejection state triggers 1000ms animation (200ms if reduced motion)
 - Revealing state uses `pieceReveal` animation with staggered timing for dramatic effect
+- Board container includes subtle inner glow (`boxShadows.boardGlow`) for enhanced visibility
 
 ### Status Indicators ✅ Implemented
 
