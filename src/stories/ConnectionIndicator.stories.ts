@@ -35,33 +35,8 @@ export const Connected: Story = {
   },
 };
 
-export const Connecting: Story = {
-  args: {
-    isConnected: false,
-    isConnecting: true,
-    error: null,
-  },
-};
-
-export const ConnectionFailed: Story = {
-  args: {
-    isConnected: false,
-    isConnecting: false,
-    error: 'WebSocket connection failed',
-  },
-};
-
-export const ConnectionFailedWithLongError: Story = {
-  args: {
-    isConnected: false,
-    isConnecting: false,
-    error:
-      'Connection timeout - please check your internet connection and try again',
-  },
-};
-
-// Mobile-specific responsive stories
-export const Connected_Mobile320: Story = {
+// Responsive variants
+export const Connected_SmallMobile: Story = {
   ...Connected,
   parameters: {
     layout: 'fullscreen',
@@ -71,32 +46,22 @@ export const Connected_Mobile320: Story = {
   },
 };
 
-export const ConnectionFailed_Mobile320: Story = {
-  ...ConnectionFailed,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile320', isRotated: false },
-  },
-};
-
-export const Connected_iPhone: Story = {
+export const Connected_LargeMobile: Story = {
   ...Connected,
   parameters: {
     layout: 'fullscreen',
   },
   globals: {
-    viewport: { value: 'mobile375', isRotated: false },
+    viewport: { value: 'mobile414', isRotated: false },
   },
 };
 
-export const ConnectionFailed_iPhone: Story = {
-  ...ConnectionFailed,
+export const Connected_Laptop: Story = {
+  ...Connected,
   parameters: {
     layout: 'fullscreen',
   },
   globals: {
-    viewport: { value: 'mobile375', isRotated: false },
+    viewport: { value: 'desktop1024', isRotated: false },
   },
 };

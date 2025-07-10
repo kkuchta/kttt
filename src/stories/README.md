@@ -33,42 +33,41 @@ npm run storybook
 
 #### HomePage (Full Screen)
 
-- **Connection states**: Default (connected), Connecting, ConnectionError
-- **Queue states**: Default (idle), InMatchmakingQueue, MatchmakingError
-- **Complete user flow**: Hero section, all three action buttons, responsive layout
-- **Mobile-first**: Comprehensive testing across all viewport sizes
+- **Primary State**: Default (connected, ready for game creation or matchmaking)
+- **Responsive**: SmallMobile (320px), LargeMobile (414px), Laptop (1024px)
+- **Focus**: Button layouts and UI density across screen sizes
 
 #### GameBoard Component
 
-- **Basic states**: EmptyBoard, MidGame, OpponentTurn, GameCompleted
-- **Mobile variants**: Test at 320px, 375px, 414px for touch target accuracy
-- **Cross-device**: Compare mobile vs tablet vs desktop layouts
+- **Primary State**: EmptyBoard (clean board ready for first move)
+- **Responsive**: SmallMobile (320px), LargeMobile (414px), Laptop (1024px)
+- **Focus**: Board sizing and cell touch targets across devices
 
 #### ConnectionIndicator Component
 
-- **States**: Connected, Connecting, ConnectionFailed
-- **Mobile positioning**: Test fixed positioning on small screens
-- **Error message**: Test long error text wrapping
+- **Primary State**: Connected
+- **Responsive**: SmallMobile (320px), LargeMobile (414px), Laptop (1024px)
+- **Focus**: Indicator visibility and positioning across screen sizes
 
 ## 🎨 Story Naming Convention
 
 ```
-ComponentName_State_ViewportSize
+ComponentName_ViewportSize
 ```
 
 Examples:
 
-- `GameBoard_EmptyBoard_Mobile320` - Empty board at 320px width
-- `ConnectionIndicator_Connected_iPhone` - Connected state at iPhone size
-- `GameBoard_MidGame_Tablet` - Mid-game state at tablet size
+- `EmptyBoard_SmallMobile` - Primary state at 320px width
+- `Connected_LargeMobile` - Primary state at 414px width
+- `Default_Laptop` - Primary state at 1024px width
 
 ## 🔧 Touch Target Testing
 
-The `TouchTargetTesting` story is specifically designed to verify:
+The responsive stories help verify:
 
 - Minimum 44px touch targets (iOS requirement)
-- Proper button spacing
-- Cell accessibility on small screens
+- Proper button spacing on small screens
+- Cell accessibility on 320px mobile devices
 - No accidental touches between buttons
 
 ## 🎯 Critical Test Cases

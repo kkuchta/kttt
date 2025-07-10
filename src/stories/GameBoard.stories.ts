@@ -33,36 +33,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Mock data for different game states
+// Mock data
 const emptyBoard: Board = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-const midGameBoard: Board = [
-  ['X', null, 'O'],
-  [null, 'X', null],
-  [null, null, null],
-];
-
-const nearEndBoard: Board = [
-  ['X', 'O', 'X'],
-  ['O', 'X', 'O'],
-  [null, null, 'X'],
-];
-
-const completeBoard: Board = [
-  ['X', 'O', 'X'],
-  ['O', 'X', 'O'],
-  ['X', 'O', 'X'],
-];
-
 const mockOnCellClick = (row: number, col: number) => {
   console.log(`Cell clicked: ${row}, ${col}`);
 };
 
-// Basic states - will default to Mobile 375px viewport
+// Primary state
 export const EmptyBoard: Story = {
   args: {
     board: emptyBoard,
@@ -75,54 +57,8 @@ export const EmptyBoard: Story = {
   },
 };
 
-export const MidGame: Story = {
-  args: {
-    board: midGameBoard,
-    canMove: true,
-    onCellClick: mockOnCellClick,
-    yourPlayer: 'X',
-    revealedCells: [{ row: 0, col: 2 }], // O piece revealed
-    hitPieces: [],
-    isYourTurn: true,
-  },
-};
-
-export const OpponentTurn: Story = {
-  args: {
-    board: midGameBoard,
-    canMove: false,
-    onCellClick: mockOnCellClick,
-    yourPlayer: 'X',
-    revealedCells: [{ row: 0, col: 2 }],
-    hitPieces: [],
-    isYourTurn: false,
-  },
-};
-
-export const GameCompleted: Story = {
-  args: {
-    board: nearEndBoard,
-    canMove: false,
-    onCellClick: mockOnCellClick,
-    yourPlayer: 'X',
-    revealedCells: [
-      { row: 0, col: 1 },
-      { row: 1, col: 0 },
-      { row: 1, col: 2 },
-    ],
-    hitPieces: [],
-    gameCompleted: true,
-    revealBoard: completeBoard,
-    winnerLineCells: [
-      { row: 0, col: 2 },
-      { row: 1, col: 1 },
-      { row: 2, col: 0 },
-    ],
-  },
-};
-
-// Mobile-specific stories (320px - smallest mobile)
-export const EmptyBoard_Mobile320: Story = {
+// Responsive variants
+export const EmptyBoard_SmallMobile: Story = {
   ...EmptyBoard,
   parameters: {
     layout: 'fullscreen',
@@ -132,48 +68,6 @@ export const EmptyBoard_Mobile320: Story = {
   },
 };
 
-export const MidGame_Mobile320: Story = {
-  ...MidGame,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile320', isRotated: false },
-  },
-};
-
-// iPhone standard size (375px)
-export const EmptyBoard_iPhone: Story = {
-  ...EmptyBoard,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const MidGame_iPhone: Story = {
-  ...MidGame,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const GameCompleted_iPhone: Story = {
-  ...GameCompleted,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-// Large mobile (414px)
 export const EmptyBoard_LargeMobile: Story = {
   ...EmptyBoard,
   parameters: {
@@ -184,59 +78,12 @@ export const EmptyBoard_LargeMobile: Story = {
   },
 };
 
-// Tablet comparison
-export const EmptyBoard_Tablet: Story = {
-  ...EmptyBoard,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'tablet768', isRotated: false },
-  },
-};
-
-export const MidGame_Tablet: Story = {
-  ...MidGame,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'tablet768', isRotated: false },
-  },
-};
-
-// Desktop comparison
-export const EmptyBoard_Desktop: Story = {
+export const EmptyBoard_Laptop: Story = {
   ...EmptyBoard,
   parameters: {
     layout: 'fullscreen',
   },
   globals: {
     viewport: { value: 'desktop1024', isRotated: false },
-  },
-};
-
-export const MidGame_Desktop: Story = {
-  ...MidGame,
-  parameters: {
-    viewport: { defaultViewport: 'desktop1024' },
-    layout: 'fullscreen',
-  },
-};
-
-// Touch target testing story
-export const TouchTargetTesting: Story = {
-  args: {
-    board: emptyBoard,
-    canMove: true,
-    onCellClick: mockOnCellClick,
-    yourPlayer: 'X',
-    revealedCells: [],
-    hitPieces: [],
-    isYourTurn: true,
-  },
-  parameters: {
-    viewport: { defaultViewport: 'mobile320' },
-    layout: 'fullscreen',
   },
 };

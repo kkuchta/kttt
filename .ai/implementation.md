@@ -214,3 +214,12 @@ fly open
 - **Typography Focus:** Clean text-based communication with Inter/Space Grotesk fonts
 - **Color-Based States:** Use color constants and CSS for visual feedback instead of symbols
 - **Accessibility:** Screen reader friendly with proper ARIA labels and semantic markup
+
+### Storybook Setup
+
+- **Purpose:** Responsive testing and component preview across viewport sizes
+- **Simplified Structure:** Each component has 4 stories (default + 3 responsive variants)
+- **Key Viewports:** SmallMobile (320px), LargeMobile (414px), Laptop (1024px)
+- **Storybook 9.0:** Uses modern viewport configuration with `globals.viewport.value`
+- **Usage:** `make storybook` to start, then visit a page like http://localhost:6006/?path=/story/pages-homepage--default-large-mobile
+- **Focus:** Mobile-first responsive testing across critical screen sizes

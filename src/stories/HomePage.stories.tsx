@@ -470,7 +470,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Basic states
+// Primary state
 export const Default: Story = {
   args: {
     connectionState: 'connected',
@@ -479,40 +479,8 @@ export const Default: Story = {
   },
 };
 
-export const Connecting: Story = {
-  args: {
-    connectionState: 'connecting',
-    queueState: 'idle',
-    error: null,
-  },
-};
-
-export const ConnectionError: Story = {
-  args: {
-    connectionState: 'error',
-    queueState: 'idle',
-    error: 'WebSocket connection failed',
-  },
-};
-
-export const InMatchmakingQueue: Story = {
-  args: {
-    connectionState: 'connected',
-    queueState: 'inQueue',
-    error: null,
-  },
-};
-
-export const MatchmakingError: Story = {
-  args: {
-    connectionState: 'connected',
-    queueState: 'error',
-    error: null,
-  },
-};
-
-// Mobile viewport stories
-export const Default_Mobile320: Story = {
+// Responsive variants
+export const Default_SmallMobile: Story = {
   ...Default,
   parameters: {
     layout: 'fullscreen',
@@ -522,57 +490,6 @@ export const Default_Mobile320: Story = {
   },
 };
 
-export const Default_iPhone: Story = {
-  ...Default,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const Connecting_iPhone: Story = {
-  ...Connecting,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const ConnectionError_iPhone: Story = {
-  ...ConnectionError,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const InMatchmakingQueue_iPhone: Story = {
-  ...InMatchmakingQueue,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-export const MatchmakingError_iPhone: Story = {
-  ...MatchmakingError,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile375', isRotated: false },
-  },
-};
-
-// Large mobile stories
 export const Default_LargeMobile: Story = {
   ...Default,
   parameters: {
@@ -583,50 +500,8 @@ export const Default_LargeMobile: Story = {
   },
 };
 
-export const InMatchmakingQueue_LargeMobile: Story = {
-  ...InMatchmakingQueue,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'mobile414', isRotated: false },
-  },
-};
-
-// Tablet stories
-export const Default_Tablet: Story = {
+export const Default_Laptop: Story = {
   ...Default,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'tablet768', isRotated: false },
-  },
-};
-
-export const InMatchmakingQueue_Tablet: Story = {
-  ...InMatchmakingQueue,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'tablet768', isRotated: false },
-  },
-};
-
-// Desktop stories
-export const Default_Desktop: Story = {
-  ...Default,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  globals: {
-    viewport: { value: 'desktop1024', isRotated: false },
-  },
-};
-
-export const InMatchmakingQueue_Desktop: Story = {
-  ...InMatchmakingQueue,
   parameters: {
     layout: 'fullscreen',
   },
