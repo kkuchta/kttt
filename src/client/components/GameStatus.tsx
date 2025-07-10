@@ -291,21 +291,6 @@ export function GameStatus({
                   ? `The ${getBotDisplayName(botInfo.botDifficulty)} outplayed you!`
                   : 'You lost the game!'}
             </p>
-            {result.winningLine && (
-              <p
-                style={{
-                  margin: '8px 0 0 0',
-                  color: colors.textDim,
-                  fontSize: '14px',
-                  fontFamily: 'Inter, sans-serif',
-                }}
-              >
-                Winning line:{' '}
-                {result.winningLine
-                  .map(pos => `(${pos.row + 1},${pos.col + 1})`)
-                  .join(' → ')}
-              </p>
-            )}
           </div>
         </div>
       );
