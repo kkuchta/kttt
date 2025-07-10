@@ -6,12 +6,7 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'prettier', // Must be last
-  ],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:react-hooks/recommended', 'prettier', 'plugin:storybook/recommended'],
   ignorePatterns: ['dist', '.gitignore'],
   parser: '@typescript-eslint/parser',
   parserOptions: {

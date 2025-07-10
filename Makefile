@@ -1,4 +1,4 @@
-.PHONY: help install dev build start lint lint-fix format format-check check clean redis-up redis-down redis-logs redis-cli deploy deploy-logs deploy-open
+.PHONY: help install dev build start lint lint-fix format format-check check clean redis-up redis-down redis-logs redis-cli deploy deploy-logs deploy-open storybook build-storybook
 
 # Default target
 help: ## Show this help message
@@ -36,6 +36,9 @@ dev-server: ## Start only the server in development mode
 dev-client: ## Start only the client in development mode
 	npm run dev:client
 
+storybook: ## Start Storybook development server
+	npm run storybook
+
 build: ## Build the project for production
 	npm run build
 
@@ -44,6 +47,9 @@ build-client: ## Build only the client
 
 build-server: ## Build only the server
 	npm run build:server
+
+build-storybook: ## Build Storybook for production
+	npm run build-storybook
 
 start: ## Start the production server
 	npm run start
