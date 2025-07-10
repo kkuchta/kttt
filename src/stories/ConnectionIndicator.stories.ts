@@ -64,31 +64,39 @@ export const ConnectionFailedWithLongError: Story = {
 export const Connected_Mobile320: Story = {
   ...Connected,
   parameters: {
-    viewport: { defaultViewport: 'mobile320' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile320', isRotated: false },
   },
 };
 
 export const ConnectionFailed_Mobile320: Story = {
   ...ConnectionFailed,
   parameters: {
-    viewport: { defaultViewport: 'mobile320' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile320', isRotated: false },
   },
 };
 
 export const Connected_iPhone: Story = {
   ...Connected,
   parameters: {
-    viewport: { defaultViewport: 'mobile375' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile375', isRotated: false },
   },
 };
 
 export const ConnectionFailed_iPhone: Story = {
   ...ConnectionFailed,
   parameters: {
-    viewport: { defaultViewport: 'mobile375' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile375', isRotated: false },
   },
 };

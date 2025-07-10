@@ -125,16 +125,20 @@ export const GameCompleted: Story = {
 export const EmptyBoard_Mobile320: Story = {
   ...EmptyBoard,
   parameters: {
-    viewport: { defaultViewport: 'mobile320' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile320', isRotated: false },
   },
 };
 
 export const MidGame_Mobile320: Story = {
   ...MidGame,
   parameters: {
-    viewport: { defaultViewport: 'mobile320' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile320', isRotated: false },
   },
 };
 
@@ -142,24 +146,30 @@ export const MidGame_Mobile320: Story = {
 export const EmptyBoard_iPhone: Story = {
   ...EmptyBoard,
   parameters: {
-    viewport: { defaultViewport: 'mobile375' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile375', isRotated: false },
   },
 };
 
 export const MidGame_iPhone: Story = {
   ...MidGame,
   parameters: {
-    viewport: { defaultViewport: 'mobile375' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile375', isRotated: false },
   },
 };
 
 export const GameCompleted_iPhone: Story = {
   ...GameCompleted,
   parameters: {
-    viewport: { defaultViewport: 'mobile375' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile375', isRotated: false },
   },
 };
 
@@ -167,8 +177,10 @@ export const GameCompleted_iPhone: Story = {
 export const EmptyBoard_LargeMobile: Story = {
   ...EmptyBoard,
   parameters: {
-    viewport: { defaultViewport: 'mobile414' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'mobile414', isRotated: false },
   },
 };
 
@@ -176,16 +188,20 @@ export const EmptyBoard_LargeMobile: Story = {
 export const EmptyBoard_Tablet: Story = {
   ...EmptyBoard,
   parameters: {
-    viewport: { defaultViewport: 'tablet768' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'tablet768', isRotated: false },
   },
 };
 
 export const MidGame_Tablet: Story = {
   ...MidGame,
   parameters: {
-    viewport: { defaultViewport: 'tablet768' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'tablet768', isRotated: false },
   },
 };
 
@@ -193,8 +209,10 @@ export const MidGame_Tablet: Story = {
 export const EmptyBoard_Desktop: Story = {
   ...EmptyBoard,
   parameters: {
-    viewport: { defaultViewport: 'desktop1024' },
     layout: 'fullscreen',
+  },
+  globals: {
+    viewport: { value: 'desktop1024', isRotated: false },
   },
 };
 

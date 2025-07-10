@@ -31,6 +31,13 @@ npm run storybook
 
 ### 3. Key Stories
 
+#### HomePage (Full Screen)
+
+- **Connection states**: Default (connected), Connecting, ConnectionError
+- **Queue states**: Default (idle), InMatchmakingQueue, MatchmakingError
+- **Complete user flow**: Hero section, all three action buttons, responsive layout
+- **Mobile-first**: Comprehensive testing across all viewport sizes
+
 #### GameBoard Component
 
 - **Basic states**: EmptyBoard, MidGame, OpponentTurn, GameCompleted
@@ -66,11 +73,13 @@ The `TouchTargetTesting` story is specifically designed to verify:
 
 ## 🎯 Critical Test Cases
 
-1. **Game Board Scaling** - Ensure 3x3 grid fits properly on 320px screens
-2. **Button Hierarchy** - Test primary/secondary button sizing
-3. **Status Indicators** - Verify turn badges and connection status visibility
-4. **Error Feedback** - Test move rejection animations on mobile
-5. **Queue UI** - Matchmaking status display on small screens
+1. **Home Page Layout** - Hero section, three action buttons, and responsive design on mobile
+2. **Game Board Scaling** - Ensure 3x3 grid fits properly on 320px screens
+3. **Button Hierarchy** - Test primary/secondary button sizing and touch targets
+4. **Status Indicators** - Verify turn badges and connection status visibility
+5. **Error Feedback** - Test move rejection animations on mobile
+6. **Queue UI** - Matchmaking status display and bot options on small screens
+7. **Connection States** - Test all connection and error states across devices
 
 ## 🚀 Best Practices
 
