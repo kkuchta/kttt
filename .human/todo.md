@@ -13,3 +13,4 @@ An AI should never touch this file
 - Remove "Winning line: (1,3) → (2,2) → (3,1)" thing
 - When A makes a move and it hits B's piece, highlight this to _B_
 - Make more obvious that you're X vs O
+- Mobile pass

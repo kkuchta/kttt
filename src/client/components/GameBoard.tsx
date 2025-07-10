@@ -1,5 +1,5 @@
 import { Board, Player, Position } from '@shared/types/game';
-import { colors } from '../../shared/constants/colors';
+import { boxShadows, colors } from '../../shared/constants/colors';
 import { Cell } from './Cell';
 
 interface GameBoardProps {
@@ -123,7 +123,7 @@ export function GameBoard({
           backgroundColor: colors.background,
           borderRadius: '15px',
           border: `3px solid ${colors.gridLines}`,
-          boxShadow: `0 8px 25px rgba(0, 0, 0, 0.4)`,
+          boxShadow: `0 8px 25px rgba(0, 0, 0, 0.4), ${boxShadows.boardGlow}`,
           position: 'relative',
         }}
       >

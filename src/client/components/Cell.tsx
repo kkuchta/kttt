@@ -65,11 +65,12 @@ function getCellStyles(
     fontFamily: 'Space Grotesk, monospace', // Geometric font for symbols
     cursor: canMove && state === 'empty' ? 'pointer' : 'not-allowed',
     borderRadius: '8px',
-    backgroundColor: colors.background,
+    backgroundColor: colors.cellDepth,
     color: '#ffffff',
     position: 'relative',
     overflow: 'hidden', // Prevent content from overflowing rounded corners
     transition: 'all 0.2s ease-in-out',
+    boxShadow: boxShadows.cellDepthSubtle,
     // Performance optimizations for smooth animations
     willChange: 'auto', // Let browser optimize automatically
     backfaceVisibility: 'hidden', // Prevent flickering during transforms
@@ -82,13 +83,15 @@ function getCellStyles(
       return {
         ...baseStyles,
         border: `2px solid ${colors.gridLines}`,
-        backgroundColor: colors.background,
+        backgroundColor: colors.cellDepth,
+        boxShadow: boxShadows.cellDepthSubtle,
         // Hover effect for empty cells (desktop only)
         ':hover':
           canHover && canMove
             ? {
-                backgroundColor: '#1a1a1a',
-                borderColor: colors.textDim,
+                backgroundColor: colors.gridDark,
+                borderColor: colors.gridLight,
+                boxShadow: boxShadows.cellDepth,
               }
             : {},
       };

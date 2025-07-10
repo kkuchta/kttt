@@ -2,7 +2,7 @@
 export const colors = {
   // Core theme colors
   background: '#0e0e0e',
-  gridLines: '#1a1a1a',
+  gridLines: '#555555',
   textDim: '#888888',
 
   // Player accent colors
@@ -17,6 +17,11 @@ export const colors = {
   // UI accent colors
   botBlue: '#2196f3', // Bot game indicators and headers
   queueOrange: '#ffc107', // Matchmaking queue status
+
+  // Enhanced grid contrast colors
+  gridDark: '#1a1a1a', // Darker variant for depth effects
+  gridLight: '#404040', // Lighter variant for highlights
+  cellDepth: '#0a0a0a', // Darker background for cell depth
 } as const;
 
 // Player type for utility functions
@@ -48,6 +53,16 @@ export const getHoverColor = (baseColor: string): string => {
   const b = Math.min(255, parseInt(hex.substr(4, 2), 16) + 30);
 
   return `rgb(${r}, ${g}, ${b})`;
+};
+
+// Utility function to create subtle cell depth effect
+export const createCellDepthShadow = (intensity: number = 0.3): string => {
+  return `inset 0 0 ${Math.round(intensity * 10)}px ${createGlow(colors.gridDark, intensity)}`;
+};
+
+// Utility function to create enhanced grid glow
+export const createGridGlow = (opacity: number = 0.1): string => {
+  return `0 0 15px ${createGlow(colors.gridLines, opacity)}`;
 };
 
 // Utility function to calculate contrast ratio for accessibility testing
@@ -129,4 +144,8 @@ export const boxShadows = {
   winningLine: `0 0 30px ${glows.winningLineGlow}`,
   botIndicator: `0 0 15px ${glows.botGlow}`,
   queueStatus: `0 0 15px ${glows.queueGlow}`,
+  // Enhanced grid contrast shadows
+  boardGlow: createGridGlow(0.1),
+  cellDepth: createCellDepthShadow(0.3),
+  cellDepthSubtle: createCellDepthShadow(0.1),
 } as const;
