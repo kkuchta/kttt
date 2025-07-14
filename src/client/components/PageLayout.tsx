@@ -22,7 +22,7 @@ export function PageLayout({
     <div
       style={{
         minHeight: '100vh',
-        padding: '20px',
+        padding: '15px', // Reduced padding for better small screen utilization
         backgroundColor: colors.background,
         backgroundImage: backgroundGradients[variant],
         display: 'flex',

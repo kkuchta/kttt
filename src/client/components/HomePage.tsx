@@ -101,7 +101,7 @@ export function HomePage() {
           textAlign: 'center',
           maxWidth: '600px',
           margin: '0 auto',
-          padding: '40px 20px',
+          padding: '40px 15px', // Reduced horizontal padding for small screens
           position: 'relative',
         }}
       >
@@ -244,7 +244,13 @@ export function HomePage() {
                 <LinkIcon size={18} style={{ verticalAlign: 'middle' }} /> Join
                 Existing Game
               </h3>
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px', // Reduced gap for better small screen fit
+                  minWidth: 0, // Ensure flex children can shrink
+                }}
+              >
                 <input
                   type="text"
                   placeholder="ENTER GAME ID"
@@ -252,7 +258,8 @@ export function HomePage() {
                   onChange={e => setJoinGameId(e.target.value)}
                   style={{
                     flex: 1,
-                    padding: '16px 20px',
+                    minWidth: 0, // Allow input to shrink below content size
+                    padding: '16px 12px', // Reduced horizontal padding for small screens
                     fontSize: '16px',
                     fontWeight: '500',
                     fontFamily: 'Space Grotesk, monospace',
@@ -278,7 +285,7 @@ export function HomePage() {
                 <button
                   onClick={handleJoinGame}
                   style={{
-                    padding: '16px 20px',
+                    padding: '16px 16px', // Reduced horizontal padding
                     fontSize: '16px',
                     fontWeight: '600',
                     fontFamily: 'Inter, sans-serif',
@@ -288,7 +295,8 @@ export function HomePage() {
                     borderRadius: '10px',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease-in-out',
-                    minWidth: '100px',
+                    minWidth: '80px', // Reduced minimum width for better small screen fit
+                    flexShrink: 0, // Prevent button from shrinking too much
                   }}
                   onMouseOver={e => {
                     e.currentTarget.style.backgroundColor = colors.xAccent;
