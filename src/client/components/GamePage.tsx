@@ -787,8 +787,8 @@ export function GamePage() {
       {(!gameState || !gameState.botInfo) && (
         <div
           style={{
-            padding: '20px',
-            margin: '0 0 25px 0',
+            padding: isMobile ? '16px' : '20px', // Reduced padding on mobile
+            margin: isMobile ? '0 0 20px 0' : '0 0 25px 0', // Reduced margin on mobile
             borderRadius: '12px',
             backgroundColor: colors.background,
             border: `2px solid ${colors.botBlue}`,
@@ -797,24 +797,24 @@ export function GamePage() {
         >
           <h3
             style={{
-              margin: '0 0 15px 0',
+              margin: isMobile ? '0 0 12px 0' : '0 0 15px 0', // Reduced margin on mobile
               color: colors.botBlue,
-              fontSize: '18px',
+              fontSize: isMobile ? '16px' : '18px', // Smaller font on mobile
               fontWeight: '600',
               fontFamily: 'Inter, sans-serif',
             }}
           >
             <LinkIcon
-              size={18}
+              size={isMobile ? 16 : 18} // Smaller icon on mobile
               style={{ verticalAlign: 'middle', marginRight: 4 }}
             />{' '}
             Invite a Friend
           </h3>
           <p
             style={{
-              margin: '0 0 15px 0',
+              margin: isMobile ? '0 0 12px 0' : '0 0 15px 0', // Reduced margin on mobile
               color: colors.textDim,
-              fontSize: '14px',
+              fontSize: isMobile ? '12px' : '14px', // Smaller font on mobile
               fontFamily: 'Inter, sans-serif',
             }}
           >
@@ -823,11 +823,12 @@ export function GamePage() {
           <div
             style={{
               display: 'flex',
-              gap: '12px',
+              gap: isMobile ? '8px' : '12px', // Reduced gap on mobile
               backgroundColor: createGlow(colors.gridLines, 0.1),
-              padding: '15px',
+              padding: isMobile ? '12px' : '15px', // Reduced padding on mobile
               borderRadius: '8px',
               border: `1px solid ${colors.gridLines}`,
+              minWidth: 0, // Ensure flex children can shrink
             }}
           >
             <input
@@ -836,10 +837,11 @@ export function GamePage() {
               readOnly
               style={{
                 flex: 1,
-                padding: '12px',
+                minWidth: 0, // Allow input to shrink below content size
+                padding: isMobile ? '10px 8px' : '12px', // Reduced padding on mobile
                 border: `2px solid ${colors.gridLines}`,
                 borderRadius: '6px',
-                fontSize: '14px',
+                fontSize: isMobile ? '12px' : '14px', // Smaller font on mobile
                 fontFamily: 'Space Grotesk, monospace',
                 backgroundColor: colors.background,
                 color: '#ffffff',
@@ -856,18 +858,20 @@ export function GamePage() {
                 }, 2000);
               }}
               style={{
-                padding: '12px 20px',
+                padding: isMobile ? '10px 12px' : '12px 20px', // Reduced padding on mobile
                 backgroundColor:
                   copyState === 'copied' ? colors.successGreen : colors.botBlue,
                 color: '#ffffff',
                 border: `2px solid ${copyState === 'copied' ? colors.successGreen : colors.botBlue}`,
                 borderRadius: '6px',
                 cursor: 'pointer',
-                fontSize: '14px',
+                fontSize: isMobile ? '12px' : '14px', // Smaller font on mobile
                 fontWeight: '600',
                 fontFamily: 'Inter, sans-serif',
                 transition: 'all 0.2s ease-in-out',
-                minWidth: '100px', // Prevent button width changes
+                minWidth: isMobile ? '70px' : '100px', // Smaller min width on mobile
+                flexShrink: 0, // Prevent button from shrinking too much
+                boxSizing: 'border-box', // Include padding and border in width
               }}
               onMouseOver={e => {
                 if (copyState === 'idle') {
