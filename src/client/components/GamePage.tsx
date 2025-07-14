@@ -630,6 +630,21 @@ export function GamePage() {
               </span>
             </h1>
 
+            {/* Game explanation subtitle */}
+            <p
+              style={{
+                margin: '2px 0 0 0',
+                color: colors.textDim,
+                fontSize: isMobile ? '11px' : '12px',
+                fontFamily: 'Inter, sans-serif',
+                fontStyle: 'italic',
+                fontWeight: '400',
+                opacity: 0.8,
+              }}
+            >
+              Tic-tac-toe with hidden moves
+            </p>
+
             {/* Player info and game type in one line */}
             <div
               style={{
