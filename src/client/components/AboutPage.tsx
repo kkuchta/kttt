@@ -18,7 +18,7 @@ export function AboutPage() {
           marginBottom: '40px',
           backgroundColor: colors.background,
           border: `2px solid ${colors.gridLines}`,
-          padding: '20px 25px',
+          padding: '20px 20px', // Reduced horizontal padding for small screens
           borderRadius: '15px',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
         }}
@@ -50,16 +50,17 @@ export function AboutPage() {
         <Link
           to="/"
           style={{
-            padding: '12px 20px',
+            padding: '10px 18px',
             backgroundColor: colors.textDim,
             color: '#ffffff',
             textDecoration: 'none',
             borderRadius: '8px',
-            fontSize: '16px',
+            fontSize: '14px',
             fontWeight: '500',
             fontFamily: 'Inter, sans-serif',
-            border: `2px solid ${colors.textDim}`,
+            border: `1px solid ${colors.textDim}`,
             transition: 'all 0.2s ease-in-out',
+            whiteSpace: 'nowrap', // Prevent text wrapping
           }}
           onMouseOver={e => {
             e.currentTarget.style.backgroundColor = '#ffffff';

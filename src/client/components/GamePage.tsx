@@ -17,6 +17,19 @@ import { GameStatus } from './GameStatus';
 import { PageLayout } from './PageLayout';
 import { PostBotGameOptions } from './PostBotGameOptions';
 
+// Custom hook for responsive behavior
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return isMobile;
+}
+
 // Board reveal state interface
 interface RevealState {
   isRevealing: boolean;
@@ -119,6 +132,7 @@ const calculateRevealSequence = (
 export function GamePage() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // State for post-bot game options modal
   const [showPostBotGameOptions, setShowPostBotGameOptions] = useState(false);
@@ -574,123 +588,146 @@ export function GamePage() {
       {/* Header */}
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
           marginBottom: '25px',
           backgroundColor: colors.background,
           border: `2px solid ${colors.gridLines}`,
-          padding: '20px 25px',
+          padding: '20px 20px',
           borderRadius: '15px',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
         }}
       >
-        <div>
-          <h1
-            style={{
-              margin: 0,
-              color: '#ffffff',
-              fontSize: '28px',
-              fontWeight: '700',
-              fontFamily: 'Inter, sans-serif',
-              textShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            Kriegspiel Tic Tac Toe
-          </h1>
-          <p
-            style={{
-              margin: '8px 0 0 0',
-              color: colors.textDim,
-              fontSize: '16px',
-              fontFamily: 'Space Grotesk, monospace',
-              letterSpacing: '1px',
-            }}
-          >
-            Game ID: <strong style={{ color: '#ffffff' }}>{gameId}</strong>
-          </p>
-          {yourPlayer && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginBottom: '15px',
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1
+              style={{
+                margin: 0,
+                color: '#ffffff',
+                fontSize: isMobile ? '24px' : '28px', // Responsive title size
+                fontWeight: '700',
+                fontFamily: 'Inter, sans-serif',
+                textShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
+                lineHeight: '1.2',
+              }}
+            >
+              Kriegspiel Tic Tac Toe
+            </h1>
             <p
               style={{
                 margin: '8px 0 0 0',
-                color: '#ffffff',
+                color: colors.textDim,
+                fontSize: isMobile ? '14px' : '16px',
+                fontFamily: 'Space Grotesk, monospace',
+                letterSpacing: '1px',
+              }}
+            >
+              Game ID: <strong style={{ color: '#ffffff' }}>{gameId}</strong>
+            </p>
+            {yourPlayer && (
+              <p
+                style={{
+                  margin: '8px 0 0 0',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                Playing as:{' '}
+                <span
+                  style={{
+                    color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
+                    fontFamily: 'Space Grotesk, monospace',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                  }}
+                >
+                  {yourPlayer}
+                </span>
+              </p>
+            )}
+          </div>
+
+          {/* Buttons - responsive layout */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '8px' : '10px',
+              alignItems: isMobile ? 'stretch' : 'center',
+              marginLeft: '15px',
+              flexShrink: 0,
+            }}
+          >
+            <Link
+              to="/about"
+              style={{
+                padding: isMobile ? '8px 12px' : '10px 18px',
+                backgroundColor: 'transparent',
+                color: colors.textDim,
+                textDecoration: 'none',
+                borderRadius: '8px',
                 fontSize: '14px',
                 fontWeight: '500',
                 fontFamily: 'Inter, sans-serif',
+                border: `1px solid ${colors.gridLines}`,
+                transition: 'all 0.2s ease-in-out',
+                textAlign: 'center',
+                minWidth: isMobile ? '80px' : 'auto',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.backgroundColor = createGlow(
+                  colors.gridLines,
+                  0.1
+                );
+                e.currentTarget.style.borderColor = colors.textDim;
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = colors.gridLines;
+                e.currentTarget.style.color = colors.textDim;
               }}
             >
-              Playing as:{' '}
-              <span
-                style={{
-                  color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
-                  fontFamily: 'Space Grotesk, monospace',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                }}
-              >
-                {yourPlayer}
-              </span>
-            </p>
-          )}
-        </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <Link
-            to="/about"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              color: colors.textDim,
-              textDecoration: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              fontFamily: 'Inter, sans-serif',
-              border: `1px solid ${colors.gridLines}`,
-              transition: 'all 0.2s ease-in-out',
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.backgroundColor = createGlow(
-                colors.gridLines,
-                0.1
-              );
-              e.currentTarget.style.borderColor = colors.textDim;
-              e.currentTarget.style.color = '#ffffff';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = colors.gridLines;
-              e.currentTarget.style.color = colors.textDim;
-            }}
-          >
-            About
-          </Link>
-          <Link
-            to="/"
-            style={{
-              padding: '12px 20px',
-              backgroundColor: colors.textDim,
-              color: '#ffffff',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Inter, sans-serif',
-              border: `2px solid ${colors.textDim}`,
-              transition: 'all 0.2s ease-in-out',
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.color = colors.background;
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.backgroundColor = colors.textDim;
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            ← Home
-          </Link>
+              About
+            </Link>
+            <Link
+              to="/"
+              style={{
+                padding: isMobile ? '8px 12px' : '10px 18px',
+                backgroundColor: colors.textDim,
+                color: '#ffffff',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Inter, sans-serif',
+                border: `1px solid ${colors.textDim}`,
+                transition: 'all 0.2s ease-in-out',
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+                minWidth: isMobile ? '80px' : 'auto',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.color = colors.background;
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.backgroundColor = colors.textDim;
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              ← Home
+            </Link>
+          </div>
         </div>
       </div>
 
