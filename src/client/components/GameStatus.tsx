@@ -87,30 +87,58 @@ export function GameStatus({
   };
 
   // Helper function to render status badge
-  const renderStatusBadge = (
-    text: string,
-    type: 'your-turn' | 'opponent-turn' | 'bot-thinking' | 'waiting'
-  ) => {
-    // Base styles that all badges share to prevent layout shifts
+  // Unified turn badge that combines player info with turn status
+  const renderUnifiedTurnBadge = () => {
+    // Base styles for the unified badge
     const baseBadgeStyles: React.CSSProperties = {
-      padding: '12px 24px', // Consistent padding for all badges
+      padding: '12px 24px',
       borderRadius: '25px',
-      fontSize: '16px', // Consistent font size for all badges
-      fontWeight: '600', // Consistent weight for all badges
+      fontSize: '16px',
+      fontWeight: '600',
       fontFamily: 'Inter, sans-serif',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '8px',
-      border: '3px solid', // Consistent border for all badges
+      border: '3px solid',
       transition: 'all 0.2s ease-in-out',
-      minWidth: '140px', // Fixed minimum width to prevent layout shifts
       textAlign: 'center' as const,
+      width: '100%', // Full width for mobile
+      boxSizing: 'border-box', // Include padding and border in width calculation
     };
 
+    // Determine turn status and styling
+    let badgeText: string;
+    let badgeType: 'your-turn' | 'opponent-turn' | 'bot-thinking';
+    let icon: React.ReactNode;
+
+    if (isYourTurn) {
+      badgeText = `Your Turn (${currentTurn})`;
+      badgeType = 'your-turn';
+      icon = <Check size={18} color={colors.successGreen} />;
+    } else if (isBotTurn) {
+      badgeText = `${getBotDisplayName(botInfo!.botDifficulty)} (${currentTurn})`;
+      badgeType = 'bot-thinking';
+      icon = (
+        <Bot
+          size={16}
+          color={colors.queueOrange}
+          style={{
+            animation: 'botThinking 1.5s ease-in-out infinite',
+          }}
+        />
+      );
+    } else {
+      // Opponent's turn in human vs human game
+      badgeText = `Opponent Turn (${currentTurn})`;
+      badgeType = 'opponent-turn';
+      icon = <Clock size={16} color={colors.textDim} />;
+    }
+
+    // Apply appropriate styling based on turn type
     let badgeStyles: React.CSSProperties = { ...baseBadgeStyles };
 
-    switch (type) {
+    switch (badgeType) {
       case 'your-turn':
         badgeStyles = {
           ...badgeStyles,
@@ -119,7 +147,6 @@ export function GameStatus({
           color: colors.successGreen,
           boxShadow: `0 0 12px ${createGlow(colors.successGreen, 0.3)}`,
           animation: 'yourTurnBadgePulse 2s ease-in-out infinite alternate',
-          // Use transform origin to ensure scaling happens from center
           transformOrigin: 'center',
         };
         break;
@@ -140,33 +167,13 @@ export function GameStatus({
           boxShadow: `0 0 12px ${createGlow(colors.queueOrange, 0.3)}`,
         };
         break;
-      case 'waiting':
-        badgeStyles = {
-          ...badgeStyles,
-          backgroundColor: createGlow(colors.textDim, 0.1),
-          borderColor: colors.textDim,
-          color: colors.textDim,
-        };
-        break;
     }
 
     return (
       <div style={badgeStyles}>
-        {type === 'your-turn' && (
-          <Check size={18} color={colors.successGreen} />
-        )}
-        {type === 'bot-thinking' && (
-          <Bot
-            size={16}
-            color={colors.queueOrange}
-            style={{
-              animation: 'botThinking 1.5s ease-in-out infinite',
-            }}
-          />
-        )}
-        {type === 'waiting' && <Clock size={16} color={colors.textDim} />}
-        <span>{text}</span>
-        {type === 'bot-thinking' && (
+        {icon}
+        <span>{badgeText}</span>
+        {badgeType === 'bot-thinking' && (
           <span
             style={{
               animation: 'dots 1.5s ease-in-out infinite',
@@ -427,9 +434,6 @@ export function GameStatus({
 
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
             padding: '15px 20px',
             backgroundColor: colors.background,
             borderRadius: '12px',
@@ -437,32 +441,7 @@ export function GameStatus({
             marginBottom: '15px',
           }}
         >
-          <div>
-            <p
-              style={{
-                margin: '0',
-                color: '#ffffff',
-                fontSize: '16px',
-                fontWeight: '500',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              <strong>Current Turn:</strong>{' '}
-              {botInfo
-                ? currentTurn === botInfo.botPlayer
-                  ? `${getBotDisplayName(botInfo.botDifficulty)} (${currentTurn})`
-                  : `You (${currentTurn})`
-                : `Player ${currentTurn}`}
-            </p>
-          </div>
-
-          <div className="status-badge">
-            {isYourTurn && renderStatusBadge('Your Turn', 'your-turn')}
-            {isBotTurn && renderStatusBadge('Bot Thinking', 'bot-thinking')}
-            {!isYourTurn &&
-              !isBotTurn &&
-              renderStatusBadge("Opponent's Turn", 'opponent-turn')}
-          </div>
+          <div className="status-badge">{renderUnifiedTurnBadge()}</div>
         </div>
       </div>
     </>
