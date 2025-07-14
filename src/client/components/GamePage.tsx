@@ -1,5 +1,5 @@
 import { Board, GameResult, Player, Position } from '@shared/types/game';
-import { Check, Link as LinkIcon } from 'lucide-react';
+import { Bot, Check, Link as LinkIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -588,11 +588,11 @@ export function GamePage() {
       {/* Header */}
       <div
         style={{
-          marginBottom: '25px',
+          marginBottom: isMobile ? '15px' : '20px', // Reduced margin on mobile
           backgroundColor: colors.background,
           border: `2px solid ${colors.gridLines}`,
-          padding: '20px 20px',
-          borderRadius: '15px',
+          padding: isMobile ? '12px 16px' : '16px 20px', // Reduced padding
+          borderRadius: '12px',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
         }}
       >
@@ -601,57 +601,94 @@ export function GamePage() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            marginBottom: '15px',
+            marginBottom: isMobile ? '8px' : '10px', // Reduced margin
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
+            {/* Title and Game ID inline */}
             <h1
               style={{
                 margin: 0,
                 color: '#ffffff',
-                fontSize: isMobile ? '24px' : '28px', // Responsive title size
+                fontSize: isMobile ? '18px' : '22px', // Smaller title
                 fontWeight: '700',
                 fontFamily: 'Inter, sans-serif',
                 textShadow: '0 0 15px rgba(255, 255, 255, 0.1)',
                 lineHeight: '1.2',
               }}
             >
-              Kriegspiel Tic Tac Toe
-            </h1>
-            <p
-              style={{
-                margin: '8px 0 0 0',
-                color: colors.textDim,
-                fontSize: isMobile ? '14px' : '16px',
-                fontFamily: 'Space Grotesk, monospace',
-                letterSpacing: '1px',
-              }}
-            >
-              Game ID: <strong style={{ color: '#ffffff' }}>{gameId}</strong>
-            </p>
-            {yourPlayer && (
-              <p
+              Kriegspiel TTT{' '}
+              <span
                 style={{
-                  margin: '8px 0 0 0',
-                  color: '#ffffff',
-                  fontSize: '14px',
+                  color: colors.textDim,
+                  fontSize: isMobile ? '14px' : '16px',
+                  fontFamily: 'Space Grotesk, monospace',
                   fontWeight: '500',
-                  fontFamily: 'Inter, sans-serif',
                 }}
               >
-                Playing as:{' '}
+                • {gameId}
+              </span>
+            </h1>
+
+            {/* Player info and game type in one line */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginTop: '4px',
+                flexWrap: 'wrap',
+              }}
+            >
+              {yourPlayer && (
                 <span
                   style={{
-                    color: yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
-                    fontFamily: 'Space Grotesk, monospace',
-                    fontSize: '16px',
-                    fontWeight: '600',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    fontFamily: 'Inter, sans-serif',
                   }}
                 >
-                  {yourPlayer}
+                  You:{' '}
+                  <span
+                    style={{
+                      color:
+                        yourPlayer === 'X' ? colors.xAccent : colors.oAccent,
+                      fontFamily: 'Space Grotesk, monospace',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {yourPlayer}
+                  </span>
                 </span>
-              </p>
-            )}
+              )}
+
+              {/* Bot game indicator */}
+              {gameState?.botInfo && (
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    color: colors.botBlue,
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    fontFamily: 'Inter, sans-serif',
+                    backgroundColor: createGlow(colors.botBlue, 0.1),
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    border: `1px solid ${colors.botBlue}`,
+                  }}
+                >
+                  <Bot size={12} color={colors.botBlue} />
+                  vs{' '}
+                  {gameState.botInfo.botDifficulty.charAt(0).toUpperCase() +
+                    gameState.botInfo.botDifficulty.slice(1)}{' '}
+                  Bot
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Buttons - responsive layout */}
@@ -659,27 +696,27 @@ export function GamePage() {
             style={{
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
-              gap: isMobile ? '8px' : '10px',
+              gap: isMobile ? '6px' : '8px', // Reduced gap
               alignItems: isMobile ? 'stretch' : 'center',
-              marginLeft: '15px',
+              marginLeft: '10px',
               flexShrink: 0,
             }}
           >
             <Link
               to="/about"
               style={{
-                padding: isMobile ? '8px 12px' : '10px 18px',
+                padding: isMobile ? '6px 10px' : '8px 14px', // Smaller padding
                 backgroundColor: 'transparent',
                 color: colors.textDim,
                 textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+                borderRadius: '6px',
+                fontSize: '12px', // Smaller font
                 fontWeight: '500',
                 fontFamily: 'Inter, sans-serif',
                 border: `1px solid ${colors.gridLines}`,
                 transition: 'all 0.2s ease-in-out',
                 textAlign: 'center',
-                minWidth: isMobile ? '80px' : 'auto',
+                minWidth: isMobile ? '60px' : 'auto', // Smaller min width
               }}
               onMouseOver={e => {
                 e.currentTarget.style.backgroundColor = createGlow(
@@ -700,19 +737,19 @@ export function GamePage() {
             <Link
               to="/"
               style={{
-                padding: isMobile ? '8px 12px' : '10px 18px',
+                padding: isMobile ? '6px 10px' : '8px 14px', // Smaller padding
                 backgroundColor: colors.textDim,
                 color: '#ffffff',
                 textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+                borderRadius: '6px',
+                fontSize: '12px', // Smaller font
                 fontWeight: '500',
                 fontFamily: 'Inter, sans-serif',
                 border: `1px solid ${colors.textDim}`,
                 transition: 'all 0.2s ease-in-out',
                 whiteSpace: 'nowrap',
                 textAlign: 'center',
-                minWidth: isMobile ? '80px' : 'auto',
+                minWidth: isMobile ? '60px' : 'auto', // Smaller min width
               }}
               onMouseOver={e => {
                 e.currentTarget.style.backgroundColor = '#ffffff';

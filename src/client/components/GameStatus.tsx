@@ -44,48 +44,6 @@ export function GameStatus({
     return difficultyMap[difficulty] || `${difficulty} Bot`;
   };
 
-  // Helper function to render game type header
-  const renderGameTypeHeader = () => {
-    if (!botInfo) return null;
-
-    return (
-      <div
-        style={{
-          marginBottom: '20px',
-          padding: '15px 20px',
-          borderRadius: '10px',
-          backgroundColor: colors.background,
-          border: `2px solid ${colors.botBlue}`,
-          boxShadow: boxShadows.botIndicator,
-          textAlign: 'center',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-          }}
-        >
-          <Bot size={24} color={colors.botBlue} />
-          <p
-            style={{
-              margin: 0,
-              color: colors.botBlue,
-              fontSize: '18px',
-              fontWeight: '600',
-              fontFamily: 'Inter, sans-serif',
-            }}
-          >
-            You ({botInfo.humanPlayer}) vs{' '}
-            {getBotDisplayName(botInfo.botDifficulty)} ({botInfo.botPlayer})
-          </p>
-        </div>
-      </div>
-    );
-  };
-
   // Helper function to render status badge
   // Unified turn badge that combines player info with turn status
   const renderUnifiedTurnBadge = () => {
@@ -201,8 +159,6 @@ export function GameStatus({
           `}</style>
 
           <div style={{ marginBottom: '20px' }}>
-            {renderGameTypeHeader()}
-
             <div
               style={{
                 padding: '20px',
@@ -258,7 +214,6 @@ export function GameStatus({
 
       return (
         <div>
-          {renderGameTypeHeader()}
           <div
             style={{
               marginBottom: '20px',
@@ -305,7 +260,6 @@ export function GameStatus({
       // Draw
       return (
         <div>
-          {renderGameTypeHeader()}
           <div
             style={{
               marginBottom: '20px',
@@ -350,7 +304,6 @@ export function GameStatus({
   if (status === 'waiting-for-players') {
     return (
       <div>
-        {renderGameTypeHeader()}
         <div
           style={{
             marginBottom: '20px',
@@ -430,8 +383,6 @@ export function GameStatus({
       `}</style>
 
       <div style={{ marginBottom: '20px' }}>
-        {renderGameTypeHeader()}
-
         <div
           style={{
             padding: '15px 20px',
