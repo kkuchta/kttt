@@ -4,6 +4,7 @@ import {
   createGlow,
   getHoverColor,
 } from '../../shared/constants/colors';
+import { Footer } from './Footer';
 import { PageLayout } from './PageLayout';
 
 export function AboutPage() {
@@ -319,45 +320,41 @@ export function AboutPage() {
       </div>
 
       {/* Footer Navigation */}
-      <div
-        style={{
-          textAlign: 'center',
-          padding: '20px 0',
-          borderTop: `1px solid ${colors.gridLines}`,
-          marginTop: '20px',
-        }}
-      >
-        <Link
-          to="/"
-          style={{
-            color: colors.textDim,
-            textDecoration: 'none',
-            fontSize: '16px',
-            fontWeight: '500',
-            fontFamily: 'Inter, sans-serif',
-            padding: '12px 24px',
-            border: `2px solid ${colors.successGreen}`,
-            borderRadius: '10px',
-            backgroundColor: 'transparent',
-            transition: 'all 0.2s ease-in-out',
-            display: 'inline-block',
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.backgroundColor = colors.successGreen;
-            e.currentTarget.style.color = colors.background;
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = `0 0 20px ${createGlow(colors.successGreen, 0.3)}`;
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = colors.textDim;
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          Start Playing
-        </Link>
-      </div>
+      <Footer
+        layoutType="vertical"
+        primaryAction={
+          <Link
+            to="/"
+            style={{
+              color: colors.textDim,
+              textDecoration: 'none',
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Inter, sans-serif',
+              padding: '12px 24px',
+              border: `2px solid ${colors.successGreen}`,
+              borderRadius: '10px',
+              backgroundColor: 'transparent',
+              transition: 'all 0.2s ease-in-out',
+              display: 'inline-block',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.backgroundColor = colors.successGreen;
+              e.currentTarget.style.color = colors.background;
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = `0 0 20px ${createGlow(colors.successGreen, 0.3)}`;
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = colors.textDim;
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            Start Playing
+          </Link>
+        }
+      />
     </PageLayout>
   );
 }

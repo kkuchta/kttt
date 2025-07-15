@@ -8,6 +8,7 @@ import {
 } from '../../shared/constants/colors';
 import { useSocket } from '../hooks/useSocket';
 import { ConnectionIndicator } from './ConnectionIndicator';
+import { Footer } from './Footer';
 import { PageLayout } from './PageLayout';
 import { QuickMatch } from './QuickMatch';
 
@@ -331,22 +332,8 @@ export function HomePage() {
       </div>
 
       {/* Subtle Footer Navigation */}
-      <div
-        style={{
-          textAlign: 'center',
-          padding: '30px 20px 20px 20px',
-          borderTop: `1px solid ${colors.gridLines}`,
-          marginTop: '40px',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '20px',
-            alignItems: 'center',
-          }}
-        >
+      <Footer
+        primaryAction={
           <Link
             to="/about"
             style={{
@@ -365,29 +352,8 @@ export function HomePage() {
           >
             About
           </Link>
-          <span style={{ color: colors.gridLines, fontSize: '14px' }}>•</span>
-          <a
-            href="https://kevinhighwater.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: colors.textDim,
-              textDecoration: 'none',
-              fontSize: '14px',
-              fontFamily: 'Inter, sans-serif',
-              transition: 'color 0.2s ease-in-out',
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.color = '#ffffff';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.color = colors.textDim;
-            }}
-          >
-            Created by Kevin Highwater
-          </a>
-        </div>
-      </div>
+        }
+      />
     </PageLayout>
   );
 }

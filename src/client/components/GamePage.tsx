@@ -11,6 +11,7 @@ import { useMoveRejectionWithSocket } from '../hooks/useMoveRejection';
 import { useSocket } from '../hooks/useSocket';
 import { useTurnVisualFeedback } from '../hooks/useTurnVisualFeedback';
 import { ConnectionIndicator } from './ConnectionIndicator';
+import { Footer } from './Footer';
 import { GameBoard } from './GameBoard';
 import { GameRules } from './GameRules';
 import { GameStatus } from './GameStatus';
@@ -988,6 +989,8 @@ export function GamePage() {
           }}
         />
       )}
+
+      <Footer />
     </PageLayout>
   );
 }
