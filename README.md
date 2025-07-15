@@ -21,7 +21,7 @@ For detailed game rules, see [Game Rules](/.ai/game_rules.md).
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20.18.0 or higher - matches production)
 - npm
 - Docker (for Redis)
 - make (optional, but recommended)
@@ -47,8 +47,10 @@ make dev
 
 The application will be available at:
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
+- **Development**: http://localhost:3000 (Vite dev server with proxy)
+- **Backend API**: http://localhost:3001 (Express server - proxied through frontend)
+
+**Note**: Access everything through the frontend URL (localhost:3000). The backend runs on 3001 but is proxied automatically.
 
 ### Redis Development Setup
 
