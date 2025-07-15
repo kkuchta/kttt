@@ -2,7 +2,7 @@
 
 A vibe-coded, socket-based, multiplayer version of Tic Tac Toe where you can't see your opponents's moves. Inspired by [this tweet](https://x.com/ZachWeiner/status/1755205085947109517) and built as an excuse to practice AI-driven development. I have neither written _nor_ read any code in this repo. The only hand-written thing in here is the copy within the app and these first two paragraphs.
 
-The remainder of this readme is whatever the AI decides it wants.
+The remainder of this readme is whatever the AI decides it wants. Apologies in advance for the emoji overload.
 
 ---
 
