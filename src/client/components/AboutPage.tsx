@@ -88,7 +88,7 @@ export function AboutPage() {
           marginBottom: '40px',
         }}
       >
-        {/* Game Description */}
+        {/* Inspiration */}
         <section style={{ marginBottom: '40px' }}>
           <h2
             style={{
@@ -100,7 +100,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.xAccent, 0.3)}`,
             }}
           >
-            What is Kriegspiel Tic Tac Toe?
+            What is this?
           </h2>
           <p
             style={{
@@ -111,64 +111,80 @@ export function AboutPage() {
               marginBottom: '20px',
             }}
           >
-            Kriegspiel Tic Tac Toe is a <strong>hidden information</strong>{' '}
-            variant of the classic game. Unlike regular tic-tac-toe, you
-            can&apos;t see your opponent&apos;s moves until you accidentally try
-            to place a piece on one of their squares!
+            Kriegspiel Tic Tac Toe was inspired by{' '}
+            <a
+              href="https://twitter.com/ZachWeiner/status/1755205085947109517"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: colors.xAccent,
+                textDecoration: 'none',
+                fontWeight: '500',
+                transition: 'all 0.2s ease-in-out',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.color = getHoverColor(colors.xAccent);
+                e.currentTarget.style.textShadow = `0 0 10px ${createGlow(colors.xAccent, 0.4)}`;
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.color = colors.xAccent;
+                e.currentTarget.style.textShadow = 'none';
+              }}
+            >
+              this Zach Wienersmith post
+            </a>
+            : it&apos;s a Tic Tac Toe variant where you can&apos;t see your
+            opponent&apos;s moves and you lose your turn if you take a spot
+            they&apos;ve already taken.
           </p>
+        </section>
+
+        {/* Development Process */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2
+            style={{
+              color: colors.oAccent,
+              fontSize: '24px',
+              fontWeight: '600',
+              fontFamily: 'Inter, sans-serif',
+              marginBottom: '20px',
+              textShadow: `0 0 15px ${createGlow(colors.oAccent, 0.3)}`,
+            }}
+          >
+            How&apos;d it get built?
+          </h2>
           <p
             style={{
-              color: colors.textDim,
-              fontSize: '16px',
+              color: '#ffffff',
+              fontSize: '18px',
               lineHeight: '1.6',
               fontFamily: 'Inter, sans-serif',
               marginBottom: '20px',
             }}
           >
-            This creates a fascinating game of deduction and risk management.
-            Every move rejection gives you valuable information, but costs you a
-            turn. Do you play it safe with corner strategies, or boldly probe
-            the center?
+            I built this partially because it&apos;s been on my &quot;fun
+            projects&quot; list for a while and partially because I wanted an
+            excuse to try out some AI-driven coding techniques.
           </p>
-          <div
+          <p
             style={{
-              backgroundColor: createGlow(colors.oAccent, 0.05),
-              border: `2px solid ${colors.oAccent}`,
-              borderRadius: '12px',
-              padding: '20px',
-              marginTop: '25px',
+              color: '#ffffff',
+              fontSize: '18px',
+              lineHeight: '1.6',
+              fontFamily: 'Inter, sans-serif',
+              marginBottom: '20px',
             }}
           >
-            <h3
-              style={{
-                color: colors.oAccent,
-                fontSize: '18px',
-                fontWeight: '600',
-                fontFamily: 'Inter, sans-serif',
-                margin: '0 0 15px 0',
-              }}
-            >
-              The Strategic Twist
-            </h3>
-            <p
-              style={{
-                color: '#ffffff',
-                fontSize: '16px',
-                lineHeight: '1.5',
-                fontFamily: 'Inter, sans-serif',
-                margin: 0,
-              }}
-            >
-              Move rejection becomes your primary source of information. Each
-              &quot;failed&quot; move reveals an opponent piece and teaches you
-              about their strategy, but at the cost of giving them an extra
-              turn.
-            </p>
-          </div>
+            As an exercise to force myself to practice those techniques, this
+            project was fully vibe-coded: didn&apos;t write <em>or read</em> a
+            single line of code for it. I tried out some context-engineering
+            strategies I&apos;ve seen people talk about and got better at
+            getting Cursor + Claude to do what I want.
+          </p>
         </section>
 
-        {/* Features */}
-        <section style={{ marginBottom: '40px' }}>
+        {/* Links */}
+        <section>
           <h2
             style={{
               color: colors.successGreen,
@@ -179,7 +195,7 @@ export function AboutPage() {
               textShadow: `0 0 15px ${createGlow(colors.successGreen, 0.3)}`,
             }}
           >
-            Features
+            More Information
           </h2>
           <div
             style={{
@@ -205,7 +221,7 @@ export function AboutPage() {
                   margin: '0 0 12px 0',
                 }}
               >
-                🔗 Instant Multiplayer
+                Source Code
               </h3>
               <p
                 style={{
@@ -213,305 +229,91 @@ export function AboutPage() {
                   fontSize: '16px',
                   lineHeight: '1.5',
                   fontFamily: 'Inter, sans-serif',
-                  margin: 0,
+                  margin: '0 0 15px 0',
                 }}
               >
-                Create games and share URLs instantly. No accounts, no setup -
-                just share and play.
+                View the complete source code and project structure on GitHub.
               </p>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: createGlow(colors.gridLines, 0.1),
-                border: `2px solid ${colors.gridLines}`,
-                borderRadius: '12px',
-                padding: '20px',
-              }}
-            >
-              <h3
-                style={{
-                  color: '#ffffff',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: '0 0 12px 0',
-                }}
-              >
-                Quick Match
-              </h3>
-              <p
-                style={{
-                  color: colors.textDim,
-                  fontSize: '16px',
-                  lineHeight: '1.5',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0,
-                }}
-              >
-                Jump into a game with a random opponent, or practice against the
-                bot while you wait.
-              </p>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: createGlow(colors.gridLines, 0.1),
-                border: `2px solid ${colors.gridLines}`,
-                borderRadius: '12px',
-                padding: '20px',
-              }}
-            >
-              <h3
-                style={{
-                  color: '#ffffff',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: '0 0 12px 0',
-                }}
-              >
-                Dramatic Reveals
-              </h3>
-              <p
-                style={{
-                  color: colors.textDim,
-                  fontSize: '16px',
-                  lineHeight: '1.5',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0,
-                }}
-              >
-                When the game ends, watch as all hidden pieces are revealed in a
-                satisfying animation.
-              </p>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: createGlow(colors.gridLines, 0.1),
-                border: `2px solid ${colors.gridLines}`,
-                borderRadius: '12px',
-                padding: '20px',
-              }}
-            >
-              <h3
-                style={{
-                  color: '#ffffff',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: '0 0 12px 0',
-                }}
-              >
-                Mobile Ready
-              </h3>
-              <p
-                style={{
-                  color: colors.textDim,
-                  fontSize: '16px',
-                  lineHeight: '1.5',
-                  fontFamily: 'Inter, sans-serif',
-                  margin: 0,
-                }}
-              >
-                Fully responsive design optimized for touch devices and mobile
-                gameplay.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Technology */}
-        <section style={{ marginBottom: '40px' }}>
-          <h2
-            style={{
-              color: colors.botBlue,
-              fontSize: '24px',
-              fontWeight: '600',
-              fontFamily: 'Inter, sans-serif',
-              marginBottom: '20px',
-              textShadow: `0 0 15px ${createGlow(colors.botBlue, 0.3)}`,
-            }}
-          >
-            Built With
-          </h2>
-          <div
-            style={{
-              backgroundColor: createGlow(colors.botBlue, 0.05),
-              border: `2px solid ${colors.botBlue}`,
-              borderRadius: '12px',
-              padding: '25px',
-            }}
-          >
-            <div
-              style={{
-                display: 'grid',
-                gap: '15px',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              }}
-            >
-              <div>
-                <h3
-                  style={{
-                    color: '#ffffff',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    fontFamily: 'Space Grotesk, monospace',
-                    margin: '0 0 8px 0',
-                  }}
-                >
-                  Frontend
-                </h3>
-                <p
-                  style={{
-                    color: colors.textDim,
-                    fontSize: '14px',
-                    fontFamily: 'Inter, sans-serif',
-                    margin: 0,
-                    lineHeight: '1.4',
-                  }}
-                >
-                  React • TypeScript • Vite
-                </p>
-              </div>
-              <div>
-                <h3
-                  style={{
-                    color: '#ffffff',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    fontFamily: 'Space Grotesk, monospace',
-                    margin: '0 0 8px 0',
-                  }}
-                >
-                  Backend
-                </h3>
-                <p
-                  style={{
-                    color: colors.textDim,
-                    fontSize: '14px',
-                    fontFamily: 'Inter, sans-serif',
-                    margin: 0,
-                    lineHeight: '1.4',
-                  }}
-                >
-                  Node.js • Express • Socket.io
-                </p>
-              </div>
-              <div>
-                <h3
-                  style={{
-                    color: '#ffffff',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    fontFamily: 'Space Grotesk, monospace',
-                    margin: '0 0 8px 0',
-                  }}
-                >
-                  Real-time
-                </h3>
-                <p
-                  style={{
-                    color: colors.textDim,
-                    fontSize: '14px',
-                    fontFamily: 'Inter, sans-serif',
-                    margin: 0,
-                    lineHeight: '1.4',
-                  }}
-                >
-                  WebSockets • Redis Storage
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Creator */}
-        <section>
-          <h2
-            style={{
-              color: colors.queueOrange,
-              fontSize: '24px',
-              fontWeight: '600',
-              fontFamily: 'Inter, sans-serif',
-              marginBottom: '20px',
-              textShadow: `0 0 15px ${createGlow(colors.queueOrange, 0.3)}`,
-            }}
-          >
-            About the Developer
-          </h2>
-          <div
-            style={{
-              backgroundColor: createGlow(colors.queueOrange, 0.05),
-              border: `2px solid ${colors.queueOrange}`,
-              borderRadius: '12px',
-              padding: '25px',
-            }}
-          >
-            <p
-              style={{
-                color: '#ffffff',
-                fontSize: '18px',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '20px',
-              }}
-            >
-              This game was built as an exploration of{' '}
-              <strong>hidden information mechanics</strong> in classic games.
-              The original Kriegspiel chess inspired the idea - what happens
-              when you remove perfect information from familiar games?
-            </p>
-            <p
-              style={{
-                color: colors.textDim,
-                fontSize: '16px',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '20px',
-              }}
-            >
-              The result is a surprisingly deep variant that transforms simple
-              tic-tac-toe into a game of deduction, psychology, and calculated
-              risk-taking.
-            </p>
-            <p
-              style={{
-                color: '#ffffff',
-                fontSize: '16px',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                margin: 0,
-              }}
-            >
-              Created by{' '}
               <a
-                href="https://kevinhighwater.com/"
+                href="https://github.com/kkuchta/kttt"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: colors.queueOrange,
+                  color: colors.successGreen,
                   textDecoration: 'none',
-                  fontWeight: '600',
+                  fontWeight: '500',
+                  fontSize: '16px',
                   transition: 'all 0.2s ease-in-out',
                 }}
                 onMouseOver={e => {
                   e.currentTarget.style.color = getHoverColor(
-                    colors.queueOrange
+                    colors.successGreen
                   );
-                  e.currentTarget.style.textShadow = `0 0 10px ${createGlow(colors.queueOrange, 0.4)}`;
+                  e.currentTarget.style.textShadow = `0 0 10px ${createGlow(colors.successGreen, 0.4)}`;
                 }}
                 onMouseOut={e => {
-                  e.currentTarget.style.color = colors.queueOrange;
+                  e.currentTarget.style.color = colors.successGreen;
                   e.currentTarget.style.textShadow = 'none';
                 }}
               >
-                Kevin Highwater
+                View on GitHub →
               </a>
-              , a generalist software engineer building serious tools and silly
-              hacks.
-            </p>
+            </div>
+
+            <div
+              style={{
+                backgroundColor: createGlow(colors.gridLines, 0.1),
+                border: `2px solid ${colors.gridLines}`,
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <h3
+                style={{
+                  color: '#ffffff',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  fontFamily: 'Inter, sans-serif',
+                  margin: '0 0 12px 0',
+                }}
+              >
+                Development Writeup
+              </h3>
+              <p
+                style={{
+                  color: colors.textDim,
+                  fontSize: '16px',
+                  lineHeight: '1.5',
+                  fontFamily: 'Inter, sans-serif',
+                  margin: '0 0 15px 0',
+                }}
+              >
+                Read about the AI-driven development process and lessons
+                learned.
+              </p>
+              <a
+                href="https://kevinhighwater.com/2025/07/kriegspiel-tic-tac-toe"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: colors.botBlue,
+                  textDecoration: 'none',
+                  fontWeight: '500',
+                  fontSize: '16px',
+                  transition: 'all 0.2s ease-in-out',
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.color = getHoverColor(colors.botBlue);
+                  e.currentTarget.style.textShadow = `0 0 10px ${createGlow(colors.botBlue, 0.4)}`;
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.color = colors.botBlue;
+                  e.currentTarget.style.textShadow = 'none';
+                }}
+              >
+                Read the writeup →
+              </a>
+            </div>
           </div>
         </section>
       </div>

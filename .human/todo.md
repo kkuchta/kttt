@@ -4,8 +4,9 @@ An AI should never touch this file
 
 [x] Register kttt.io on route53
 [x] Move off of Railway - it doesn't support apex domains through route53. Maybe fly.io?
-[]- Finish blog post
+[x]- Finish blog post
 []- Update about page
+[]- Readme
 
 - Update all copy
   X Increase contrast on board
