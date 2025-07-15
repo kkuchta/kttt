@@ -1,5 +1,11 @@
 # Kriegspiel Tic Tac Toe
 
+A vibe-coded, socket-based, multiplayer version of Tic Tac Toe where you can't see your opponents's moves. Inspired by [this tweet](https://x.com/ZachWeiner/status/1755205085947109517) and built as an excuse to practice AI-driven development. I have neither written _nor_ read any code in this repo. The only hand-written thing in here is the copy within the app and these first two paragraphs.
+
+The remainder of this readme is whatever the AI decides it wants.
+
+---
+
 A web-based multiplayer implementation of Kriegspiel Tic Tac Toe - a hidden information variant of classic tic-tac-toe where players cannot see their opponent's moves until they accidentally try to place a piece on an occupied space.
 
 ## 🎮 Game Rules
