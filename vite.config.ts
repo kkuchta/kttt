@@ -4,16 +4,30 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
-import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { fileURLToPath } from 'node:url';
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
 
+// Plugin to conditionally inject Cloudflare Analytics
+const cloudflareAnalyticsPlugin = () => {
+  return {
+    name: 'cloudflare-analytics',
+    transformIndexHtml(html: string) {
+      const token = process.env.VITE_CLOUDFLARE_ANALYTICS_TOKEN;
+      const script = token
+        ? `<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "${token}"}'></script><!-- End Cloudflare Web Analytics -->`
+        : '';
+      return html.replace('%VITE_CLOUDFLARE_ANALYTICS_SCRIPT%', script);
+    },
+  };
+};
+
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), cloudflareAnalyticsPlugin()],
   root: 'src/client',
   build: {
     outDir: '../../dist/client',
