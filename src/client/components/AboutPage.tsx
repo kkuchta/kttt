@@ -163,7 +163,26 @@ export function AboutPage() {
               marginBottom: '20px',
             }}
           >
-            I built this partially because it&apos;s been on my &quot;fun
+            I (
+            <a
+              href="https://bsky.app/profile/kevinkuchta.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: colors.textDim,
+                textDecoration: 'none',
+                transition: 'color 0.2s ease-in-out',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.color = colors.textDim;
+              }}
+            >
+              Kevin Highwater
+            </a>
+            ) built this partially because it&apos;s been on my &quot;fun
             projects&quot; list for a while and partially because I wanted an
             excuse to try out some AI-driven coding techniques.
           </p>
