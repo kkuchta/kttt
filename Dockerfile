@@ -16,6 +16,10 @@ ENV NODE_ENV="production"
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
+# Build argument for Cloudflare Analytics token
+ARG VITE_CLOUDFLARE_ANALYTICS_TOKEN
+ENV VITE_CLOUDFLARE_ANALYTICS_TOKEN=$VITE_CLOUDFLARE_ANALYTICS_TOKEN
+
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3

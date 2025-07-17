@@ -7,6 +7,8 @@ app = 'kttt'
 primary_region = 'sjc'
 
 [build]
+  [build.args]
+    VITE_CLOUDFLARE_ANALYTICS_TOKEN = "12a9b6af36c843348eba671ae8683b65"
 
 [http_service]
   internal_port = 3000
