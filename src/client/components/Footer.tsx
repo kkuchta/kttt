@@ -33,6 +33,29 @@ export function Footer({
     </a>
   );
 
+  const blueskyLink = (
+    <a
+      href="https://bsky.app/profile/kevinkuchta.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        color: colors.textDim,
+        textDecoration: 'none',
+        fontSize: '14px',
+        fontFamily: 'Inter, sans-serif',
+        transition: 'color 0.2s ease-in-out',
+      }}
+      onMouseOver={e => {
+        e.currentTarget.style.color = '#ffffff';
+      }}
+      onMouseOut={e => {
+        e.currentTarget.style.color = colors.textDim;
+      }}
+    >
+      @kevinkuchta.com
+    </a>
+  );
+
   return (
     <div
       style={{
@@ -43,7 +66,7 @@ export function Footer({
       }}
     >
       {layoutType === 'horizontal' && primaryAction ? (
-        // Horizontal layout: "About • Created by Kevin Highwater"
+        // Horizontal layout: "About • Created by Kevin Highwater • @kevinkuchta.com"
         <div
           style={{
             display: 'flex',
@@ -55,15 +78,28 @@ export function Footer({
           {primaryAction}
           <span style={{ color: colors.gridLines, fontSize: '14px' }}>•</span>
           {creatorLink}
+          <span style={{ color: colors.gridLines, fontSize: '14px' }}>•</span>
+          {blueskyLink}
         </div>
       ) : (
-        // Vertical layout: Button above, creator link below
+        // Vertical layout: Button above, creator links below
         <>
           {primaryAction && (
             <div style={{ marginBottom: '20px' }}>{primaryAction}</div>
           )}
 
-          <div>{creatorLink}</div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '20px',
+              alignItems: 'center',
+            }}
+          >
+            {creatorLink}
+            <span style={{ color: colors.gridLines, fontSize: '14px' }}>•</span>
+            {blueskyLink}
+          </div>
         </>
       )}
     </div>
