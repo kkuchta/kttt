@@ -38,7 +38,7 @@ export function GameRules() {
         <p style={{ margin: '0' }}>
           • <strong style={{ color: '#ffffff' }}>Move Rejection:</strong> If you
           try to place on an occupied square, that opponent piece will be
-          permanently revealed.
+          permanently revealed and you&apos;ll lose your turn.
         </p>
       </div>
     </div>
